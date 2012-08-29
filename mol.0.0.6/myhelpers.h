@@ -76,11 +76,11 @@ void* mycalloc(size_t nmemb, size_t size);
 void* myrealloc(void* ptr, size_t size);
 #endif
 
-#if defined _DARWIN_  && !defined _DARWIN_LION_
+#if defined _DARWIN_  && defined _DARWIN_SNOW_LEOPARD_
 
 int  getline (char **lineptr, size_t *n, FILE *stream);
 
-#endif /* _DARWIN_ && ! _DARWIN_LION_ */
+#endif /* _DARWIN_ && _DARWIN_SNOW_LEOPARD_ */
 
 
 void myexit (int status);

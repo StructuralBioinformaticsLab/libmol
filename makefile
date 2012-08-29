@@ -39,8 +39,8 @@ ifeq ($(_os), Darwin)
 LDFLAGS  := -L/sw/lib  $(LDFLAGS)
 CPPFLAGS := -D _DARWIN_ -I/opt/local/include -I/sw/include  $(CPPFLAGS)
 _os_ver = $(shell sw_vers -productVersion | cut -f 1-2 -d .)
-ifeq ($(_os_ver), 10.7) #lion
-CPPFLAGS := -D _DARWIN_LION_ $(CPPFLAGS)
+ifeq ($(_os_ver), 10.6) #lion
+CPPFLAGS := -D _DARWIN_SNOW_LEOPARD_ $(CPPFLAGS)
 endif
 
 endif
