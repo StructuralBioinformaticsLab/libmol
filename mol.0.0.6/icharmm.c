@@ -475,7 +475,6 @@ void read_atom_type_name_num(char *rtffile, int *num_atom_types, struct atom_typ
   char *buffer = _mol_malloc(sizeof(char) * linesize);
   char tmp_name[64];
   char ftype_name[64];
-  char *p;
   int i=0;
   int ftype_num;
 
@@ -487,13 +486,9 @@ void read_atom_type_name_num(char *rtffile, int *num_atom_types, struct atom_typ
       continue;
 
     if (strstr(buffer, "MASS") != NULL) {
-      //nthv(&p, buffer, ' ', 1);
-      //atom_type_name_num[i] = atoi(p);
-      //nthv(&p, buffer, ' ', 2);
       sscanf(buffer, "%s %d %s", tmp_name, &ftype_num, ftype_name);
       strcpy(atypenn[i].name, ftype_name);
       atypenn[i].num = ftype_num;
-      //printf("type index: %d, atom type num: %d, atom type name: %s\n", i, atypenn[i].num, atypenn[i].name);
       i++;
     }
   }
