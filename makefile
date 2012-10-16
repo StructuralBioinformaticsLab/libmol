@@ -11,7 +11,7 @@ LIB_FILE = libmol.$(MOL_VERSION).a
 
 #ifeq ($(_processor), i686)
 ifneq ($(_processor), ppc64)
-	LIBS = -lm -lfftw3f
+	LIBS = -lm 
 
 
 	# library installation dir
@@ -25,7 +25,7 @@ else # assume BG/L
 	CPPFLAGS := -D _BGL_ $(CPPFLAGS)
 	CPPFLAGS := -D _MPI_ $(CPPFLAGS)
 	CPPFLAGS := -I/bgl/BlueLight/ppcfloor/bglsys/include -I$(HOME)/usr/include $(CPPFLAGS)
-	LIBS = -lm -lfftw3f -lmpich.rts -lmsglayer.rts -lrts.rts -ldevices.rts
+	LIBS = -lm -lmpich.rts -lmsglayer.rts -lrts.rts -ldevices.rts
 	LDFLAGS := -L/bgl/BlueLight/ppcfloor/bglsys/lib -L$(HOME)/usr/lib
 
 	# library installation dir
