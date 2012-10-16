@@ -69,4 +69,5 @@ typedef unsigned int uint;
 #include "mol.0.0.6/subag.h"
 #include "mol.0.0.6/hbond.h"
 #include "mol.0.0.6/version.h"
+#include "mol.0.0.6/mol2.h"
 #endif
