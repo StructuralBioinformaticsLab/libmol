@@ -56,8 +56,6 @@ void fprintf_stderr_atomgrp_file_exts ();
 */
 struct atomgrp* read_file_atomgrp (const char* path, struct prm* prm, float msur_k);
 
-struct grid* read_file_grid (const char* path);
-
 /**
   prints an atomgrp file based on its ext
 */

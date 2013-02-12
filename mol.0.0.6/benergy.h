@@ -58,8 +58,6 @@ void zero_grads(struct atomgrp *ag);
 
 void check_b_grads(struct atomgrp *ag, double d,
                 void (*efun)(struct atomgrp *, double*));
-void check_epeng_grads(struct atomgrp *ag, struct grid* pot, double d,
-                void (*efun)(double, struct atomgrp *, double*, struct grid*));
 void check_speng_grads(int nstart, int nend,
                 struct atomgrp *ag, double d, double stens,
                 double* hx0, double* hy0, double* hz0, 

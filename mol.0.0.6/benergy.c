@@ -455,58 +455,6 @@ void check_b_grads(struct atomgrp *ag, double d, void (*efun)(struct atomgrp *, 
         free(fs);
 }
 
-void check_epeng_grads(struct atomgrp *ag, struct grid* pot, double d, 
-		void (*efun)(double, struct atomgrp *, double*, struct grid*))
-{
-	int n=ag->natoms, i;
-	double en, en1, t;
-	double *fs=_mol_malloc(3*n*sizeof(double));
-//en0
-	en=0;
-//	(*efun)(ag, &en);
-        (*efun)(1.0,ag, &en, pot);
-
-        for(i=0; i<n; i++)
-	{
-//x
-		en1=0;
-		t=ag->atoms[i].X;
-		ag->atoms[i].X=d+t;
-//		(*efun)(ag, &en1);
-                (*efun)(1.0,ag, &en1, pot);
-		ag->atoms[i].X=t;
-		fs[3*i]=(en-en1)/d;
-//y
-		en1=0;
-                t=ag->atoms[i].Y;
-                ag->atoms[i].Y=d+t;
-//                (*efun)(ag, &en1);
-                  (*efun)(1.0,ag, &en1, pot);
-                ag->atoms[i].Y=t;
-                fs[3*i+1]=(en-en1)/d;
-//z
-                en1=0;
-                t=ag->atoms[i].Z;
-                ag->atoms[i].Z=d+t;
-//                (*efun)(ag, &en1);
-                  (*efun)(1.0,ag, &en1, pot);
-                ag->atoms[i].Z=t;
-                fs[3*i+2]=(en-en1)/d;
-	}
-	en=0;
-	zero_grads(ag);
-//	(*efun)(ag, &en);
-        (*efun)(1.0,ag, &en, pot);
-	for(i=0; i<n; i++)
-        {
-		printf("%d calculated: %lf %lf %lf\n",
-		i,ag->atoms[i].GX,ag->atoms[i].GY,ag->atoms[i].GZ);
-		printf("%d numerical : %lf %lf %lf\n",
-                i,fs[3*i],fs[3*i+1],fs[3*i+2]);
-	}
-	free(fs);
-}
-
 void check_speng_grads(int nstart, int nend,
                 struct atomgrp *ag, double d, double stens,
                 double* hx0, double* hy0, double* hz0, 
