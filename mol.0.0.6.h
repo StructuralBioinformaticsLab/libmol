@@ -41,9 +41,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define strnequal(s1,s2,n) (!strncmp(s1,s2,n))
 #endif
 
-typedef unsigned int uint;
-
-#include <fftw3.h>
 #include "mol.0.0.6/mem.h"
 #include "mol.0.0.6/myhelpers.h"
 #include "mol.0.0.6/prms.h"

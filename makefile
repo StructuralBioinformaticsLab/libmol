@@ -11,7 +11,6 @@ LIB_FILE = libmol.$(MOL_VERSION).a
 
 #ifeq ($(_processor), i686)
 ifneq ($(_processor), ppc64)
-	LIBS = -lm 
 
 
 	# library installation dir
@@ -140,7 +139,7 @@ $(LIB_FILE): $(LIB_OBJS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 #$(CC) $(CPPFLAGS) $(CFLAGS) -c -dD -E $<
 
-$(LIB_OBJS): $(LIB_HEADERS)
+$(LIB_OBJS): $(LIB_HEADERS) $(LIB_MAIN_HEADER)
 
 # additional rules
 all: $(LIB_FILE)

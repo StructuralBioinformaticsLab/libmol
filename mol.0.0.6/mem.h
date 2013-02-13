@@ -27,6 +27,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef _MOL_MEM_H_
 #define _MOL_MEM_H_
+#include <stdlib.h>
 
 #ifdef _DEBUG_
 #define _mol_malloc(size) malloc(size)

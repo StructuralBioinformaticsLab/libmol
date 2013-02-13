@@ -27,6 +27,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef _MOL_MYHELPERS_H_
 #define _MOL_MYHELPERS_H_
+#include <stdio.h>
 
 #ifdef freeMem
    #undef freeMem
