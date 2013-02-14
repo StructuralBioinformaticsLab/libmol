@@ -4,7 +4,7 @@ MOL_VERSION = 0.0.6
 MOL_INCLUDE = "\"../mol.$(MOL_VERSION).h\""
 CPPFLAGS := -D _MOL_VERSION_="\"$(MOL_VERSION)\"" $(CPPFLAGS)
 CPPFLAGS := -D _MOL_INCLUDE_=$(MOL_INCLUDE) $(CPPFLAGS)
-CPPFLAGS := -D _SVN_VERSION_="\"$(shell svnversion)\"" $(CPPFLAGS)
+CPPFLAGS := -D _GIT_VERSION_="\"$(shell git describe --always)\"" $(CPPFLAGS)
 
 # library archive file
 LIB_FILE = libmol.$(MOL_VERSION).a

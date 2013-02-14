@@ -40,5 +40,5 @@ mol_version (char** lineptr, size_t *n);
     compiled library
 */
 void
-mol_svn_version (char** lineptr, size_t *n);
+mol_git_version (char** lineptr, size_t *n);
 #endif
