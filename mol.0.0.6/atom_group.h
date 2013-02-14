@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2009-2012, Structural Bioinformatics Laboratory, Boston University
+Copyright (c) 2013, Acpharis Inc
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -247,5 +248,8 @@ void array2ag ( double* array, struct atomgrp* ag);
 */
 
 void replace_coordinates(struct atomgrp* ag,const char* pdb_path);
+
+
+void transform_atomgrpf(struct atomgrp* ag, struct mol_matrix3f rotation, struct mol_vector3f translation);
 
 #endif

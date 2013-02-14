@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2009-2012, Structural Bioinformatics Laboratory, Boston University
+Copyright (c) 2013, Acpharis Inc
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -612,3 +613,16 @@ replace_coordinates(struct atomgrp* ag, const char* pdb_path)
     free_atomgrp(ag_new);
 }
 
+void transform_atomgrpf(struct atomgrp* ag, struct mol_matrix3f rotation, struct mol_vector3f translation) {
+	for (int i=0; i < ag->natoms; i++) {
+		double X = ag->atoms[i].X;
+		double Y = ag->atoms[i].Y;
+		double Z = ag->atoms[i].Z;
+		ag->atoms[i].X = X*rotation.m11 + Y*rotation.m12 + Z*rotation.m13;
+		ag->atoms[i].Y = X*rotation.m21 + Y*rotation.m22 + Z*rotation.m23;
+		ag->atoms[i].Z = X*rotation.m31 + Y*rotation.m32 + Z*rotation.m33;
+		ag->atoms[i].X += translation.X;
+		ag->atoms[i].Y += translation.Y;
+		ag->atoms[i].Z += translation.Z;
+	}
+}

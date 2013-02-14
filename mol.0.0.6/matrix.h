@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2009-2012, Structural Bioinformatics Laboratory, Boston University
+Copyright (c) 2013, Acpharis Inc
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -42,6 +43,24 @@ struct matrix2df // 2d matrix of floats
 {
 	float** vals; // pointer to array of rows
 	int ni, nj; // number of rows, number of cols
+};
+
+struct mol_matrix3f {
+	float m11; float m12; float m13;
+	float m21; float m22; float m23;
+	float m31; float m32; float m33;
+};
+
+struct mol_matrix3 {
+	double m11; double m12; double m13;
+	double m21; double m22; double m23;
+	double m31; double m32; double m33;
+};
+
+struct mol_matrix3l {
+	long double m11; long double m12; long double m13;
+	long double m21; long double m22; long double m23;
+	long double m31; long double m32; long double m33;
 };
 
 /**
