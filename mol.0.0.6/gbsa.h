@@ -25,50 +25,42 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef _MOL_H_
-#define _MOL_H_
-
-#ifndef _PRINT_DEPRECATED_
-#define _PRINT_DEPRECATED_ fprintf (stderr, "%s: Deprecated function\n", __func__);
-#endif
-#ifndef _mol_error
-#define _mol_error(format,...) fprintf (stderr, "%s in %s@%d: " format "\n", __func__, __FILE__, __LINE__, __VA_ARGS__)
-#endif
-#ifndef strequal
-#define strequal(s1,s2) (!strcmp(s1,s2))
-#endif
-#ifndef strnequal
-#define strnequal(s1,s2,n) (!strncmp(s1,s2,n))
-#endif
-
-#include "mol.0.0.6/mem.h"
-#include "mol.0.0.6/myhelpers.h"
-#include "mol.0.0.6/prms.h"
-#include "mol.0.0.6/io.h"
-#include "mol.0.0.6/bond.h"
-#include "mol.0.0.6/vector.h"
-#include "mol.0.0.6/atom.h"
-#include "mol.0.0.6/matrix.h"
-#include "mol.0.0.6/atom_group.h"
-#include "mol.0.0.6/_atom_group_copy_from_deprecated.h"
-#include "mol.0.0.6/icharmm.h"
-#include "mol.0.0.6/init.h"
-#include "mol.0.0.6/protein.h"
-#include "mol.0.0.6/pdb.h"
-#include "mol.0.0.6/ms.h"
-#include "mol.0.0.6/octree.h"
-#include "mol.0.0.6/sasa.h"
-#include "mol.0.0.6/potential.h"
-#include "mol.0.0.6/energy.h"
-#include "mol.0.0.6/benergy.h"
-#include "mol.0.0.6/nbenergy.h"
-#include "mol.0.0.6/minimize.h"
-#include "mol.0.0.6/compare.h"
-#include "mol.0.0.6/subag.h"
-#include "mol.0.0.6/hbond.h"
-#include "mol.0.0.6/version.h"
-#include "mol.0.0.6/mol2.h"
-#include "mol.0.0.6/rotamer.h"
-#include "mol.0.0.6/rmsd.h"
-#include "mol.0.0.6/gbsa.h"
+#ifndef _MOL_GBSA_H_
+#define _MOL_GBSA_H_
+struct acesetup {
+    int ntypes;
+    double efac;
+    int nbsize;//Size of nblist
+    int* list0123;
+    int n0123;
+    double* eself;
+    double* rborn;
+    double* swarr;
+    double* dswarr;
+    double* darr;
+    //d(rb)/d(eself)
+    double* dbrdes;
+    double* xsf;
+    double* ysf;
+    double* zsf;
+    double* xf;
+    double* yf;
+    double* zf;
+    double* diarr;
+    double  *lwace,*rsolv,*vsolv,*s2ace,*uace,*wace,*hydr;
+   
+};
+//Initialize ace data types
+void ace_ini(struct atomgrp* ag,struct acesetup* ac_s);
+//Update ace lists once fixedlist was updated
+void ace_fixedupdate(struct atomgrp* ag,struct agsetup* ags ,struct acesetup* ac_s);
+//Update nblst once nblist is updated
+void ace_updatenblst(struct agsetup* ags, struct acesetup* ac_s);
+//Calculate ace energy and gradients
+void aceeng(struct atomgrp* ag,double *en,struct acesetup* ac_s,struct agsetup* ags);
+//Free ace data
+void destroy_acesetup(struct acesetup* ac_s);
+void free_acesetup(struct acesetup* ac_s);
+//Test ace gradients
+void test_acegrads(struct atomgrp *ag,struct agsetup* ags, struct acesetup* acs,double d);
 #endif
