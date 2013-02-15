@@ -251,5 +251,6 @@ void replace_coordinates(struct atomgrp* ag,const char* pdb_path);
 
 
 void transform_atomgrpf(struct atomgrp* ag, struct mol_matrix3f rotation, struct mol_vector3f translation);
+struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig);
 
 #endif
