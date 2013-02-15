@@ -128,6 +128,7 @@ void read_ff_charmm(const char* psffile, char* prmfile, char* rtffile, struct at
        update fixed atom index and bonded active structures. list contains indices of fixed atoms
 */
 void fixed_update(struct atomgrp* ag, int nlist, int* list);
+void fixed_update_nolist(struct atomgrp *ag);
 /**
 	initialize active structures
 */

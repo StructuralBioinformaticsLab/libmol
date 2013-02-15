@@ -1297,6 +1297,131 @@ void fixed_update(struct atomgrp *ag, int nlist, int *list)
 		free(ag->impact);
 }
 
+void fixed_update_nolist(struct atomgrp *ag)
+{
+
+	int i, m, n;
+	struct atom *a0, *a1, *a2, *a3;
+	if (ag->nbact > 0) {
+		free(ag->bact);
+		ag->nbact = 0;
+	}
+	if (ag->nangact > 0) {
+		free(ag->angact);
+		ag->nangact = 0;
+	}
+
+	if (ag->ntoract > 0) {
+		free(ag->toract);
+		ag->ntoract = 0;
+	}
+	if (ag->nimpact > 0) {
+		free(ag->impact);
+		ag->nimpact = 0;
+	}
+	if (ag->nactives > 0) {
+		free(ag->activelist);
+		ag->nactives = 0;
+	}
+// atoms
+	int ci;
+	ag->activelist = (int *)_mol_malloc((ag->natoms) * sizeof(int));
+	ci = 0;
+	for (i = 0; i < ag->natoms; i++) {
+		if (ag->atoms[i].fixed == 0)
+			ag->activelist[ci++] = i;
+	}
+	ag->nactives = ci;
+	ag->activelist = (int *)_mol_realloc(ag->activelist, (ag->nactives) * sizeof(int));
+// bonds
+	n = ag->nbonds;
+	m = 0;
+	ag->bact = _mol_malloc(n * sizeof(struct atombond *));
+	for (i = 0; i < n; i++) {
+		a0 = ag->bonds[i].a0;
+		a1 = ag->bonds[i].a1;
+		if (a0->fixed == 1 && a1->fixed == 1)
+			continue;
+		ag->bact[m++] = &(ag->bonds[i]);
+	}
+	ag->nbact = m;
+	if (m > 0)
+		ag->bact =
+		    (struct atombond **)_mol_realloc(ag->bact,
+						     m *
+						     sizeof(struct atombond *));
+	else
+		free(ag->bact);
+// angles
+	n = ag->nangs;
+	m = 0;
+	ag->angact = _mol_malloc(n * sizeof(struct atomangle *));
+	for (i = 0; i < n; i++) {
+		a0 = ag->angs[i].a0;
+		a1 = ag->angs[i].a1;
+		a2 = ag->angs[i].a2;
+		if (a0->fixed == 1 && a1->fixed == 1 && a2->fixed == 1)
+			continue;
+		ag->angact[m++] = &(ag->angs[i]);
+	}
+	ag->nangact = m;
+	if (m > 0)
+		ag->angact =
+		    (struct atomangle **)_mol_realloc(ag->angact,
+						      m *
+						      sizeof(struct atomangle
+							     *));
+	else
+		free(ag->angact);
+// dihedrals
+	n = ag->ntors;
+	m = 0;
+	ag->toract = _mol_malloc(n * sizeof(struct atomtorsion *));
+	for (i = 0; i < n; i++) {
+		a0 = ag->tors[i].a0;
+		a1 = ag->tors[i].a1;
+		a2 = ag->tors[i].a2;
+		a3 = ag->tors[i].a3;
+		if (a0->fixed == 1 && a1->fixed == 1 && a2->fixed == 1
+		    && a3->fixed == 1)
+			continue;
+		ag->toract[m++] = &(ag->tors[i]);
+	}
+	ag->ntoract = m;
+	if (m > 0)
+		ag->toract =
+		    (struct atomtorsion **)_mol_realloc(ag->toract,
+							m *
+							sizeof(struct
+							       atomtorsion *));
+	else
+		free(ag->toract);
+// impropers
+	n = ag->nimps;
+	m = 0;
+	ag->impact = _mol_malloc(n * sizeof(struct atomimproper *));
+	for (i = 0; i < n; i++) {
+		a0 = ag->imps[i].a0;
+		a1 = ag->imps[i].a1;
+		a2 = ag->imps[i].a2;
+		a3 = ag->imps[i].a3;
+		if (a0->fixed == 1 && a1->fixed == 1 && a2->fixed == 1
+		    && a3->fixed == 1)
+			continue;
+		ag->impact[m++] = &(ag->imps[i]);
+	}
+	ag->nimpact = m;
+	if (m > 0)
+		ag->impact =
+		    (struct atomimproper **)_mol_realloc(ag->impact,
+							 m *
+							 sizeof(struct
+								atomimproper
+								*));
+	else
+		free(ag->impact);
+}
+
 /*Light version to read only bond info*/
 void read_ff_charmm_light(const char *psffile, struct atomgrp *ag)
 {
