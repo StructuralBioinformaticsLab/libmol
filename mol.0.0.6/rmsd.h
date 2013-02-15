@@ -33,4 +33,6 @@ struct pointlist* detectsymmetry(struct atomgrp* ag);
 
 float rmsd_sym(struct atomgrp* pA, struct atomgrp* pB, struct pointlist* sym);
 
+float rmsd_sym_no_bb(struct atomgrp *pA, struct atomgrp *pB, struct pointlist *sym);
+
 #endif

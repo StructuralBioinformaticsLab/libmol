@@ -161,3 +161,37 @@ float rmsd_sym (struct atomgrp* pA, struct atomgrp* pB, struct pointlist* sym)
 	}
 	return rmsd_min;
 }
+
+float rmsd_sym_no_bb(struct atomgrp *pA, struct atomgrp *pB,
+		     struct pointlist *sym)
+{
+	int nis = pA->natoms - 5;
+	if (nis == 0) {
+		fprintf(stderr, "error: no indices for rmsd calculation\n");
+		exit(EXIT_FAILURE);
+	}
+	float rmsd_min = INFINITY;
+	for (int j = 0; j < sym->n; j++) {
+		int *curlist = (int *)sym->list[j];
+		float sum = 0.0;
+		for (int i = 3; i < pA->natoms - 2; i++) {
+			int ii = curlist[i];	// indices index
+			float dev_squared =
+			    ((pA->atoms[i].X -
+			      pB->atoms[ii].X) * (pA->atoms[i].X -
+						  pB->atoms[ii].X)) +
+			    ((pA->atoms[i].Y -
+			      pB->atoms[ii].Y) * (pA->atoms[i].Y -
+						  pB->atoms[ii].Y)) +
+			    ((pA->atoms[i].Z -
+			      pB->atoms[ii].Z) * (pA->atoms[i].Z -
+						  pB->atoms[ii].Z));
+
+			sum += dev_squared;
+		}
+		float rmsd_val = sqrtf(sum / (float)nis);
+		if (rmsd_val < rmsd_min)
+			rmsd_min = rmsd_val;
+	}
+	return rmsd_min;
+}
