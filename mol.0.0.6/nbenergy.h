@@ -38,17 +38,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 struct cluster
 {
 	int natoms; /**<number of atoms in the cluster */
+        int nextincube; /**<index of the next cluster in cube */
         double gcent[3]; /**<coordinates of the geom center */
         double mdc;      /**<maximun distance to the center */
-        int nextincube; /**<index of the next cluster in cube */
         int* iatom;/**<atom index of the cluster */
 };
 
 struct clusterset
 {
-        int nclusters; /**< number of clusters in the coor set */
         struct cluster* clusters; /**< pointer to the array of clusters */
         double marg; /**< sum of two max distances from the geom center */
+        int nclusters; /**< number of clusters in the coor set */
 };
 
 struct cube

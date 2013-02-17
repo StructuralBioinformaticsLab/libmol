@@ -39,8 +39,8 @@ struct prm
 {
 	// atom
 	int natoms; /**< number of atoms */
-	struct prmatom* atoms;
 	int nsubatoms; /**< number of subatom types */
+	struct prmatom* atoms;
 
 	//float* rs;
 	//float* chrgs;
@@ -49,17 +49,17 @@ struct prm
 	struct prmpwpot* pwpot;
 
 	// bond
-	int nbonds;
 	struct prmbond* bonds;
+	int nbonds;
 
 };
 
 struct prmatom
 {
 	int id; // atom id
+	int subid; // subatom id
 	char* typemaj; // e.g. GLY
 	char* typemin; // e.g. CA
-	int subid; // subatom id
 
 	float r; // vdw radius
 	float q; // partial charge
@@ -71,10 +71,10 @@ struct prmatom
 struct prmpwpot
 {
 	float r1,r2; /**< r1,r2 for potential. */
-	int k; /**< number of eigenvalues */
 	float* lambdas; /**< pointer to array of eigenvalues */
 	float* Xs; /**< pointer to matrix of eigenvectors */
         float **eng;/** matrix of eps_ij */
+	int k; /**< number of eigenvalues */
 };
 
 struct prmbond

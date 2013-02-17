@@ -38,6 +38,7 @@ struct atom
 	int ingrp ; /**< atom index in the atomgroup */
 	int atom_typen; /**< atom type number */
 	int atom_ftypen;/**< atom type number in the forcefield */
+        int octree_ptr; /**< index (ptr) to octree leaf node to which this atoms belongs */           
 	char *name;
 
 	int sa; /**< solvent accessible: 1 => solvent accessible, 0 => !1, -1 => undefined */
@@ -64,28 +65,27 @@ struct atom
         int res_num;/** global residue number based on libmol numbering */
         int res_seq; /**< residue sequence number */
         int comb_res_seq; /**< single sequence of residue numbers combining all chains */
-        char icode;  /**< insertion code */
         
         int backbone; /**< 1 if this atom is part of the backbone, 0 otherwise */
 
 	// deprecated
-	int nbonds;
 	struct atombond** bonds; /**< first level bonds of this atom */
 	// end deprecated
 
 	// bond indices of this atom's bonds
-	int nbondis;
 	int* bondis;
 
-	int nangs;
 	struct atomangle** angs; /**< angles this atom is involved in */
 
-	int ntors;
 	struct atomtorsion** tors; /**< torsions this atom is involved in */
 
-	int nimps;
 	struct atomimproper** imps; /**< impropers this atom is involved in */
 	
+	int nbonds;
+	int nbondis;
+	int nangs;
+	int ntors;
+	int nimps;
 	int hprop; /**< properties related to hydrogen bonding */
 	           /**< this should have been "enum HBondProp hprop" (HbondProp is defined in hbond.h) */
                    /**< but C/C++ standard does not seem to allow forward decelarations */
@@ -93,7 +93,7 @@ struct atom
 		           /**< this should have been "enum HybridizationState hybridization" (HybridizationState is defined in hbond.h) */
                            /**< but C/C++ standard does not seem to allow forward decelarations */
         int base, base2; /**< indices to the base atoms of the hbond acceptor and the donor atom (in base) for hydrogens */                   
-        int octree_ptr; /**< index (ptr) to octree leaf node to which this atoms belongs */           
+        char icode;  /**< insertion code */
 };
 
 // warning: this function does not handle all of mol_atom
@@ -180,16 +180,16 @@ struct atomimproper
 struct spring
 {
         struct atomgrp *agp;  /**< affected atomgroup */
-        int naspr ; /**< number of affected atoms */
         int *laspr; /**< list of atoms */
         double fkspr; /**< force constant */
         double X0,Y0,Z0; /**< anchor point */
+        int naspr ; /**< number of affected atoms */
 };
 
 struct springset
 {
-        int nsprings; /**< number of springs */
         struct spring *springs;  /**< array of springs */
+        int nsprings; /**< number of springs */
 };
 
 /**

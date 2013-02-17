@@ -29,10 +29,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _MOL_GBSA_H_
 struct acesetup {
     int ntypes;
-    double efac;
     int nbsize;//Size of nblist
+    double efac;
     int* list0123;
-    int n0123;
     double* eself;
     double* rborn;
     double* swarr;
@@ -48,6 +47,7 @@ struct acesetup {
     double* zf;
     double* diarr;
     double  *lwace,*rsolv,*vsolv,*s2ace,*uace,*wace,*hydr;
+    int n0123;
    
 };
 //Initialize ace data types

@@ -139,11 +139,11 @@ typedef struct OPAR
         OCTREE *octree_static;
         /** index of the current node in the static octree */
         int node_static;
+        /** index of the current node in the moving octree */        
+        int node_moving;
 
         /** pointer to the octree containing the moving molecule */        
         OCTREE *octree_moving;
-        /** index of the current node in the moving octree */        
-        int node_moving;
         
         /** distance cutoff for pairwise interaction evaluation */        
         double dist_cutoff;
@@ -151,9 +151,6 @@ typedef struct OPAR
         double hdist_cutoff;
         /** distance cutoff for approximate pairwise interaction evaluation */                
         double approx_cutoff;
-        
-        /** if set to 1, ignore computations involving node pairs containing only fixed atoms */        
-        int fixed_cull;
         
         /** 3 x 4 transformation matrix */
         double *trans;
@@ -165,6 +162,9 @@ typedef struct OPAR
         void *proc_func_params;
         /** user-defined pairwise interaction evaluation function */
         void ( * processing_function )( struct OPAR *, double * );
+        
+        /** if set to 1, ignore computations involving node pairs containing only fixed atoms */        
+        int fixed_cull;
 } OCTREE_PARAMS;
 
 

@@ -92,48 +92,48 @@ struct atom_type_name_num {
 struct atomgrp {
 
 	int natoms; /**< number of atoms in the group */
+        int nactives;/**< number of active atoms in the group */
 	mol_atom* atoms; /**< pointer to the array of atoms in the group */
 
-        int num_atom_types;
         struct atom_type_name_num* atypenn;
 
-        int nactives;/**< number of active atoms in the group */
         int *activelist;/**< list of active atoms in the group */
 
 	int nbonds;
+        int nbact;
 	mol_bond* bonds; /**< all first level bonds of this atomgrp */
         
-        int nbact;
         struct atombond** bact; /**< array of pointers to the bonds of active atom/s */
 
 	int nangs;
+        int nangact;
 	struct atomangle* angs; /**< all angs of this atomgrp */
 
-        int nangact;
         struct atomangle** angact; /**< all active angs of this atomgrp */
 
 	int ntors;
+        int ntoract;
 	struct atomtorsion* tors; /**< all tors of this atomgrp */
 
-        int ntoract;
         struct atomtorsion** toract; /**< all active tors of this atomgrp */
 
 	int nimps;
+        int nimpact;
 	struct atomimproper* imps; /**< all imps of this atomgrp */
         
-        int nimpact;
         struct atomimproper** impact; /**< all active imps of this atomgrp */
 
+        int num_atom_types;
         int nres;
         int *iares;
         int *rot;
         char **idres;
         enum mol_res_type *res_type;
 
-        bool is_psf_read; //psf has been read in
         struct prm *prm;        
         
         void *flow_struct; // for netfork-flow based hydrogen bonding
+        bool is_psf_read; //psf has been read in
 };
 
 
