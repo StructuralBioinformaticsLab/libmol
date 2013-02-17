@@ -26,6 +26,9 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -348,7 +351,9 @@ struct atomgrp* fullcopy_atomgrp (struct atomgrp* srcag)
 	size_t imp_offset  = destag->imps  - srcag->imps;
 	size_t tor_offset  = destag->tors  - srcag->tors;
 	for (int i = 0; i < destag->natoms; i++) {
-		struct atom local_atom = destag->atoms[i];
+//		struct atom local_atom = destag->atoms[i];
+		destag->atoms[i].name = strdup(srcag->atoms[i].name);
+
 		destag->atoms[i].bonds = _mol_malloc( destag->atoms[i].nbonds*sizeof(struct atombond*));
 		memcpy(destag->atoms[i].bonds, srcag->atoms[i].bonds, sizeof(struct atombond*) * destag->atoms[i].nbonds);
 		for (int j = 0; j < destag->atoms[i].nbonds; j++) {
@@ -728,18 +733,28 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 	size_t imp_offset  = ag->imps  - rec->imps;
 	size_t tor_offset  = ag->tors  - rec->tors;
 	for (int i = 0; i < rec->natoms; i++) {
-		struct atom local_atom = ag->atoms[i];
-		for (int j = 0; j < local_atom.nbonds; j++) {
-			local_atom.bonds[j] += bond_offset;
+//		struct atom local_atom = ag->atoms[i];
+		ag->atoms[i].name = strdup(rec->atoms[i].name);
+
+		ag->atoms[i].bonds = _mol_malloc( rec->atoms[i].nbonds*sizeof(struct atombond*));
+		memcpy(ag->atoms[i].bonds, rec->atoms[i].bonds, sizeof(struct atombond*) * rec->atoms[i].nbonds);
+		for (int j = 0; j < ag->atoms[i].nbonds; j++) {
+			ag->atoms[i].bonds[j] += bond_offset;
 		}
-		for (int j = 0; j < local_atom.nangs; j++) {
-			local_atom.angs[j] += ang_offset;
+		ag->atoms[i].angs = _mol_malloc( rec->atoms[i].nangs*sizeof(struct atomangle*));
+		memcpy(ag->atoms[i].angs, rec->atoms[i].angs, sizeof(struct atomangle*) * rec->atoms[i].nangs);
+		for (int j = 0; j < ag->atoms[i].nangs; j++) {
+			ag->atoms[i].angs[j] += ang_offset;
 		}
-		for (int j = 0; j < local_atom.ntors; j++) {
-			local_atom.tors[j] += tor_offset;
+		ag->atoms[i].tors = _mol_malloc( rec->atoms[i].ntors*sizeof(struct atomtorsion*));
+		memcpy(ag->atoms[i].tors, rec->atoms[i].tors, sizeof(struct atomtorsion*) * rec->atoms[i].ntors);
+		for (int j = 0; j < ag->atoms[i].ntors; j++) {
+			ag->atoms[i].tors[j] += tor_offset;
 		}
-		for (int j = 0; j < local_atom.nimps; j++) {
-			local_atom.imps[j] += imp_offset;
+		ag->atoms[i].imps = _mol_malloc( rec->atoms[i].nimps*sizeof(struct atomimproper*));
+		memcpy(ag->atoms[i].imps, rec->atoms[i].imps, sizeof(struct atomimproper*) * rec->atoms[i].nimps);
+		for (int j = 0; j < ag->atoms[i].nimps; j++) {
+			ag->atoms[i].imps[j] += imp_offset;
 		}
 	}
 
@@ -781,18 +796,28 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 	imp_offset  = ag->imps  - lig->imps + rec->nimps;
 	tor_offset  = ag->tors  - lig->tors + rec->ntors;
 	for (int i = rec->natoms; i < ag->natoms; i++) {
-		struct atom local_atom = ag->atoms[i];
-		for (int j = 0; j < local_atom.nbonds; j++) {
-			local_atom.bonds[j] += bond_offset;
+//		struct atom local_atom = ag->atoms[i];
+		ag->atoms[i].name = strdup(lig->atoms[i-(rec->natoms)].name);
+
+		ag->atoms[i].bonds = _mol_malloc( lig->atoms[i-(rec->natoms)].nbonds*sizeof(struct atombond*));
+		memcpy(ag->atoms[i].bonds, lig->atoms[i-(rec->natoms)].bonds, sizeof(struct atombond*) * lig->atoms[i-(rec->natoms)].nbonds);
+		for (int j = 0; j < ag->atoms[i].nbonds; j++) {
+			ag->atoms[i].bonds[j] += bond_offset;
 		}
-		for (int j = 0; j < local_atom.nangs; j++) {
-			local_atom.angs[j] += ang_offset;
+		ag->atoms[i].angs = _mol_malloc( lig->atoms[i-(rec->natoms)].nangs*sizeof(struct atomangle*));
+		memcpy(ag->atoms[i].angs, lig->atoms[i-(rec->natoms)].angs, sizeof(struct atomangle*) * lig->atoms[i-(rec->natoms)].nangs);
+		for (int j = 0; j < ag->atoms[i].nangs; j++) {
+			ag->atoms[i].angs[j] += ang_offset;
 		}
-		for (int j = 0; j < local_atom.ntors; j++) {
-			local_atom.tors[j] += tor_offset;
+		ag->atoms[i].tors = _mol_malloc( lig->atoms[i-(rec->natoms)].ntors*sizeof(struct atomtorsion*));
+		memcpy(ag->atoms[i].tors, lig->atoms[i-(rec->natoms)].tors, sizeof(struct atomtorsion*) * lig->atoms[i-(rec->natoms)].ntors);
+		for (int j = 0; j < ag->atoms[i].ntors; j++) {
+			ag->atoms[i].tors[j] += tor_offset;
 		}
-		for (int j = 0; j < local_atom.nimps; j++) {
-			local_atom.imps[j] += imp_offset;
+		ag->atoms[i].imps = _mol_malloc( lig->atoms[i-(rec->natoms)].nimps*sizeof(struct atomimproper*));
+		memcpy(ag->atoms[i].imps, lig->atoms[i-(rec->natoms)].imps, sizeof(struct atomimproper*) * lig->atoms[i-(rec->natoms)].nimps);
+		for (int j = 0; j < ag->atoms[i].nimps; j++) {
+			ag->atoms[i].imps[j] += imp_offset;
 		}
 	}
 
