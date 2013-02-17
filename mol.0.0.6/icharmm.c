@@ -429,6 +429,7 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 	free(epa);
 	free(siga);
 	free(acevolumes);
+	free(atom_names);
 
 	// copy vals from deprecated to new data structures
 	int atomsi;

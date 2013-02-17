@@ -249,6 +249,9 @@ void full_free_atomgrp (struct atomgrp* ag)
               free (ag->idres[i]);    //free residue names
         free (ag->idres);  //free pointers to residue names
         free (ag->iares);  //free array of first atom in residues
+        free (ag->rot);
+        free (ag->res_type);
+        free (ag->atypenn);
 
 	free (ag); // free the ag itself
 }
