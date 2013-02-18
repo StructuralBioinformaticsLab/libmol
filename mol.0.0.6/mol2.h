@@ -5,6 +5,6 @@
   routine for reading hybridization states from CHIMERA MOL2 file 
 */
 
-int read_hybridization_states_from_mol2( const char* mol2file, const char* pdbfile, struct atomgrp* ag );
+int read_hybridization_states_from_mol2( const char* mol2file, struct atomgrp* ag );
 
 #endif

@@ -37,7 +37,7 @@ void extract_filename( const char *str, char *fname )
 }
 
 
-int read_hybridization_states_from_mol2( const char* mol2file, const char* pdbfile, struct atomgrp* ag )
+int read_hybridization_states_from_mol2( const char* mol2file, struct atomgrp* ag )
 {
    char buffer[ linesize + 1 ];
    int mol_info_found = 0;
