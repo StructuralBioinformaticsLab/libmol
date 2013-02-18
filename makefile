@@ -128,7 +128,7 @@ LIB_HEADERS = mol.$(MOL_VERSION)/mem.h \
 
 # compiler flags
 #CFLAGS = -O3 -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c99 -Winline
-CFLAGS := $(CFLAGS) -ffast-math -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c99 -Winline
+CFLAGS := $(CFLAGS) -ffast-math -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c99 -Winline -pedantic
 ifneq ($(MAKECMDGOALS), mol.debug)
 	CFLAGS := $(CFLAGS) -O3
 endif

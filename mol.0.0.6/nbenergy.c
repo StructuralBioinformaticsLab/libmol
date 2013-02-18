@@ -1277,7 +1277,7 @@ void comp_n23(int natoms, int *na01, int **pna01, int *n02, int *n03)
 	}
 }
 
-int trim_comp(void *s1, void *s2)
+int trim_comp(const void *s1, const void *s2)
 {
      int *v1, *v2;
      v1=(int *)s1;
@@ -1362,7 +1362,7 @@ void comp_list02(int natoms, int *na01, int **pna01,
               }
            }
         }
-        qsort(list, *n02, 2*sizeof(list[0]), (void*) trim_comp);
+        qsort(list, *n02, 2*sizeof(list[0]), trim_comp);
         j=(*n02)-1;
         for(i=j; i>0; i--)
         {
@@ -1464,7 +1464,7 @@ void trim_list03(int natoms,
                  int *na02, int **pna02,
                  int *n03, int *list03)
 {
-	qsort(list03, *n03, 2*sizeof(list03[0]), (void*) trim_comp);
+	qsort(list03, *n03, 2*sizeof(list03[0]), trim_comp);
         int i, j, k, l, m, n, o, *p;
         int *list=_mol_malloc(*n03*sizeof(int));
         for(i=1; i<*n03; i++)
@@ -1519,7 +1519,7 @@ void trim_list03(int natoms,
                list03[j+1]=natoms;
            }
         }
-        qsort(list03, *n03, 2*sizeof(list03[0]), (void*) trim_comp);
+        qsort(list03, *n03, 2*sizeof(list03[0]), trim_comp);
         j=*n03-1;
         for(i=j; i>0; i--)
         {

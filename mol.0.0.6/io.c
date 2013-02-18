@@ -73,10 +73,12 @@ struct atomgrp* read_file_atomgrp (const char* path, struct prm* prm, float msur
 void fprint_file_atomgrp (const char* path, struct atomgrp* ag, struct prm* prm)
 {
 	if (file_ext (path) == FILE_PDB)
-		return fprint_pdb (ag, prm, path);
+		fprint_pdb (ag, prm, path);
+		return;
 
 	if (file_ext (path) == FILE_MS)
-		return fprint_ms (ag, prm, path);
+		fprint_ms (ag, prm, path);
+		return;
 
 	// file type unknown
 	fprintf (stderr, "file ext of %s is not a recognized file ext\n", path);

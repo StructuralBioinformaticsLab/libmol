@@ -47,7 +47,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define MAXLEN 100 // max string length
 
 // atype comparison function
-static int comp_prmatom (void* a1, void *a2)
+static int comp_prmatom (const void* a1, const void *a2)
 {
 	struct prmatom* atom1 = (struct prmatom*) a1; 
 	struct prmatom* atom2 = (struct prmatom*) a2;
@@ -59,7 +59,7 @@ static int comp_prmatom (void* a1, void *a2)
 	return (strcmp (atom1->typemin, atom2->typemin));
 }
 
-static int comp_prmbond (void* b1, void *b2)
+static int comp_prmbond (const void* b1, const void *b2)
 {
 	struct prmbond* bond1 = (struct prmbond*) b1; 
 	struct prmbond* bond2 = (struct prmbond*) b2;
@@ -212,7 +212,7 @@ void read_prmatom (struct prm* prm, const char* path)
 	}
 
 	// qsort atoms for bsearch
-	qsort (prm->atoms, prm->natoms, sizeof (struct prmatom), (void*) comp_prmatom);
+	qsort (prm->atoms, prm->natoms, sizeof (struct prmatom), comp_prmatom);
 	for (int i=0; i<prm->natoms; i++) // assign the id after sort
 	{
 		prm->atoms[i].id=i;
@@ -281,7 +281,7 @@ void read_typeinfo_from_pdb (struct prm* prm, const char* path)
 	myfclose (fp);
 
 	// qsort atoms for bsearch
-	qsort (prm->atoms, prm->natoms, sizeof (struct prmatom), (void*) comp_prmatom);
+	qsort (prm->atoms, prm->natoms, sizeof (struct prmatom), comp_prmatom);
 
         atomsi = 0;
 	prm->atoms[atomsi].id=atomsi;
@@ -513,7 +513,7 @@ void read_prmbond (struct prm* prm, const char* path)
 	myfclose (fp);
 
 	// qsort bonds
-	qsort (prm->bonds, prm->nbonds, sizeof (struct prmbond), (void*) comp_prmbond);
+	qsort (prm->bonds, prm->nbonds, sizeof (struct prmbond), comp_prmbond);
 }
 
 int atomid (struct prm* prm, const char* typemaj, const char* typemin)
@@ -525,7 +525,7 @@ int atomid (struct prm* prm, const char* typemaj, const char* typemin)
 	atomkey.typemaj = strncpy (atomkey.typemaj, typemaj, 20);
 	atomkey.typemin = strncpy (atomkey.typemin, typemin, 20);
 
-	struct prmatom* atomres = bsearch (&atomkey, prm->atoms, prm->natoms, sizeof (struct prmatom), (void*) comp_prmatom);
+	struct prmatom* atomres = bsearch (&atomkey, prm->atoms, prm->natoms, sizeof (struct prmatom), comp_prmatom);
 
 	free (atomkey.typemaj);
 	free (atomkey.typemin);

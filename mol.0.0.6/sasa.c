@@ -37,7 +37,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* comparison function for qsort */
 //int accs_comp(const void *s1, const void *s2)
-int accs_comp(void *s1, void *s2)
+int accs_comp(const void *s1, const void *s2)
 {
      float f1,f2;
      f1=*(float *)s1;
@@ -49,7 +49,7 @@ int accs_comp(void *s1, void *s2)
 
 /* comparison function for qsort double version*/
 //int accs_comp(const void *s1, const void *s2)
-int accs_comp1(void *s1, void *s2)
+int accs_comp1(const void *s1, const void *s2)
 {
      double f1,f2;
      f1=*(double *)s1;
@@ -451,7 +451,7 @@ void accs (struct atomgrp* ag, struct prm* prm, float r_solv, short cont_acc, sh
 					arcsum=pix2;
 				else
 				{
-					qsort(arcif, karc, 2*sizeof(arcif[0]), (void*) accs_comp);
+					qsort(arcif, karc, 2*sizeof(arcif[0]), accs_comp);
 					arcsum=arcif[0];
 					t=arcif[1];
 					if(karc>1)
@@ -727,7 +727,7 @@ void accs1 (struct atomgrp* ag, int n_at, int* restat, double r_solv, short cont
 					arcsum=pix2;
 				else
 				{
-					qsort(arcif, karc, 2*sizeof(arcif[0]), (void*) accs_comp1);
+					qsort(arcif, karc, 2*sizeof(arcif[0]), accs_comp1);
 					arcsum=arcif[0];
 					t=arcif[1];
 					if(karc>1)

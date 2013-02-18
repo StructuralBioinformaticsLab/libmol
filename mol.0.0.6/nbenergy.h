@@ -152,7 +152,7 @@ void trim_list03(int natoms,
                  int *na02, int **pna02,
                  int *n03, int *list03);
 
-int trim_comp(void *s1, void *s2);
+int trim_comp(const void *s1, const void *s2);
 
 void excl_dims(int natoms, int *na01, int **pna01,
                int n02, int *list02, int n03, int *list03,
