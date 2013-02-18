@@ -33,6 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include _MOL_INCLUDE_
 
+#ifndef _DARWIN_
 /*Recursive algorithm for detecting symmetry based on bonds and atom types of the molecule.
  Input molecule should have atom numbers arranged the way that atom number k has at least one connection with previous atoms.
 Basic idea is in the fact that algorithm on depth k try to find atom in the potential permutation which behaves exactly like
@@ -129,6 +130,7 @@ symmetry->n++;
 symmetry->list=(int**)_mol_realloc(symmetry->list,symmetry->n*sizeof(int**));
 return symmetry;
 }
+#endif
 
 float rmsd_sym (struct atomgrp* pA, struct atomgrp* pB, struct pointlist* sym)
 {
