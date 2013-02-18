@@ -66,7 +66,7 @@ for (i=0;i<ag->natoms;i++){
 	struct atombond bp;	
 	for (j=0;j<ag->nbonds;j++){
 	     bp=ag->bonds[j];
-	    if ((bp.a0->atom_ftypen == ag->atoms[i].atom_ftypen)) {
+	    if (bp.a0->atom_ftypen == ag->atoms[i].atom_ftypen) {
 		ac_s->rsolv[ag->atoms[i].atom_ftypen]=_mol_max(ac_s->rsolv[ag->atoms[i].atom_ftypen],bp.a1->rminh - bp.l0);	
 	    }
 	    if (ag->bonds[j].a1->atom_ftypen==ag->atoms[i].atom_ftypen){
