@@ -223,6 +223,7 @@ inline void compute_non_root_bounding_box( int node_id, OCTREE *octree, int chil
 }
 
 
+#ifdef ADD_ATTR
 /**
    if ADD_ATTR is defined this routine computes the sum of the attribute values
    stored in the children of the octree node indexed by 'node_id', and stores
@@ -230,7 +231,6 @@ inline void compute_non_root_bounding_box( int node_id, OCTREE *octree, int chil
 */
 inline void compute_non_leaf_attributes( int node_id, OCTREE *octree )
 {
-#ifdef ADD_ATTR         
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
 
    double sumX = 0, sumY = 0, sumZ = 0;	
@@ -254,7 +254,6 @@ inline void compute_non_leaf_attributes( int node_id, OCTREE *octree )
    node->sz = sumZ;      
    
    node->sq = sumQ;
-#endif   
 }
 
 
@@ -266,7 +265,6 @@ inline void compute_non_leaf_attributes( int node_id, OCTREE *octree )
 inline void compute_leaf_attributes( int node_id, OCTREE *octree,
                                      int *indices, int start_id, int end_id )
 {
-#ifdef ADD_ATTR
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );        
    mol_atom *atoms = octree->atoms;
 
@@ -288,8 +286,8 @@ inline void compute_leaf_attributes( int node_id, OCTREE *octree,
    node->sz = sumZ;      
    
    node->sq = sumQ;   
-#endif   
 }
+#endif
 
 /**
    Assuming that *atom belongs to *node, returns the index
