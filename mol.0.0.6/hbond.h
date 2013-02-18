@@ -159,7 +159,7 @@ void get_categorized_hbondeng( double *engcat, double *bb_bb_sr, double *bb_bb_l
 
 void set_categorized_hbondeng( double *engcat, double bb_bb_sr, double bb_bb_lr, double bb_sc, double sc_sc );
 
-void print_acceptor_hybridization_states( struct atomgrp *ag, struct prm *prm );
+void print_acceptor_hybridization_states( struct atomgrp *ag );
 
 void check_fading_funcs( void );
 

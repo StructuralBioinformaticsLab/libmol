@@ -575,7 +575,6 @@ void fix_acceptor_bases( struct atomgrp *ag, struct prm *prm )
          for ( int j = 0; j < atom->nbondis; j++ )
             {
               int base_i = bonded_atom_index( ag, i, j );
-              mol_atom *base = &( ag->atoms[ base_i ] );
     
               if ( atom->base != base_i ) 
                 {
@@ -587,7 +586,7 @@ void fix_acceptor_bases( struct atomgrp *ag, struct prm *prm )
 }
 
 
-void print_acceptor_hybridization_states( struct atomgrp *ag, struct prm *prm )
+void print_acceptor_hybridization_states( struct atomgrp *ag )
 {
    for ( int i = 0; i < ag->natoms; i++ )
      {
@@ -1018,7 +1017,6 @@ int water_mediated_hbond_compute_energy_and_gradient( int hbe,
 	
 	mol_atom *hydro = &( atoms_hydro[ hydro_id ]);
 	mol_atom *acc = &( atoms_acc[ acc_id ]);
-        mol_atom *base = &( atoms_acc[ acc->base ] );	
         mol_atom *don = &( atoms_hydro[ hydro->base ] );	
 	mol_atom *wox = &( atoms_wox[ wox_id ]);        
 
@@ -1375,7 +1373,7 @@ inline double get_pairwise_hbondeng_nblist( mol_atom *atoms_hydro, int hydro_id,
 
 inline double get_water_mediated_pairwise_hbondeng( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id, 
                                                     mol_atom *atoms_wox, int wox_id,
-                                                    double rc2, int comp_grad )
+                                                    int comp_grad )
 {
     mol_atom *hydro = &( atoms_hydro[ hydro_id ]);
     mol_atom *acc = &( atoms_acc[ acc_id ]);
@@ -1734,8 +1732,6 @@ void hbondeng_all( struct atomgrp *ag, double *energy, struct nblist *nblst )
 
 void water_mediated_hbondeng( struct atomgrp *ag, double *energy )
 {
-    double rc = 4;
-    double rc2 = rc * rc;
     struct prm *prm = ( struct prm * ) ag->prm;
     
     ( *energy ) = 0;
@@ -1789,7 +1785,7 @@ void water_mediated_hbondeng( struct atomgrp *ag, double *energy )
       
                 if ( !( atom_j->hprop & HBOND_ACCEPTOR ) ) continue;
       
-                double en = get_water_mediated_pairwise_hbondeng( ag->atoms, ai, ag->atoms, aj, ag->atoms, ak, rc2, 1 );
+                double en = get_water_mediated_pairwise_hbondeng( ag->atoms, ai, ag->atoms, aj, ag->atoms, ak, 1 );
       
                 if ( en >= 0 ) continue;
                 
