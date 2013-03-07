@@ -33,6 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <errno.h>
 #include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
 #include _MOL_INCLUDE_
 
 
@@ -323,6 +324,16 @@ struct atomgrp* read_pdb_nopar (const char* path)
 			ag->atoms[atomi].backbone = 1;
 		else
 			ag->atoms[atomi].backbone = 0;
+
+		char * atom_name = _mol_calloc(sizeof(char), 5);
+		strncpy(atom_name, line+12, 4);
+		rstrip(atom_name);
+		char * atom_name_2 = atom_name;
+		while (isspace(*atom_name_2))
+			atom_name_2++;
+		if (atom_name != atom_name_2)
+			strcpy(atom_name, atom_name_2);
+		ag->atoms[atomi].name = atom_name;
 
                 ag->atoms[atomi].X = atof (&line[30]);
                 ag->atoms[atomi].Y = atof (&line[38]);
