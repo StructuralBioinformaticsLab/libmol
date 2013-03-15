@@ -85,8 +85,9 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 		modeli++;
 		ag_models[modeli] = _mol_calloc(1, sizeof(struct atomgrp));
 
+		rstrip(line);
 		size_t name_size = strlen(line);
-		ag_models[modeli]->atom_group_name = _mol_malloc((1+name_size)*sizeof(char));
+		ag_models[modeli]->atom_group_name = _mol_calloc((1+name_size),sizeof(char));
 		strncpy(ag_models[modeli]->atom_group_name, line, name_size);
 		rstrip(ag_models[modeli]->atom_group_name);
 
@@ -116,7 +117,7 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 				fprintf(stderr, "Not enough atom lines in sdf file\n");
 			}
 			ag_models[modeli]->atoms[atomi].name = _mol_calloc(4, sizeof(char));
-			sscanf(line, "%10lf%10lf%10lf %3s", 
+			sscanf(line, "%10lf%10lf%10lf %3s",
 			       &(ag_models[modeli]->atoms[atomi].X),
 			       &(ag_models[modeli]->atoms[atomi].Y),
 			       &(ag_models[modeli]->atoms[atomi].Z),
@@ -160,8 +161,9 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 		modeli++;
 		ag_models[modeli] = _mol_calloc(1, sizeof(struct atomgrp));
 
+		rstrip(line);
 		size_t name_size = strlen(line);
-		ag_models[modeli]->atom_group_name = _mol_malloc((1+name_size)*sizeof(char));
+		ag_models[modeli]->atom_group_name = _mol_calloc((1+name_size),sizeof(char));
 		strncpy(ag_models[modeli]->atom_group_name, line, name_size);
 		rstrip(ag_models[modeli]->atom_group_name);
 
@@ -189,7 +191,7 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 			if (getline(&line, &len, fp) == -1) {
 				fprintf(stderr, "Not enough atom lines in sdf file\n");
 			}
-			sscanf(line, "M  V30 %*d %ms %lf %lf %lf", 
+			sscanf(line, "M  V30 %*d %as %lf %lf %lf",
 			       &(ag_models[modeli]->atoms[atomi].name),
 			       &(ag_models[modeli]->atoms[atomi].X),
 			       &(ag_models[modeli]->atoms[atomi].Y),
