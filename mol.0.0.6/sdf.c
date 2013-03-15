@@ -85,6 +85,11 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 		modeli++;
 		ag_models[modeli] = _mol_calloc(1, sizeof(struct atomgrp));
 
+		size_t name_size = strlen(line);
+		ag_models[modeli]->atom_group_name = _mol_malloc((1+name_size)*sizeof(char));
+		strncpy(ag_models[modeli]->atom_group_name, line, name_size);
+		rstrip(ag_models[modeli]->atom_group_name);
+
 		getline(&line, &len, fp);
 		getline(&line, &len, fp);
 		getline(&line, &len, fp);
@@ -154,6 +159,11 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 		}
 		modeli++;
 		ag_models[modeli] = _mol_calloc(1, sizeof(struct atomgrp));
+
+		size_t name_size = strlen(line);
+		ag_models[modeli]->atom_group_name = _mol_malloc((1+name_size)*sizeof(char));
+		strncpy(ag_models[modeli]->atom_group_name, line, name_size);
+		rstrip(ag_models[modeli]->atom_group_name);
 
 		getline(&line, &len, fp);
 		getline(&line, &len, fp);

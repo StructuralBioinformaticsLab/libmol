@@ -133,6 +133,7 @@ struct atomgrp {
         struct prm *prm;        
         
         void *flow_struct; // for netfork-flow based hydrogen bonding
+	char *atom_group_name;
         bool is_psf_read; //psf has been read in
 };
 
