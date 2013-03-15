@@ -91,7 +91,7 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 
 		
 
-		char tmp[11]; //temporary holding for variables
+		char tmp[4]; //temporary holding for variables
 		tmp[3] = '\0';
 		strncpy(tmp, line, 3); //copy the number of atoms into tmp
 
@@ -110,33 +110,13 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 			if (getline(&line, &len, fp) == -1) {
 				fprintf(stderr, "Not enough atom lines in sdf file\n");
 			}
-			tmp[10] = '\0';
-			strncpy(tmp, line, 10);
-			errno = 0;
-			ag_models[modeli]->atoms[atomi].X = atof(tmp);
-			if (errno) {
-				perror("atof");
-				exit(EXIT_FAILURE);
-			}
-			strncpy(tmp, line+10, 10);
-			errno = 0;
-			ag_models[modeli]->atoms[atomi].Y = atof(tmp);
-			if (errno) {
-				perror("atof");
-				exit(EXIT_FAILURE);
-			}
-			strncpy(tmp, line+20, 10);
-			errno = 0;
-			ag_models[modeli]->atoms[atomi].Z = atof(tmp);
-			if (errno) {
-				perror("atof");
-				exit(EXIT_FAILURE);
-			}
+			ag_models[modeli]->atoms[atomi].name = _mol_calloc(4, sizeof(char));
+			sscanf(line, "%10lf%10lf%10lf %3s", 
+			       &(ag_models[modeli]->atoms[atomi].X),
+			       &(ag_models[modeli]->atoms[atomi].Y),
+			       &(ag_models[modeli]->atoms[atomi].Z),
+			       ag_models[modeli]->atoms[atomi].name );
 
-			char * atom_name = _mol_calloc(4, sizeof(char));
-			strncpy(atom_name, line+31, 3);
-			rstrip(atom_name);
-			ag_models[modeli]->atoms[atomi].name = atom_name;
 		}
 		int status;
 		do {
