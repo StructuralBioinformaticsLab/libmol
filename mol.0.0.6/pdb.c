@@ -325,7 +325,7 @@ struct atomgrp* read_pdb_nopar (const char* path)
 		else
 			ag->atoms[atomi].backbone = 0;
 
-		char * atom_name = _mol_calloc(sizeof(char), 5);
+		char * atom_name = _mol_calloc(5, sizeof(char));
 		strncpy(atom_name, line+12, 4);
 		rstrip(atom_name);
 		char * atom_name_2 = atom_name;
