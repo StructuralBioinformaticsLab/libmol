@@ -259,6 +259,7 @@ void full_free_atomgrp (struct atomgrp* ag)
         free (ag->rot);
         free (ag->res_type);
         free (ag->atypenn);
+        free (ag->atom_group_name);
 
 	free (ag); // free the ag itself
 }
