@@ -85,7 +85,7 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 				ag_models[modeli]->natoms);
                 ag_models[modeli]->prm = NULL;
 
-		for (int atomi = 0; atomi < ag_models[modeli]->natoms; atomi ++) {
+		for (int atomi = 0; atomi < ag_models[modeli]->natoms; atomi++) {
 			if (getline(&line, &len, fp) == -1) {
 				fprintf(stderr, "Not enough atom lines in sdf file\n");
 			}
@@ -155,12 +155,12 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 		ag_models[modeli]->atoms =
 		    _mol_malloc(sizeof(struct atom) * ag_models[modeli]->natoms);
                 ag_models[modeli]->prm = NULL;
-		
+
 		do {
 			status=getline(&line, &len, fp);
 		} while ( (status != -1) && (strncmp(line, "M  V30 BEGIN ATOM", 17) != 0) );
 
-		for (int atomi = 0; atomi < ag_models[modeli]->natoms; atomi ++) {
+		for (int atomi = 0; atomi < ag_models[modeli]->natoms; atomi++) {
 			if (getline(&line, &len, fp) == -1) {
 				fprintf(stderr, "Not enough atom lines in sdf file\n");
 			}
