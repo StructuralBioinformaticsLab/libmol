@@ -30,6 +30,20 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 struct atomgrp **read_sdf(const char *path, int *rmodels);
 
+enum sdf_version {
+	V2000,
+	V3000,
+};
 
+struct sdf_reader {
+	FILE* fp;
+	long beginning;
+	long position;
+	enum sdf_version version;
+};
+
+struct sdf_reader  *open_sdf_reader(const char *path);
+struct atomgrp *next_sdf(struct sdf_reader *reader);
+void close_sdf_reader(struct sdf_reader *reader);
 
 #endif
