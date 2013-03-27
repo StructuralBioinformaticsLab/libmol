@@ -30,8 +30,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 struct atomgrp **read_sdf(const char *path, int *rmodels);
 
-struct atomgrp **read_sdf_v2000(const char *path, int *rmodels);
 
-struct atomgrp **read_sdf_v3000(const char *path, int *rmodels);
 
 #endif

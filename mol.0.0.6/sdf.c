@@ -37,33 +37,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * http://accelrys.com/products/informatics/cheminformatics/ctfile-formats/no-fee.php
  */
 
-struct atomgrp **read_sdf(const char *path, int *rmodels)
-{
-	FILE *fp = myfopen(path, "r");
-	char *line = NULL;
-	size_t len = 0;
-	getline(&line, &len, fp);
-	getline(&line, &len, fp);
-	getline(&line, &len, fp);
-	int line_length = getline(&line, &len, fp);
-	if (line_length < 39) {
-		fprintf(stderr, "No SDF version found\n");
-		return NULL;
-	}
-	char version[5];
-	strncpy(version, line+34, 5);
-	fclose(fp);
-	if (line)
-		free(line);
-
-	if ( strncmp(version, "V3000", 5) == 0) {
-		return read_sdf_v3000(path, rmodels);
-	} else { //assume v2000
-		return read_sdf_v2000(path, rmodels);
-	}
-	return NULL;
-}
-		
 struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 {
 	FILE *fp = myfopen(path, "r");
@@ -211,4 +184,31 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 
 	*rmodels = modeli + 1;
 	return ag_models;
+}
+
+struct atomgrp **read_sdf(const char *path, int *rmodels)
+{
+	FILE *fp = myfopen(path, "r");
+	char *line = NULL;
+	size_t len = 0;
+	getline(&line, &len, fp);
+	getline(&line, &len, fp);
+	getline(&line, &len, fp);
+	int line_length = getline(&line, &len, fp);
+	if (line_length < 39) {
+		fprintf(stderr, "No SDF version found\n");
+		return NULL;
+	}
+	char version[5];
+	strncpy(version, line+34, 5);
+	fclose(fp);
+	if (line)
+		free(line);
+
+	if ( strncmp(version, "V3000", 5) == 0) {
+		return read_sdf_v3000(path, rmodels);
+	} else { //assume v2000
+		return read_sdf_v2000(path, rmodels);
+	}
+	return NULL;
 }
