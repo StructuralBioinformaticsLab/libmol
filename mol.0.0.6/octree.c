@@ -256,7 +256,6 @@ inline void compute_non_leaf_attributes( int node_id, OCTREE *octree )
    node->sq = sumQ;
 }
 
-
 /**
    if ADD_ATTR is defined this routine computes the sum of the attribute values
    stored in the atoms contained inside the octree node indexed by 'node_id', 

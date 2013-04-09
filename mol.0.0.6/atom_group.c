@@ -240,13 +240,17 @@ void full_free_atomgrp (struct atomgrp* ag)
               free_atom(ag->atoms+i); // free bonded pointers of each atom
 	free (ag->atoms); // free all the atoms in the ag
         free (ag->activelist);// free list of active atoms
-        free (ag->bact); // free active bond pointers
+	if (ag->nbact > 0)
+	        free (ag->bact); // free active bond pointers
         free (ag->bonds); // free bonds
-        free (ag->angact); // free active angle pointers
+	if (ag->nangact > 0)
+	        free (ag->angact); // free active angle pointers
         free (ag->angs); // free angles
-        free (ag->toract); // free active torsion pointers
+	if (ag->ntoract > 0)
+	        free (ag->toract); // free active torsion pointers
         free (ag->tors); // free torsions
-        free (ag->impact); // free active improper pointers
+	if (ag->nimpact > 0)
+	        free (ag->impact); // free active improper pointers
         free (ag->imps); // free impropers
         for(i=0; i<ag->nres; i++)
               free (ag->idres[i]);    //free residue names
@@ -255,6 +259,7 @@ void full_free_atomgrp (struct atomgrp* ag)
         free (ag->rot);
         free (ag->res_type);
         free (ag->atypenn);
+        free (ag->atom_group_name);
 
 	free (ag); // free the ag itself
 }
