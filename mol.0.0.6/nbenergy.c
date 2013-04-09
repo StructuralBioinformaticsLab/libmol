@@ -1610,7 +1610,7 @@ void excl_dims(int natoms, int *na01, int **pna01,
 
 //! Evaluate if a pair of atoms should be excluded from nonbonded list.
 /*! Based on connectivity data in exclusion list excl_list/pd1/pd2. */
-inline int exta(int a1, int a2, int *excl_list, int **pd1, int **pd2, int ndm)
+int exta(int a1, int a2, int *excl_list, int **pd1, int **pd2, int ndm)
 {
 	int i=a2-a1-1;
         if(i<0)
