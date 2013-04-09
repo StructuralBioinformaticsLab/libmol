@@ -39,9 +39,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //int accs_comp(const void *s1, const void *s2)
 int accs_comp(const void *s1, const void *s2)
 {
-     float f1,f2;
-     f1=*(float *)s1;
-     f2=*(float *)s2;
+     const float f1=*(const float *)s1;
+     const float f2=*(const float *)s2;
      if(f1<f2)return -1;
      if(f1==f2)return 0;
      return 1;
@@ -51,9 +50,8 @@ int accs_comp(const void *s1, const void *s2)
 //int accs_comp(const void *s1, const void *s2)
 int accs_comp1(const void *s1, const void *s2)
 {
-     double f1,f2;
-     f1=*(double *)s1;
-     f2=*(double *)s2;
+     const double f1=*(const double *)s1;
+     const double f2=*(const double *)s2;
      if(f1<f2)return -1;
      if(f1==f2)return 0;
      return 1;

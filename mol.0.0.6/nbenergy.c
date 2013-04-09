@@ -1279,19 +1279,19 @@ void comp_n23(int natoms, int *na01, int **pna01, int *n02, int *n03)
 
 int trim_comp(const void *s1, const void *s2)
 {
-     int *v1, *v2;
-     v1=(int *)s1;
-     v2=(int *)s2;
+     const int *v1, *v2;
+     v1=(const int *)s1;
+     v2=(const int *)s2;
 
-     int i11=*v1;
-     int i21=*v2;
+     const int i11=*v1;
+     const int i21=*v2;
      if(i11<i21)
         return -1;
      if(i11>i21)
         return 1;
 
-     int i12=*(v1+1);
-     int i22=*(v2+1);
+     const int i12=*(v1+1);
+     const int i22=*(v2+1);
      if(i12<i22)
         return -1;
      if(i12>i22)

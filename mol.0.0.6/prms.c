@@ -49,8 +49,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // atype comparison function
 static int comp_prmatom (const void* a1, const void *a2)
 {
-	struct prmatom* atom1 = (struct prmatom*) a1; 
-	struct prmatom* atom2 = (struct prmatom*) a2;
+	const struct prmatom* atom1 = (const struct prmatom*) a1;
+	const struct prmatom* atom2 = (const struct prmatom*) a2;
 
 	if (strcmp (atom1->typemaj, atom2->typemaj) < 0)
 		return -1;
@@ -61,8 +61,8 @@ static int comp_prmatom (const void* a1, const void *a2)
 
 static int comp_prmbond (const void* b1, const void *b2)
 {
-	struct prmbond* bond1 = (struct prmbond*) b1; 
-	struct prmbond* bond2 = (struct prmbond*) b2;
+	const struct prmbond* bond1 = (const struct prmbond*) b1;
+	const struct prmbond* bond2 = (const struct prmbond*) b2;
 
 	if (bond1->i < bond2->i)
 		return -1;
