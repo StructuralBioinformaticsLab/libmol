@@ -13,3 +13,6 @@
 
 # Vim undo files
 *.un~
+
+# build directory
+build
