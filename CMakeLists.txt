@@ -50,9 +50,10 @@ add_library(mol.${libmol_version} ${SOURCES})
 include_directories("${PROJECT_BINARY_DIR}")
 include_directories("${PROJECT_BINARY_DIR}/mol.0.0.6/")
 
-if( EXISTS "${CMAKE_SOURCE_DIR}/.git")
+find_package(Git)
+if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
   execute_process(
-    COMMAND git describe --always HEAD
+    COMMAND ${GIT_EXECUTABLE} describe --always HEAD
     COMMAND sed -e "s/-/./g"
     OUTPUT_VARIABLE GIT_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE)
