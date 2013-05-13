@@ -151,14 +151,14 @@ struct atomgrp* read_pdb (const char* path, struct prm* prm)
 		sscanf(&line[60], "%6lf",
 			   &ag->atoms[atomi].B);
 
-                ag->atoms[atomi].icode = line[26];
-                line[26] = 0;
+		ag->atoms[atomi].icode = line[26];
+		line[26] = 0;
 		errno = 0;
-                ag->atoms[atomi].res_seq = atoi(&line[22]);
-				if (errno) {
-					perror("atoi");
-					exit(EXIT_FAILURE);
-				}
+		ag->atoms[atomi].res_seq = atoi(&line[22]);
+		if (errno) {
+			perror("atoi");
+			exit(EXIT_FAILURE);
+		}
 
                 ag->atoms[atomi].base = ag->atoms[atomi].base2 = -1;
 
@@ -247,14 +247,14 @@ struct atomgrp* read_pdb_with_compressed_typeinfo (const char* path, struct prm*
 		sscanf(&line[60], "%6lf",
 			   &ag->atoms[atomi].B);
 
-                ag->atoms[atomi].icode = line[26];
-                line[26] = 0;
+		ag->atoms[atomi].icode = line[26];
+		line[26] = 0;
 		errno = 0;
-                ag->atoms[atomi].res_seq = atoi(&line[22]);
-				if (errno) {
-					perror("atoi");
-					exit(EXIT_FAILURE);
-				}
+		ag->atoms[atomi].res_seq = atoi(&line[22]);
+		if (errno) {
+			perror("atoi");
+			exit(EXIT_FAILURE);
+		}
 
                 ag->atoms[atomi].base = ag->atoms[atomi].base2 = -1;
 
