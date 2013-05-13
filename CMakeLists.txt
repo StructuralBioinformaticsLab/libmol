@@ -93,15 +93,10 @@ else()
   set(HEADER_INSTALL_DIR "$ENV{HOME}/usr/include")
 endif()
 
-if(CMAKE_SYSTEM_NAME MATCHES Darwin)
+if(APPLE)
   add_definitions(
     -D _DARWIN_)
-  execute_process(
-    COMMAND sw_vers -productVersion
-    COMMAND cut -f 1-2 -d .
-    OUTPUT_VARIABLE OS_VER
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-  if(OS_VER VERSION_EQUAL 10.6)
+  if(_CURRENT_OSX_VERSION VERSION_EQUAL 10.6)
     add_definitions(
       -D _DARWIN_SNOW_LEOPARD_)
   endif()
