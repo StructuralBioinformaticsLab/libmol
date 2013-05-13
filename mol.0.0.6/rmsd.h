@@ -29,9 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _MOL_RMSD_H_
 
 
-#ifndef _DARWIN_
 struct pointlist* detectsymmetry(struct atomgrp* ag);
-#endif
 
 float rmsd_sym(struct atomgrp* pA, struct atomgrp* pB, struct pointlist* sym);
 
