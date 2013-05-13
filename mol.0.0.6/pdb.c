@@ -148,6 +148,7 @@ struct atomgrp* read_pdb (const char* path, struct prm* prm)
 
                 ag->atoms[atomi].icode = line[26];
                 line[26] = 0;
+		errno = 0;
                 ag->atoms[atomi].res_seq = atoi(&line[22]);
 				if (errno) {
 					perror("atoi");
@@ -243,6 +244,7 @@ struct atomgrp* read_pdb_with_compressed_typeinfo (const char* path, struct prm*
 
                 ag->atoms[atomi].icode = line[26];
                 line[26] = 0;
+		errno = 0;
                 ag->atoms[atomi].res_seq = atoi(&line[22]);
 				if (errno) {
 					perror("atoi");
@@ -331,6 +333,7 @@ struct atomgrp* read_pdb_nopar (const char* path)
 
                 ag->atoms[atomi].icode = line[26];
                 line[26] = 0;
+		errno = 0;
                 ag->atoms[atomi].res_seq = atoi(&line[22]);
 				if (errno) {
 					perror("atoi");
@@ -440,6 +443,7 @@ struct atomgrp** read_pdb_models (const char* path, struct prm* prm, int* rmodel
 
                 ag_models[modeli]->atoms[atomi].icode = line[26];
                 line[26] = 0;
+		errno = 0;
                 ag_models[modeli]->atoms[atomi].res_seq = atoi(&line[22]);
 				if (errno) {
 					perror("atoi");
@@ -527,6 +531,7 @@ struct atomgrp **read_pdb_modelsnopar(const char *path, int *rmodels)
 
                         ag_models[modeli]->atoms[atomi].icode = line[26];
                         line[26] = 0;
+			errno = 0;
                         ag_models[modeli]->atoms[atomi].res_seq = atoi(&line[22]);
 				if (errno) {
 					perror("atoi");
