@@ -93,12 +93,8 @@ else()
 endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES Darwin)
-  link_directories("/sw/lib")
   add_definitions(
     -D _DARWIN_)
-  include_directories(
-    "/opt/local/include"
-    "/sw/include")
   execute_process(
     COMMAND sw_vers -productVersion
     COMMAND cut -f 1-2 -d .
