@@ -1,0 +1,4 @@
+REMARK   1 Example of a pdb with number of Y digits equal to 8
+ATOM      1  CA  GLY A   1    1142.4201119.291 -57.094  1.00 36.64           C  
+TER       2      GLY A   1                                                      
+END                                                                             

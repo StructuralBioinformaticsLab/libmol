@@ -34,7 +34,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
-#include _MOL_INCLUDE_
+
+#include "pdb.h"
+#include "atom.h"
+#include "protein.h"
+#include "mem.h"
+#include "myhelpers.h"
 
 
 void assign_combined_residue_sequence( struct atomgrp *ag )
@@ -141,10 +146,10 @@ struct atomgrp* read_pdb (const char* path, struct prm* prm)
 		else
 			ag->atoms[atomi].backbone = 0;
 
-		ag->atoms[atomi].X = atof (&line[30]);
-		ag->atoms[atomi].Y = atof (&line[38]);
-		ag->atoms[atomi].Z = atof (&line[46]);
-                ag->atoms[atomi].B = atof (&line[60]);
+		sscanf(&line[30], "%8lf%8lf%8lf",
+			   &ag->atoms[atomi].X, &ag->atoms[atomi].Y, &ag->atoms[atomi].Z);
+		sscanf(&line[60], "%6lf",
+			   &ag->atoms[atomi].B);
 
                 ag->atoms[atomi].icode = line[26];
                 line[26] = 0;
@@ -237,10 +242,10 @@ struct atomgrp* read_pdb_with_compressed_typeinfo (const char* path, struct prm*
 		else
 			ag->atoms[atomi].backbone = 0;
 
-		ag->atoms[atomi].X = atof (&line[30]);
-		ag->atoms[atomi].Y = atof (&line[38]);
-		ag->atoms[atomi].Z = atof (&line[46]);
-                ag->atoms[atomi].B = atof (&line[60]);
+		sscanf(&line[30], "%8lf%8lf%8lf",
+			   &ag->atoms[atomi].X, &ag->atoms[atomi].Y, &ag->atoms[atomi].Z);
+		sscanf(&line[60], "%6lf",
+			   &ag->atoms[atomi].B);
 
                 ag->atoms[atomi].icode = line[26];
                 line[26] = 0;
@@ -327,9 +332,10 @@ struct atomgrp* read_pdb_nopar (const char* path)
 			strcpy(atom_name, atom_name_2);
 		ag->atoms[atomi].name = atom_name;
 
-                ag->atoms[atomi].X = atof (&line[30]);
-                ag->atoms[atomi].Y = atof (&line[38]);
-                ag->atoms[atomi].Z = atof (&line[46]);
+		sscanf(&line[30], "%8lf%8lf%8lf",
+			   &ag->atoms[atomi].X, &ag->atoms[atomi].Y, &ag->atoms[atomi].Z);
+		sscanf(&line[60], "%6lf",
+			   &ag->atoms[atomi].B);
 
                 ag->atoms[atomi].icode = line[26];
                 line[26] = 0;
@@ -431,15 +437,17 @@ struct atomgrp** read_pdb_models (const char* path, struct prm* prm, int* rmodel
 			}
 		}
 
-
 		if ( !strcmp( atypemin, "C" ) || !strcmp( atypemin, "CA" ) || !strcmp( atypemin, "N" ) || !strcmp( atypemin, "O" ) || !strcmp( atypemin, "H" ) )
 			ag_models[modeli]->atoms[atomi].backbone = 1;
 		else
 			ag_models[modeli]->atoms[atomi].backbone = 0;
 
-		ag_models[modeli]->atoms[atomi].X = atof (&line[30]);
-		ag_models[modeli]->atoms[atomi].Y = atof (&line[38]);
-		ag_models[modeli]->atoms[atomi].Z = atof (&line[46]);
+		sscanf(&line[30], "%8lf%8lf%8lf",
+			   &(ag_models[modeli]->atoms[atomi].X),
+			   &(ag_models[modeli]->atoms[atomi].Y),
+			   &(ag_models[modeli]->atoms[atomi].Z));
+		sscanf(&line[60], "%6lf",
+			   &(ag_models[modeli]->atoms[atomi].B));
 
                 ag_models[modeli]->atoms[atomi].icode = line[26];
                 line[26] = 0;
@@ -525,9 +533,12 @@ struct atomgrp **read_pdb_modelsnopar(const char *path, int *rmodels)
                 	else
                 		ag_models[modeli]->atoms[atomi].backbone = 0;
 
-			ag_models[modeli]->atoms[atomi].X = atof(&line[30]);
-			ag_models[modeli]->atoms[atomi].Y = atof(&line[38]);
-			ag_models[modeli]->atoms[atomi].Z = atof(&line[46]);
+			sscanf(&line[30], "%8lf%8lf%8lf",
+				   &(ag_models[modeli]->atoms[atomi].X),
+				   &(ag_models[modeli]->atoms[atomi].Y),
+				   &(ag_models[modeli]->atoms[atomi].Z));
+			sscanf(&line[60], "%6lf",
+				   &(ag_models[modeli]->atoms[atomi].B));
 
                         ag_models[modeli]->atoms[atomi].icode = line[26];
                         line[26] = 0;
