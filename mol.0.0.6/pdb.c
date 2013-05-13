@@ -121,16 +121,6 @@ struct atomgrp* read_pdb (const char* path, struct prm* prm)
 			exit (EXIT_FAILURE);
 		}
 
-		if (strncmp (atypemin, "HT", 2) == 0)
-			continue; // ignore terminal hydrogens
-		if (strncmp (atypemin, "OCT1", 4) == 0)
-		{
-			atypemin[1] = '\0';
-		}
-		if (strncmp (atypemin, "OCT2", 4) == 0)
-			continue;
-
-
 		ag->atoms[atomi].atom_typen = atomid (prm, atypemaj, atypemin);
 		if (ag->atoms[atomi].atom_typen == -1) // val not found
 		{
@@ -422,16 +412,6 @@ struct atomgrp** read_pdb_models (const char* path, struct prm* prm, int* rmodel
 			fprintf (stderr, "error: in file %s line %s: incorrect atom line\n", path, line);
 			exit (EXIT_FAILURE);
 		}
-
-		if (strncmp (atypemin, "HT", 2) == 0)
-			continue; // ignore terminal hydrogens
-		if (strncmp (atypemin, "OCT1", 4) == 0)
-		{
-			atypemin[1] = '\0';
-		}
-		if (strncmp (atypemin, "OCT2", 4) == 0)
-			continue;
-
 
 		ag_models[modeli]->atoms[atomi].atom_typen = atomid (prm, atypemaj, atypemin);
 		if (ag_models[modeli]->atoms[atomi].atom_typen == -1) // val not found
