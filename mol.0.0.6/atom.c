@@ -30,7 +30,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <assert.h>
 
-#include _MOL_INCLUDE_
+#include "atom.h"
+#include "mem.h"
 
 // warning: this function does not handle all of mol_atom
 void

@@ -30,6 +30,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _MOL_ATOM_GROUP_H_
 #include <stdbool.h>
 
+#include "atom.h"
+#include "bond.h"
+#include "matrix.h"
+#include "vector.h"
+
 typedef struct atomgrp mol_atom_group;
 
 enum mol_res_type {

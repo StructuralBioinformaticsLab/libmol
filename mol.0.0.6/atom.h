@@ -28,6 +28,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _MOL_ATOM_H_
 #define _MOL_ATOM_H_
 
+#include "prms.h"
+
 typedef struct atom mol_atom;
 
 // enum HBondProp;  /* properties related to hydrogen bonding -> defined in hbond.c */

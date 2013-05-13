@@ -28,6 +28,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _MOL_PDB_H_
 #define _MOL_PDB_H_
 
+#include "prms.h"
+#include "atom_group.h"
+
 /**
   generate a single residue sequence combining all chains
 */
