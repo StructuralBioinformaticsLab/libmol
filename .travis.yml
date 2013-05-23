@@ -6,7 +6,4 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq check
 script:
-  - mkdir -p build && cd build
-  - cmake ..
   - make
-  - ctest
