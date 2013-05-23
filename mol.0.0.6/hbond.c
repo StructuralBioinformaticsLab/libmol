@@ -38,19 +38,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define POLY_OUT 0.0	// POLY_OUT is the polynomial value outside of clip interval [xmin xmax]
 
-#define poly2generator(name, xmin, xmax, c1, c0) inline void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c1; (*val) = (*val)*x+c0; }
+#define poly2generator(name, xmin, xmax, c1, c0) static void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c1; (*val) = (*val)*x+c0; }
 
-#define poly3generator(name, xmin, xmax, c2, c1, c0) inline void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c2; (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
+#define poly3generator(name, xmin, xmax, c2, c1, c0) static void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c2; (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
 
-#define poly4generator(name, xmin, xmax, c3, c2, c1, c0) inline void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c3; (*val) = (*val)*x+c2; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
+#define poly4generator(name, xmin, xmax, c3, c2, c1, c0) static void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c3; (*val) = (*val)*x+c2; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
 
-#define poly5generator(name, xmin, xmax, c4, c3, c2, c1, c0) inline void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c4; (*val) = (*val)*x+c3; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c2; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
+#define poly5generator(name, xmin, xmax, c4, c3, c2, c1, c0) static void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c4; (*val) = (*val)*x+c3; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c2; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
 
-#define poly6generator(name, xmin, xmax, c5, c4, c3, c2, c1, c0) inline void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c5; (*val) = (*val)*x+c4; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c3; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c2; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
+#define poly6generator(name, xmin, xmax, c5, c4, c3, c2, c1, c0) static void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c5; (*val) = (*val)*x+c4; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c3; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c2; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
 
-#define poly7generator(name, xmin, xmax, c6, c5, c4, c3, c2, c1, c0) inline void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c6; (*val) = (*val)*x+c5; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c4; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c3; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c2; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
+#define poly7generator(name, xmin, xmax, c6, c5, c4, c3, c2, c1, c0) static void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c6; (*val) = (*val)*x+c5; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c4; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c3; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c2; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
 
-#define poly8generator(name, xmin, xmax, c7, c6, c5, c4, c3, c2, c1, c0) inline void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c7; (*val) = (*val)*x+c6; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c5; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c4; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c3; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c2; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
+#define poly8generator(name, xmin, xmax, c7, c6, c5, c4, c3, c2, c1, c0) static void name(FLOAT x, FLOAT *val, FLOAT *der) { if ( (x<=xmin) || (x>=xmax) ) {(*val) = POLY_OUT; (*der) = 0.0; return; } (*val) = (*der) = c7; (*val) = (*val)*x+c6; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c5; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c4; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c3; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c2; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c1; (*der) = (*der)*x+(*val); (*val) = (*val)*x+c0; }
 
 // Defining polynomials for hbond score calculation
 
@@ -95,7 +95,7 @@ poly7generator(xH_Ring,MIN_xH,MAX_xH,37.744316,-117.731674,143.0759275,-86.22588
 #endif             
 
 #define create_fade_interval( name, min0, fmin, fmax, max0 ) \
-inline void name##_value_deriv(FLOAT x, FLOAT *val, FLOAT *der) { \
+static void name##_value_deriv(FLOAT x, FLOAT *val, FLOAT *der) { \
      const FLOAT name##_dfade_min = ( fmin == min0 ) ? 0.0 : ( 1.0 / ( fmin - min0 ) ), name##_dfade_max = ( max0 == fmax ) ? 0.0 : ( 1.0 / ( max0 - fmax ) ); \
      if ( x < fmax ) { if ( x >= fmin ) { *val = 1.0; *der = 0.0; return; } \
                        if ( x <= min0 ) { *val = *der = 0.0; return; } \
@@ -114,14 +114,14 @@ create_fade_interval( fade_xH, MIN_xH, INTPOL_EDGE_ANGL, 1, 1 )		// fading r,xD
 
 #ifdef USE_LONG_DOUBLE
   #define create_log_fade_interval( name, a, b, c, d, e, f ) \
-  inline void name##_log_value_deriv( FLOAT x, FLOAT *val, FLOAT *der ) { \
+  static void name##_log_value_deriv( FLOAT x, FLOAT *val, FLOAT *der ) { \
        FLOAT lnx = logl( x ); \
        *val = ( ( ( ( f * lnx + e ) * lnx + d ) * lnx + c ) * lnx + b ) * lnx + a; \
        *der = ( ( ( ( 5 * f * lnx + 4 * e ) * lnx + 3 * d ) * lnx + 2 * c ) * lnx + b ) / x; \
   }
 #else
   #define create_log_fade_interval( name, a, b, c, d, e, f ) \
-  inline void name##_log_value_deriv( FLOAT x, FLOAT *val, FLOAT *der ) { \
+  static void name##_log_value_deriv( FLOAT x, FLOAT *val, FLOAT *der ) { \
        FLOAT lnx = log( x ); \
        *val = ( ( ( ( f * lnx + e ) * lnx + d ) * lnx + c ) * lnx + b ) * lnx + a; \
        *der = ( ( ( ( 5 * f * lnx + 4 * e ) * lnx + 3 * d ) * lnx + 2 * c ) * lnx + b ) / x; \
@@ -289,7 +289,7 @@ FLOAT hbeng_HOH_y2[ ] = { 0, 0.000000000000, 24.162670008471, -96.6506800338837,
 FLOAT eval_spline( FLOAT *x, FLOAT *y, FLOAT *y2, int n, FLOAT v );
 
 #define create_bspline_fade_interval( name ) \
-inline void name##_bspline_value_deriv( FLOAT x, FLOAT *val, FLOAT *der ) { \
+static void name##_bspline_value_deriv( FLOAT x, FLOAT *val, FLOAT *der ) { \
      if ( ( x < name##_x[ 2 ] ) || ( x > name##_x[ name##_n - 1 ] ) ) { *val = *der = 0; } \
      else { \
             *val = eval_spline( name##_x, name##_y, name##_y2, name##_n, x ); \
@@ -597,7 +597,7 @@ void print_acceptor_hybridization_states( struct atomgrp *ag )
 }
 
 
-inline int get_hbond_weight_type( int hbe_type )
+static int get_hbond_weight_type( int hbe_type )
 {
     switch ( hbe_type ) 
        {
@@ -616,7 +616,7 @@ inline int get_hbond_weight_type( int hbe_type )
     return hbw_NONE;
 }
 
-inline int classify_BB_by_separation( mol_atom *don, mol_atom *acc )
+static int classify_BB_by_separation( mol_atom *don, mol_atom *acc )
 {
 	int hbe;
 	switch ( don->comb_res_seq - acc->comb_res_seq )
@@ -635,13 +635,13 @@ inline int classify_BB_by_separation( mol_atom *don, mol_atom *acc )
 	return hbe;
 }
 
-inline int get_donor_chem_type( mol_atom *don )
+static int get_donor_chem_type( mol_atom *don )
 {
 	if ( don->backbone ) return hbdon_BB;
 	else return hbdon_SC;
 }
 
-inline int get_acceptor_chem_type( mol_atom *acc )
+static int get_acceptor_chem_type( mol_atom *acc )
 {
 	if ( acc->backbone ) return hbacc_BB;
 	else {
@@ -657,7 +657,7 @@ inline int get_acceptor_chem_type( mol_atom *acc )
 	return hbacc_NO;
 }
 
-inline int get_hbe_type( mol_atom *atoms, mol_atom *hydro, mol_atom *acc )
+static int get_hbe_type( mol_atom *atoms, mol_atom *hydro, mol_atom *acc )
 {
       if ( ( hydro->base < 0 ) && ( !( acc->hprop & HBOND_ACCEPTOR ) ) ) return hbe_NONE;
 
@@ -1283,7 +1283,7 @@ int hbond_energy_and_gradient_computation( int hbe,
 }
 
 
-inline double get_pairwise_hbondeng( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id,
+static double get_pairwise_hbondeng( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id,
 	                    	     struct agsetup *ags, double *engcat, double rc2, int comp_grad )
 {
     mol_atom *hydro = &( atoms_hydro[ hydro_id ] );
