@@ -536,6 +536,22 @@ int atomid (struct prm* prm, const char* typemaj, const char* typemin)
 		return atomres->id;
 }
 
+static void copy_prmpwpot (struct prmpwpot* copy, struct prmpwpot* orig, int nsubatoms)
+{
+	copy->r1 = orig->r1;
+	copy->r2 = orig->r2;
+	copy->k = orig->k;
+	copy->lambdas = _mol_malloc(copy->k * sizeof(float));
+	memcpy(copy->lambdas, orig->lambdas, copy->k * sizeof(float));
+	copy->Xs = _mol_malloc(copy->k * copy->k * sizeof(float));
+	memcpy(copy->Xs, orig->Xs, copy->k * copy->k * sizeof(float));
+	copy->eng = (float**)_mol_malloc(nsubatoms*sizeof(float*));
+	for(int i=0;i<nsubatoms;i++){
+		copy->eng[i] = (float*) _mol_malloc(nsubatoms*sizeof(float));
+		memcpy(copy->eng[i], orig->eng[i], nsubatoms*sizeof(float));
+	}
+}
+
 //currently only copies prmatom
 struct prm* copy_prm (struct prm* iprm)
 {
@@ -554,27 +570,16 @@ struct prm* copy_prm (struct prm* iprm)
 		copy_prmatom (&iprm->atoms[i], &oprm->atoms[i]);
 	}
 
-	/*
-	oprm->hydrogen_typen = iprm->hydrogen_typen;
+	oprm->pwpot = _mol_malloc (sizeof (struct prmpwpot));
+	copy_prmpwpot( oprm->pwpot, iprm->pwpot, oprm->nsubatoms);
 
-	oprm->pwpot->r1 = iprm->pwpot->r1;
-	oprm->pwpot->r2 = iprm->pwpot->r2;
-
-	oprm->pwpot->k = iprm->pwpot->k;
-	oprm->lambdas = (float*) _mol_malloc (sizeof (float) * oprm->pwpot->k);
-	oprm->Xs = (float*) _mol_malloc (sizeof (float) * oprm->pwpot->k * oprm->pwpot->k);
-
-	for (i = 0; i < oprm->pwpot->k; i++)
-	{
-		oprm->pwpot->lambdas[i] = iprm->pwpot->lambdas[i];
-		int j;
-		for (j = 0; j < oprm->pwpot->k; j++)
-		{
-			int ai = (i*oprm->pwpot->k)+j;
-			oprm->pwpot->Xs[ai] = iprm->Xs[ai];
-		}
+	oprm->nbonds = iprm->nbonds;
+	if (oprm->nbonds > 0) {
+		oprm->bonds = _mol_malloc (oprm->nbonds * sizeof(struct prmbond));
+		memcpy(oprm->bonds, iprm->bonds, oprm->nbonds * sizeof(struct prmbond) );
+	} else {
+		oprm->bonds = NULL;
 	}
-	*/
 
 	return oprm;
 }
@@ -762,17 +767,21 @@ destroy_prmatom (struct prmatom* atom)
     free (atom->typemin);
 }
 
-void
-destroy_prmpwpot (struct prmpwpot* pwpot)
+static void
+destroy_prmpwpot (struct prmpwpot* pwpot, int nsubatoms)
 {
     free (pwpot->lambdas);
     free (pwpot->Xs);
+    for (int i=0; i<nsubatoms; i++) {
+        free(pwpot->eng[i]);
+    }
+    free (pwpot->eng);
 }
 
-void
-free_prmpwpot (struct prmpwpot* pwpot)
+static void
+free_prmpwpot (struct prmpwpot* pwpot, int nsubatoms)
 {
-    destroy_prmpwpot (pwpot);
+    destroy_prmpwpot (pwpot, nsubatoms);
     free(pwpot);
 }
 
@@ -785,7 +794,7 @@ destroy_prm (struct prm* prm)
     }
     free (prm->atoms);
 
-    free_prmpwpot ( prm->pwpot );
+    free_prmpwpot ( prm->pwpot, prm->nsubatoms );
 
     free (prm->bonds);
 }

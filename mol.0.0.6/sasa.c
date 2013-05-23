@@ -143,7 +143,7 @@ void msur (struct atomgrp* ag, struct prm* prm, float msur_k)
 	short rpr=1;
 	baccs(ag, rkprm, r_solv, cont_acc, rpr, sthresh);
 
-	//free_prms (rkprm); // (free_prms needs to be fixed)
+	free_prm (rkprm); // (free_prms needs to be fixed)
 }
 
 /* convert float atomic surface arrays into 0/1 representation (sa in the structure atom) */
