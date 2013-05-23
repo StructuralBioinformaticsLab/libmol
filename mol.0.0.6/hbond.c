@@ -94,6 +94,7 @@ poly7generator(xH_Ring,MIN_xH,MAX_xH,37.744316,-117.731674,143.0759275,-86.22588
 
 #endif             
 
+#if FADING_FUNCTION == LINEAR_FADE
 #define create_fade_interval( name, min0, fmin, fmax, max0 ) \
 static void name##_value_deriv(FLOAT x, FLOAT *val, FLOAT *der) { \
      const FLOAT name##_dfade_min = ( fmin == min0 ) ? 0.0 : ( 1.0 / ( fmin - min0 ) ), name##_dfade_max = ( max0 == fmax ) ? 0.0 : ( 1.0 / ( max0 - fmax ) ); \
@@ -111,6 +112,7 @@ create_fade_interval( fade_rshort, MIN_AH, MIN_AH, INTPOL_MIN, INTPOL_MAX )
 create_fade_interval( fade_rlong, INTPOL_MIN, INTPOL_MAX, INTPOL_MAX, MAX_AH )
 create_fade_interval( fade_xD, MIN_xD, INTPOL_EDGE_ANGL, 1, 1 )		// fading theta(xD)
 create_fade_interval( fade_xH, MIN_xH, INTPOL_EDGE_ANGL, 1, 1 )		// fading r,xD
+#endif //LINEAR_FADE
 
 #ifdef USE_LONG_DOUBLE
   #define create_log_fade_interval( name, a, b, c, d, e, f ) \
@@ -129,11 +131,13 @@ create_fade_interval( fade_xH, MIN_xH, INTPOL_EDGE_ANGL, 1, 1 )		// fading r,xD
 #endif
 
 // used to adjust xD,xH
+#if FADING_FUNCTION == LOG_FADE
 create_log_fade_interval( fade_rBB,-37.3180547817287,285.741141861363,-834.307606917721,1189.6798830102,-826.409671561707,222.919001825369)
 create_log_fade_interval( fade_rshort, 5.17967058862565, -73.0669137757406, 315.57016260663, -559.689100793323, 438.586611628675, -126.548509998553 )
 create_log_fade_interval( fade_rlong, -14.0813542571684, 130.05181593123, -453.153559518528, 740.025843886255, -562.47374254511, 160.168566150279 )
 create_log_fade_interval( fade_xD, 0.133459218358311, 13.0816902916604, -57.2491258523768, 86.8476548565786, -3.78050184877689, -58.7848249871094 )	// 	theta(xD) should fade r,xH sooner
 create_log_fade_interval( fade_xH, 0.133459218358311, 13.0816902916604, -57.2491258523768, 86.8476548565786, -3.78050184877689, -58.7848249871094 )	// fading r and xD
+#endif //LOG_FADE
 
 
 // The following cubic splines were generated using DataFit 9
@@ -286,6 +290,7 @@ FLOAT hbeng_HOH_y2[ ] = { 0, 0.000000000000, 24.162670008471, -96.6506800338837,
                              0.000000000000 };
 
 
+#if FADING_FUNCTION == BSPLINE_FADE
 FLOAT eval_spline( FLOAT *x, FLOAT *y, FLOAT *y2, int n, FLOAT v );
 
 #define create_bspline_fade_interval( name ) \
@@ -326,6 +331,7 @@ FLOAT eval_spline( FLOAT *x, FLOAT *y, FLOAT *y2, int n, FLOAT v )
 
    return ( a * y[ l ] + b * y[ h ] + ( a * ( a * a - 1 ) * y2[ l ] + b * ( b * b - 1 ) * y2[ h ] ) * ( d * d ) / 6.0 );
 }
+#endif //BSPLINE_FADE
 
 
 double dot_product(struct dvector *va, struct dvector *vb)
