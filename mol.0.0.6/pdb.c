@@ -119,6 +119,11 @@ struct atomgrp* read_pdb (const char* path, struct prm* prm)
 		ag->atoms[atomi].mask = 0;
 		// init attl
 		ag->atoms[atomi].attl = 0.0;
+		ag->atoms[atomi].nbondis = 0;
+		ag->atoms[atomi].nbonds = 0;
+		ag->atoms[atomi].nangs = 0;
+		ag->atoms[atomi].ntors = 0;
+		ag->atoms[atomi].nimps = 0;
 
 		if (sscanf (line, "%*s %*d %4s %4s", atypemin, atypemaj) < 2)
 		{
@@ -228,6 +233,11 @@ struct atomgrp* read_pdb_with_compressed_typeinfo (const char* path, struct prm*
 
 		// init sa
 		ag->atoms[atomi].sa = -1;
+		ag->atoms[atomi].nbondis = 0;
+		ag->atoms[atomi].nbonds = 0;
+		ag->atoms[atomi].nangs = 0;
+		ag->atoms[atomi].ntors = 0;
+		ag->atoms[atomi].nimps = 0;
 
 		if (sscanf (line, "%*s %*d %4s %4s", atypemin, atypemaj) < 2)
 		{

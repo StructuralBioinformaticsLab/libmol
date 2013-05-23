@@ -75,6 +75,11 @@ struct atomgrp* read_ms (const char* path, struct prm* prm)
 		ag->atoms[atomi].sa = -1;
 		// init mask
 		ag->atoms[atomi].mask = 0;
+		ag->atoms[atomi].nbondis = 0;
+		ag->atoms[atomi].nbonds = 0;
+		ag->atoms[atomi].nangs = 0;
+		ag->atoms[atomi].ntors = 0;
+		ag->atoms[atomi].nimps = 0;
 
 		if (sscanf (line, "%*s %*d %4s %4s", atypemin, atypemaj) < 2)
 		{
