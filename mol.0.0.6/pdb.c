@@ -632,8 +632,14 @@ void fprint_pdb (struct atomgrp* ag, struct prm* prm, const char* path)
 
 void write_pdb_nopar (struct atomgrp* ag, const char* inf, const char* ouf)
 {
-        FILE* fp = myfopen (inf, "r");
         FILE* fop = myfopen (ouf, "w");
+        fprint_pdb_nopar(fop, ag, inf);
+        myfclose (fop);
+}
+
+void fprint_pdb_nopar(FILE * fop, struct atomgrp* ag, const char* inf)
+{
+        FILE* fp = myfopen (inf, "r");
 
         char* line = NULL;
         size_t len = 0;
@@ -660,5 +666,4 @@ void write_pdb_nopar (struct atomgrp* ag, const char* inf, const char* ouf)
         if (line)
                 free (line);
         myfclose (fp);
-        myfclose (fop);
 }

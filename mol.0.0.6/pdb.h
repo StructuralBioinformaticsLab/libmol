@@ -86,5 +86,6 @@ void fprint_pdb (struct atomgrp* ag, struct prm* prm, const char* path);
   print a pdb file
 */
 void write_pdb_nopar (struct atomgrp* ag, const char* inf, const char* ouf);
+void fprint_pdb_nopar(FILE * fop, struct atomgrp* ag, const char* inf);
 
 #endif
