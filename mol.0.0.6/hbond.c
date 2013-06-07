@@ -1341,7 +1341,7 @@ static double get_pairwise_hbondeng( mol_atom *atoms_hydro, int hydro_id, mol_at
 }
 
 
-inline double get_pairwise_hbondeng_nblist( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id, 
+double get_pairwise_hbondeng_nblist( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id,
                                             double *engcat, double rc2, int comp_grad )
 {
     mol_atom *hydro = &( atoms_hydro[ hydro_id ]);
@@ -1377,7 +1377,7 @@ inline double get_pairwise_hbondeng_nblist( mol_atom *atoms_hydro, int hydro_id,
 
 
 
-inline double get_water_mediated_pairwise_hbondeng( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id, 
+static double get_water_mediated_pairwise_hbondeng( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id,
                                                     mol_atom *atoms_wox, int wox_id,
                                                     int comp_grad )
 {
