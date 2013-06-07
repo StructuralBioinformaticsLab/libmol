@@ -51,6 +51,9 @@ ifeq ($(MAKECMDGOALS), mol.debug)
 	CPPFLAGS := -D _DEBUG_ $(CPPFLAGS)
 	CFLAGS := -g $(CFLAGS)
 endif
+ifeq ($(MAKECMDGOALS), mol.profile)
+	CFLAGS := -pg $(CFLAGS)
+endif
 
 # file utils
 RM = /bin/rm -f
@@ -152,6 +155,7 @@ $(LIB_OBJS): $(LIB_HEADERS) $(LIB_MAIN_HEADER)
 # additional rules
 all: $(LIB_FILE)
 mol.debug: $(LIB_FILE)
+mol.profile: $(LIB_FILE)
 openmp: all
 clean:
 	$(RM) $(LIB_OBJS) $(LIB_FILE)
