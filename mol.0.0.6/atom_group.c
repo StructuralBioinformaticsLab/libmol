@@ -269,6 +269,7 @@ struct atomgrp* fullcopy_atomgrp (struct atomgrp* srcag)
 	struct atomgrp* destag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
 
 	destag->natoms = srcag->natoms;
+	destag->num_atom_types = srcag->num_atom_types;
 	destag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * destag->natoms);
 	memcpy(destag->atoms, srcag->atoms, sizeof(struct atom) * destag->natoms);
 
@@ -358,6 +359,7 @@ struct atomgrp* fullcopy_atomgrp (struct atomgrp* srcag)
 	for (int i = 0; i < destag->natoms; i++) {
 //		struct atom local_atom = destag->atoms[i];
 		destag->atoms[i].name = strdup(srcag->atoms[i].name);
+		destag->atoms[i].ftype_name = strdup(srcag->atoms[i].ftype_name);
 
 		destag->atoms[i].bonds = _mol_malloc( destag->atoms[i].nbonds*sizeof(struct atombond*));
 		memcpy(destag->atoms[i].bonds, srcag->atoms[i].bonds, sizeof(struct atombond*) * destag->atoms[i].nbonds);
@@ -687,6 +689,7 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 	ag->nangs    = rec->nangs   + lig->nangs;
 	ag->ntors    = rec->ntors   + lig->ntors;
 	ag->nimps    = rec->nimps   + lig->nimps;
+	ag->num_atom_types = rec->num_atom_types + lig->num_atom_types;
 	//don't think we need actives yet
 	//ag->nactives = rec->nactives + lig->nactives;
 	//ag->nbact    = rec->nbact   + lig->nbact;
@@ -738,8 +741,8 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 	size_t imp_offset  = ag->imps  - rec->imps;
 	size_t tor_offset  = ag->tors  - rec->tors;
 	for (int i = 0; i < rec->natoms; i++) {
-//		struct atom local_atom = ag->atoms[i];
 		ag->atoms[i].name = strdup(rec->atoms[i].name);
+		ag->atoms[i].ftype_name = strdup(rec->atoms[i].ftype_name);
 
 		ag->atoms[i].bonds = _mol_malloc( rec->atoms[i].nbonds*sizeof(struct atombond*));
 		memcpy(ag->atoms[i].bonds, rec->atoms[i].bonds, sizeof(struct atombond*) * rec->atoms[i].nbonds);
@@ -802,7 +805,9 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 	tor_offset  = ag->tors  - lig->tors + rec->ntors;
 	for (int i = rec->natoms; i < ag->natoms; i++) {
 //		struct atom local_atom = ag->atoms[i];
+		ag->atoms[i].atom_ftypen += rec->num_atom_types;
 		ag->atoms[i].name = strdup(lig->atoms[i-(rec->natoms)].name);
+		ag->atoms[i].ftype_name = strdup(lig->atoms[i-(rec->natoms)].ftype_name);
 
 		ag->atoms[i].bonds = _mol_malloc( lig->atoms[i-(rec->natoms)].nbonds*sizeof(struct atombond*));
 		memcpy(ag->atoms[i].bonds, lig->atoms[i-(rec->natoms)].bonds, sizeof(struct atombond*) * lig->atoms[i-(rec->natoms)].nbonds);
@@ -828,6 +833,8 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 
 	//copy into ryan's structure
 //	_mol_atom_group_copy_from_deprecated(ag);
+
+	fill_ingrp(ag);
 	
 	return ag;
 }

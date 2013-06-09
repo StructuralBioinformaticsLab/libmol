@@ -194,18 +194,17 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 // vdw and charges, types and acevolumes
 	for (i = 0; i < nat; i++) {
 		ag->atoms[i].atom_ftypen = atoms[i];
+		ag->atoms[i].ftype_name = _mol_malloc(sizeof(char) * 5);
 
-		/*
 		for(j = 0; j < 4; j++){
-		  //atnam[4 * j + i] = *(p + i);
 		  if(atnam[4*i + j] == ' '){
-		    ag->atoms[i].atom_ftype_name[j]='\0';
+		    ag->atoms[i].ftype_name[j]='\0';
+		    break;
 		  }else{
-		    ag->atoms[i].atom_ftype_name[j] = atnam[4*i + j];
+		    ag->atoms[i].ftype_name[j] = atnam[4*i + j];
 		  }
 		}
-		ag->atoms[i].atom_ftype_name[4]='\0';
-		*/
+		ag->atoms[i].ftype_name[4]='\0';
 
 		ag->atoms[i].name = atom_names[i];
 		if (acevolumes[i] < 0.0) {

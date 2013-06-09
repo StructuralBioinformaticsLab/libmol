@@ -42,6 +42,7 @@ struct atom
 	int atom_ftypen;/**< atom type number in the forcefield */
         int octree_ptr; /**< index (ptr) to octree leaf node to which this atoms belongs */           
 	char *name;
+	char *ftype_name;
 
 	int sa; /**< solvent accessible: 1 => solvent accessible, 0 => !1, -1 => undefined */
 	int fixed; /**< =1 if atom is immovable , 0 otherwise*/
@@ -162,8 +163,8 @@ struct atomtorsion
   	improper struct
 	 a1---a0---a3
 	      |
-		  |
-		  a2
+	      |
+	      a2
 
 	e = k * (psi - psi0)^2
 */
