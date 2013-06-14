@@ -62,6 +62,7 @@ void ace_ini(struct atomgrp* ag,struct acesetup* ac_s){
 		if (ac_s->vsolv[ag->atoms[i].atom_ftypen]<=0.0){
 			ac_s->vsolv[ag->atoms[i].atom_ftypen]=ag->atoms[i].acevolume;
 			ac_s->rsolv[ag->atoms[i].atom_ftypen]=_mol_max(ag->atoms[i].rminh,minr);
+			//Hydrogen correction
 			if (strcmp("H", ag->atoms[i].ftype_name) == 0) {
 				ac_s->rsolv[ag->atoms[i].atom_ftypen]=_mol_max(0.85, ac_s->rsolv[ag->atoms[i].atom_ftypen]);
 			} else if (strcmp("HC", ag->atoms[i].ftype_name) == 0) {
@@ -81,8 +82,8 @@ void ace_ini(struct atomgrp* ag,struct acesetup* ac_s){
 		}
 	}
 	//Hydrogen correction
-	if (ac_s->rsolv[1]<0.85) ac_s->rsolv[1]=0.85; //H   ?
-	if (ac_s->rsolv[2]<0.83) ac_s->rsolv[2]=0.83; //HC  ?
+//	if (ac_s->rsolv[1]<0.85) ac_s->rsolv[1]=0.85; //H   ?
+//	if (ac_s->rsolv[2]<0.83) ac_s->rsolv[2]=0.83; //HC  ?
 	for (i=0;i<ac_s->ntypes;i++){
 		if (ac_s->vsolv[i]>=0.0){
 			//	printf ("%d %.3f %.3f\n",i,ac_s->vsolv[i],ac_s->rsolv[i]);
