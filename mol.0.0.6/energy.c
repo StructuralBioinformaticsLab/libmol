@@ -45,8 +45,8 @@ float pairwise_potential_energy (struct atomgrp* agA, struct atomgrp* agB, struc
 	int Aatomi, Batomi; // loop iters
 
 	// squared vals for euclidean dist
-	float r1sq = powf (prm->pwpot->r1, 2.0);
-	float r2sq = powf (prm->pwpot->r2, 2.0);
+	float r1sq = _mol_sq(prm->pwpot->r1);
+	float r2sq = _mol_sq(prm->pwpot->r2);
 
 	float E = 0;
 
@@ -113,9 +113,9 @@ float pairwise_potential_energy (struct atomgrp* agA, struct atomgrp* agB, struc
 				float BZ = agB->atoms[Batomi].Z;
 
 			// calculate euclidean distance
-			float rsq = (powf ((AX - BX), 2.0) +
-					powf ((AY - BY), 2.0) +
-					powf ((AZ - BZ), 2.0));
+			float rsq = (_mol_sq(AX - BX) +
+			             _mol_sq(AY - BY) +
+			             _mol_sq(AZ - BZ));
 
 			if (rsq >= r1sq && rsq < r2sq) // atom distance is within the bin
 			{
@@ -174,9 +174,9 @@ float coulombic_elec_energy (struct atomgrp* agA, struct atomgrp* agB, struct pr
 			float BZ = agB->atoms[Batomi].Z;
 
 			// calculate euclidean distance
-			float rsq = (powf ((AX - BX), 2.0) +
-					powf ((AY - BY), 2.0) +
-					powf ((AZ - BZ), 2.0));
+			float rsq = (_mol_sq(AX - BX) +
+			             _mol_sq(AY - BY) +
+			             _mol_sq(AZ - BZ));
 
 			//E += (q1 * q2) / rsq;
 			if (rsq <= maxrsq)
@@ -200,7 +200,7 @@ float nummod_energy (struct atomgrp* agA, struct atomgrp* agB, struct prm* prm)
 	float vaE = 0;
 	float eE = 0;
 
-	float r2sq = powf (6.5, 2.0);
+	float r2sq = _mol_sq(6.5);
 
 	// loop through every atom in agA
 	for (Aatomi = 0; Aatomi < agA->natoms; Aatomi++)
@@ -212,7 +212,7 @@ float nummod_energy (struct atomgrp* agA, struct atomgrp* agB, struct prm* prm)
 			exit (EXIT_FAILURE);
 		}
 
-		float r1sq = powf (prm->atoms[Atypen].r, 2.0);
+		float r1sq = _mol_sq(prm->atoms[Atypen].r);
 		float q1 = prm->atoms[Atypen].q;
 
 		float AX = agA->atoms[Aatomi].X;
@@ -237,9 +237,9 @@ float nummod_energy (struct atomgrp* agA, struct atomgrp* agB, struct prm* prm)
 			float BZ = agB->atoms[Batomi].Z;
 
 			// calculate euclidean distance
-			float rsq = (powf ((AX - BX), 2.0) +
-					powf ((AY - BY), 2.0) +
-					powf ((AZ - BZ), 2.0));
+			float rsq = (_mol_sq(AX - BX) +
+			             _mol_sq(AY - BY) +
+			             _mol_sq(AZ - BZ));
 
 			if (rsq < r1sq)
 			{

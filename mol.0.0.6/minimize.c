@@ -48,7 +48,7 @@ void bracket(double* orig, double* dir, double step,
 
          double fa,fc,fnew,lnew;
          double G = 1.618034;
-         double TooSmall=pow(10, -10);
+         double TooSmall=1E-10;
 
          int i, j;
 
@@ -155,7 +155,7 @@ void old_brent(double* orig, double* dir,
 {
            int j;
            double* new=_mol_malloc(ndim*sizeof(double) );
-           double s=pow(10,-10);
+           double s=1E-10;
            double CGOLD=0.3819660;
            int iter;
            double a,b,d=0.0,etemp,fu,fv,fw,fx,p,q,r,tol1,tol2,u,v,w,x,xm;
@@ -270,7 +270,7 @@ void brent(double* orig, double* dir,
         double fprevmin2=fb;
         double dMoved=0;
         double dMoved2=0;
-        double s= pow(10,-10);
+        double s= 1E-10;
         double lim;
         double par1,par2,lpartial,lnew,fnew;
         double GOLD=0.381966;
@@ -420,7 +420,7 @@ void dirbrent(double* orig, double* dir,
        double fprevmin2=fb;
        double distMoved=0;
        double distMoved2=0;
-       double s= pow(10,-10);
+       double s= 1E-10;
        double lim;
        double sec1=0,sec2=0,lnew,fnew,dnew;
        double*  new=_mol_malloc(numAct*sizeof(double) );
@@ -633,7 +633,7 @@ void powell(double* orig, double* directions, unsigned int maxIt, double tol,
             brent(pcur,  newdir,  
                   fbrac, la, lb, lc,
                   ndim, prms, egfun,
-                  pow(10,-5), 100,    
+                  1E-5, 100,
                   pcur, &val);
             if(fabs(fprev2-val)>mostdec)//get direction of greatest decrease and greatest decrease
             {
@@ -668,7 +668,7 @@ void powell(double* orig, double* directions, unsigned int maxIt, double tol,
         
         if(fprev2<fprev)
         {
-            test=2.*(fprev-2.*val+fprev2)*pow((fprev-val-mostdec),2)-mostdec*pow((fprev-fprev2),2);
+            test=2.*(fprev-2.*val+fprev2)* _mol_sq(fprev-val-mostdec)-mostdec*_mol_sq(fprev-fprev2);
             if(test<0)
             {//if it makes sence to the direction set
                 bracket(pcur, newdir, 1, ndim, prms, egfun,
@@ -676,7 +676,7 @@ void powell(double* orig, double* directions, unsigned int maxIt, double tol,
                 brent(pcur, newdir,
                       fbrac, la, lb, lc,
                       ndim, prms, egfun,
-                      pow(10,-5), 100,
+                      1E-5, 100,
                       pcur, &val);
                 for(k=0; k<numAct; k++)
                 {
@@ -717,7 +717,7 @@ void dirMin(double* orig,  unsigned int maxIt, double tol,
             curmin[i]=orig[i];
         
      double val,t1,t2,t3,la,lb,lc,fbrac ;
-     double s = pow(10,-5);
+     double s = 1E-5;
      double fprev;
      egfun(ndim, orig, prms, &fprev, grad);
      double dnorm=0, maxnorm=1.5;
@@ -745,7 +745,7 @@ void dirMin(double* orig,  unsigned int maxIt, double tol,
         
         dirbrent(curmin,dir,  fbrac, la, lb, lc,
                  ndim, prms, egfun,
-                 pow(10,-10), 100,
+                 1E-10, 100,
                  mvec, &val, grad);
 
         if(2*fabs(val-fprev)<= tol*(fabs(fprev)+fabs(val)+s))
@@ -770,7 +770,7 @@ void dirMin(double* orig,  unsigned int maxIt, double tol,
         t2=0;
         for(j=0; j<numAct; j++)
         {
-            t1+= pow(interm[j],2);
+            t1+= _mol_sq(interm[j]);
             t2+= (dir[j]+interm[j])*dir[j] ;
         }
       

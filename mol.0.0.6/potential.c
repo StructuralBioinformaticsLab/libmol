@@ -46,8 +46,8 @@ struct matrix2df* potential_matrix2df_ncontacts_bin (struct atomgrp* agA, struct
 	int Aatomi, Batomi; // loop iters
 
 	// squared vals for euclidean dist
-	float r1sq = powf (r1, 2.0);
-	float r2sq = powf (r2, 2.0);
+	float r1sq = _mol_sq(r1);
+	float r2sq = _mol_sq(r2);
 
 	struct matrix2df* M = matrix2df_create (prm->natoms, prm->natoms);
 	matrix2df_init (M, 0); // init all matrix vals to 0
@@ -97,9 +97,9 @@ struct matrix2df* potential_matrix2df_ncontacts_bin (struct atomgrp* agA, struct
 			float BZ = agB->atoms[Batomi].Z;
 
 			// calculate euclidean distance
-			float rsq = (powf ((AX - BX), 2.0) +
-					powf ((AY - BY), 2.0) +
-					powf ((AZ - BZ), 2.0));
+			float rsq = (_mol_sq(AX - BX) +
+			             _mol_sq(AY - BY) +
+			             _mol_sq(AZ - BZ));
 
 			if (rsq >= r1sq && rsq < r2sq) // atom distance is within the bin
 			{

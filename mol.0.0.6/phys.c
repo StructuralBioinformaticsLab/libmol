@@ -34,9 +34,9 @@ float* moment_of_inertia (struct atomgrp* ag)
 {
 	struct tvector* com = center_of_mass (ag);
 
-	float sq_x_com = powf (com->X, 2.0);
-	float sq_y_com = powf (com->Y, 2.0);
-	float sq_z_com = powf (com->Z, 2.0);
+	float sq_x_com = _mol_sq(com->X);
+	float sq_y_com = _mol_sq(com->Y);
+	float sq_z_com = _mol_sq(com->Z);
 
 	float sum_sq_x = 0;
 	float sum_sq_y = 0;
@@ -49,9 +49,9 @@ float* moment_of_inertia (struct atomgrp* ag)
 	int i;
 	for (i = 0; i < ag->natoms; i++)
 	{
-		sum_sq_x += powf (ag->atoms[i].X, 2.0);
-		sum_sq_y += powf (ag->atoms[i].Y, 2.0);
-		sum_sq_z += powf (ag->atoms[i].Z, 2.0);
+		sum_sq_x += _mol_sq(ag->atoms[i].X);
+		sum_sq_y += _mol_sq(ag->atoms[i].Y);
+		sum_sq_z += _mol_sq(ag->atoms[i].Z);
 
 		sum_mult_xy += ag->atoms[i].X * ag->atoms[i].Y;
 		sum_mult_xz += ag->atoms[i].X * ag->atoms[i].Z;
