@@ -95,6 +95,7 @@ LIB_OBJS = mol.$(MOL_VERSION)/mem.o \
 		   mol.$(MOL_VERSION)/rmsd.o \
 		   mol.$(MOL_VERSION)/gbsa.o \
 		   mol.$(MOL_VERSION)/sdf.o \
+		   mol.$(MOL_VERSION)/json.o \
 
 # library header files
 LIB_MAIN_HEADER = mol.$(MOL_VERSION).h
@@ -130,6 +131,7 @@ LIB_HEADERS = mol.$(MOL_VERSION)/mem.h \
 			  mol.$(MOL_VERSION)/rmsd.h \
 			  mol.$(MOL_VERSION)/gbsa.h \
 			  mol.$(MOL_VERSION)/sdf.h \
+			  mol.$(MOL_VERSION)/json.h \
 
 # compiler flags
 #CFLAGS = -O3 -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c99 -Winline

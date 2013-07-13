@@ -75,4 +75,5 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "mol.0.0.6/rmsd.h"
 #include "mol.0.0.6/gbsa.h"
 #include "mol.0.0.6/sdf.h"
+#include "mol.0.0.6/json.h"
 #endif
