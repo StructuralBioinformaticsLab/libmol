@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2009-2012, Structural Bioinformatics Laboratory, Boston University
+Copyright (c) 2013, Acpharis Inc
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -42,8 +43,8 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 	int first_atom, last_atom;
 	char *atnam;
 	char **atom_names;	//CA, CB, etc.
-	float *lbond, *kbond, *fang, *kang, *fdih, *kdih;
-	float *fimp, *kimp, *cha, *siga, *epa, *acevolumes;
+	double *lbond, *kbond, *fang, *kang, *fdih, *kdih;
+	double *fimp, *kimp, *cha, *siga, *epa, *acevolumes;
 	int *pdih, *tdih, ti;
 	int nres, *ires;
 	char *res_name;
@@ -519,7 +520,7 @@ int nthv(char **pptext, char *ptext, char ch, int n)
 void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 	      char ***o_atom_names, int *o_nb, int **o_bonds, int *o_nang,
 	      int **o_angs, int *o_ndih, int **o_dihs, int *o_nimp,
-	      int **o_imps, float **o_cha, int *o_nres, int **o_ires,
+	      int **o_imps, double **o_cha, int *o_nres, int **o_ires,
 	      char **o_dres, int *o_ndon, int **o_dons, int *o_nacc,
 	      int **o_acpts)
 {
@@ -535,13 +536,13 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 	int *ires = NULL;
 	char *p, *p1, *p2, seg0[16] = "---------------", seg[16] =
 	    "---------------";
-	float *cha = NULL;
+	double *cha = NULL;
 	while (fgets(buffer, linesize, fp) != NULL) {
 		if (strstr(buffer, "NATOM") != NULL) {
 			nat = atoi(buffer);
 			atoms = _mol_malloc(sizeof(int) * nat);
 			atom_names = _mol_malloc(sizeof(char *) * nat);
-			cha = _mol_malloc(sizeof(float) * nat);
+			cha = _mol_malloc(sizeof(double) * nat);
 			ires = _mol_malloc(sizeof(int) * nat);
 
 			for (i = 0; i < nat; i++) {
@@ -656,38 +657,38 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 }
 
 void read_par(char *prmfile, int nat, char *atnam,
-	      int nb, int *bonds, float **o_kbond, float **o_lbond,
-	      int nang, int *angles, float **o_kangle, float **o_fangle,
-	      int *ndih, int *dihs, float **o_kdih, float **o_fdih,
-	      int **o_pdih, int **o_tdih, int nimp, int *imps, float **o_kimp,
-	      float **o_fimp, float **o_epa, float **o_siga,
-	      float **o_acevolumes)
+	      int nb, int *bonds, double **o_kbond, double **o_lbond,
+	      int nang, int *angles, double **o_kangle, double **o_fangle,
+	      int *ndih, int *dihs, double **o_kdih, double **o_fdih,
+	      int **o_pdih, int **o_tdih, int nimp, int *imps, double **o_kimp,
+	      double **o_fimp, double **o_epa, double **o_siga,
+	      double **o_acevolumes)
 {
 	int i, ndih0 = *ndih;
 	char *buffer = _mol_malloc(sizeof(char) * linesize);
 	char *p;
 
-	float *kbond = _mol_malloc(sizeof(float) * nb);
+	double *kbond = _mol_malloc(sizeof(double) * nb);
 	for (i = 0; i < nb; i++)
 		kbond[i] = -1.0;
 
-	float *lbond = _mol_malloc(sizeof(float) * nb);
+	double *lbond = _mol_malloc(sizeof(double) * nb);
 	for (i = 0; i < nb; i++)
 		lbond[i] = -1.0;
 
-	float *kangle = _mol_malloc(sizeof(float) * nang);
+	double *kangle = _mol_malloc(sizeof(double) * nang);
 	for (i = 0; i < nang; i++)
 		kangle[i] = -1.0;
 
-	float *fangle = _mol_malloc(sizeof(float) * nang);
+	double *fangle = _mol_malloc(sizeof(double) * nang);
 	for (i = 0; i < nang; i++)
 		fangle[i] = -1.0;
 
-	float *kdih = _mol_malloc(sizeof(float) * 3 * ndih0);
+	double *kdih = _mol_malloc(sizeof(double) * 3 * ndih0);
 	for (i = 0; i < 3 * ndih0; i++)
 		kdih[i] = -1.0;
 
-	float *fdih = _mol_malloc(sizeof(float) * 3 * ndih0);
+	double *fdih = _mol_malloc(sizeof(double) * 3 * ndih0);
 	for (i = 0; i < 3 * ndih0; i++)
 		fdih[i] = -1.0;
 
@@ -703,23 +704,23 @@ void read_par(char *prmfile, int nat, char *atnam,
 	for (i = 0; i < 3 * ndih0; i++)
 		tdih[i] = -1;
 
-	float *kimp = _mol_malloc(sizeof(float) * nimp);
+	double *kimp = _mol_malloc(sizeof(double) * nimp);
 	for (i = 0; i < nimp; i++)
 		kimp[i] = -1.0;
 
-	float *fimp = _mol_malloc(sizeof(float) * nimp);
+	double *fimp = _mol_malloc(sizeof(double) * nimp);
 	for (i = 0; i < nimp; i++)
 		fimp[i] = -1.0;
 
-	float *epa = _mol_malloc(2 * sizeof(float) * nat);
+	double *epa = _mol_malloc(2 * sizeof(double) * nat);
 	for (i = 0; i < 2 * nat; i++)
 		epa[i] = 1.0;
 
-	float *siga = _mol_malloc(2 * sizeof(float) * nat);
+	double *siga = _mol_malloc(2 * sizeof(double) * nat);
 	for (i = 0; i < 2 * nat; i++)
 		siga[i] = -1.0;
 
-	float *acevolumes = _mol_malloc(sizeof(float) * nat);
+	double *acevolumes = _mol_malloc(sizeof(double) * nat);
 	for (i = 0; i < nat; i++)
 		acevolumes[i] = -1.0;
 
@@ -795,12 +796,12 @@ void read_par(char *prmfile, int nat, char *atnam,
 	*o_acevolumes = acevolumes;
 }
 
-void chkbond(char *buffer, int nb, int *bonds, char *atnam, float *kbond,
-	     float *lbond)
+void chkbond(char *buffer, int nb, int *bonds, char *atnam, double *kbond,
+	     double *lbond)
 {
 	int i;
 	char *p, match[10] = "         ", tag[20];
-	float l, k;
+	double l, k;
 	if (nthv(&p, buffer, ' ', 0) == 0)
 		return;
 	strncpy(match, p, 4);
@@ -840,11 +841,11 @@ void bondtag(int i, int *bonds, char *atnam, char *p)
 }
 
 void chkangle(char *buffer, int nang, int *angles,
-	      char *atnam, float *kangle, float *fangle)
+	      char *atnam, double *kangle, double *fangle)
 {
 	int i;
 	char *p, match[15] = "              ", tag[30];
-	float l, k;
+	double l, k;
 	if (nthv(&p, buffer, ' ', 0) == 0)
 		return;
 	strncpy(match, p, 4);
@@ -935,13 +936,13 @@ void dihtag(int i, int *dihs, char *atnam, int mode, char *p)
 }
 
 void chkdih(char *buffer, int *ndih, int ndih0, int *dihs,
-	    char *atnam, float *kdih, float *fdih, int *pdih, int *tdih,
+	    char *atnam, double *kdih, double *fdih, int *pdih, int *tdih,
 	    int *wdih)
 {
 	int i, ndih03 = 3 * ndih0;
 	char *p, match[20] = "                   ";
 	char tag0[40], tag3[40];
-	float l, k;
+	double l, k;
 	int n;
 	if (nthv(&p, buffer, ' ', 0) == 0)
 		return;
@@ -1020,12 +1021,12 @@ void putXtoP(char *p, int n)
 }
 
 void chkimp(char *buffer, int nimp, int *imps,
-	    char *atnam, float *kimp, float *fimp)
+	    char *atnam, double *kimp, double *fimp)
 {
 	int i;
 	char *p, match[20] = "                   ";
 	char tag0[40], tag1[40], tag2[40], tag3[40], tag4[40];
-	float l, k;
+	double l, k;
 	if (nthv(&p, buffer, ' ', 0) == 0)
 		return;
 	strncpy(match, p, 4);
@@ -1062,12 +1063,12 @@ void chkimp(char *buffer, int nimp, int *imps,
 	}
 }
 
-void chkvdw(char *buffer, int nat, char *atnam, float *epa, float *siga)
+void chkvdw(char *buffer, int nat, char *atnam, double *epa, double *siga)
 {
 	int i, j, nm;
 	char *p, *p1, match[5] = "    ";
 	char tag[5];
-	float e, s, e03, s03;
+	double e, s, e03, s03;
 	if (nthv(&p, buffer, ' ', 0) == 0)
 		return;
 	strncpy(match, p, 4);
@@ -1122,12 +1123,12 @@ void chkvdw(char *buffer, int nat, char *atnam, float *epa, float *siga)
 	}
 }
 
-void chkacevolumes(char *buffer, int nat, char *atnam, float *acevolumes)
+void chkacevolumes(char *buffer, int nat, char *atnam, double *acevolumes)
 {
 	int i, j, nm;
 	char *p, match[5] = "    ";
 	char tag[5];
-	float volume;
+	double volume;
 	if (nthv(&p, buffer, ' ', 0) == 0)
 		return;
 	strncpy(match, p, 4);
@@ -1429,7 +1430,7 @@ void read_ff_charmm_light(const char *psffile, struct atomgrp *ag)
 	int nat, nb, nang, ndih0, nimp, ndon, nacc;
 	int *atoms, *bonds, *angs, *dihs, *imps, *dons, *acpts;
 	char **atom_names;	//CA, CB, etc.
-	float *cha;
+	double *cha;
 	int nres, *ires;
 	char **dres = _mol_malloc(ag->natoms * sizeof(char *));
 //        printf("PSF INn\n");

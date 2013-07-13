@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2009-2012, Structural Bioinformatics Laboratory, Boston University
+Copyright (c) 2013, Acpharis Inc
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -49,7 +50,7 @@ char* get_atnam_rtf(char* rtffile, int* atoms, int nat);
 */
 void read_psf(const char* psffile, int* o_nat,  int** o_atoms, char*** o_atom_names, int* o_nb,   int** o_bonds,
                                    int* o_nang, int** o_angs,  int* o_ndih, int** o_dihs,
-                                   int* o_nimp, int** o_imps, float** o_cha, 
+                                   int* o_nimp, int** o_imps, double** o_cha, 
                                    int* o_nres, int** o_ires, char** o_dres,
                                    int* o_ndon, int** o_dons, int* o_nacc, int** o_accs);
 /**
@@ -61,11 +62,11 @@ void read_psf(const char* psffile, int* o_nat,  int** o_atoms, char*** o_atom_na
 	**o_epa, **o_siga:-vdw parameters
 */
 void read_par(char* prmfile, int nat,  char* atnam,
-                int nb,   int *bonds, float **kbond, float **lbond,
-                int nang, int *angles, float **o_kangle, float **o_fangle,
-                int *ndih, int *dihs, float **o_kdih, float **o_fdih, int **o_pdih, int **o_tdih,
-                int nimp, int *imps, float **o_kimp, float **o_fimp,
-                float **o_epa, float **o_siga, float **o_acevolumes);
+                int nb,   int *bonds, double **kbond, double **lbond,
+                int nang, int *angles, double **o_kangle, double **o_fangle,
+                int *ndih, int *dihs, double **o_kdih, double **o_fdih, int **o_pdih, int **o_tdih,
+                int nimp, int *imps, double **o_kimp, double **o_fimp,
+                double **o_epa, double **o_siga, double **o_acevolumes);
 /**
         return *pptext, a pointer to the n-th word (starting from 0) in a string ptext
 	with a delimiter ch
@@ -75,7 +76,7 @@ int nthv(char **pptext, char *ptext, char ch, int n);
 	get bond parameters from a string buffer
 */
 void chkbond(char* buffer, int nb, int* bonds,
-        char* atnam, float* kbond, float* lbond);
+        char* atnam, double* kbond, double* lbond);
 /**
 	based on existing bond i generate a string tag
 	to be matched by a parameter record
@@ -85,7 +86,7 @@ void bondtag(int i, int* bonds, char* atnam, char* tag);
         get angle parameters from a string buffer
 */
 void chkangle(char* buffer, int nang, int* angles,
-        char* atnam, float* kangle, float* fangle);
+        char* atnam, double* kangle, double* fangle);
 /**
         based on existing angle i generate a string tag
         to be matched by a parameter record
@@ -95,7 +96,7 @@ void angletag(int i, int* angles, char* atnam, char* tag);
         get torsion parameters from a string buffer
 */
 void chkdih(char* buffer, int *ndih, int ndih0, int* dihs,
-                char* atnam, float* kdih, float* fdih, int* pdih, int *tdih, int *wdih);
+                char* atnam, double* kdih, double* fdih, int* pdih, int *tdih, int *wdih);
 /**
         based on existing torsion or improper i generate a string tag
         to be matched by a parameter record (mode is a way of dealing
@@ -106,7 +107,7 @@ void dihtag(int i, int* dihs, char* atnam, int mode, char* tag);
         get improper parameters from a string buffer
 */
 void chkimp(char* buffer, int nimp, int* imps,
-                char* atnam, float* kimp, float* fimp);
+                char* atnam, double* kimp, double* fimp);
 /** 
 	put "X   " replacement into string p starting with character n
 */
@@ -114,11 +115,11 @@ void putXtoP(char* p, int n);
 /**
         get vdw parameters from a string buffer
 */
-void chkvdw(char* buffer, int nat, char* atnam, float* epa, float* siga);
+void chkvdw(char* buffer, int nat, char* atnam, double* epa, double* siga);
 /**
         get ACE volumes parmaeter from string
 */
-void chkacevolumes(char* buffer, int nat, char* atnam, float* acevolumes);
+void chkacevolumes(char* buffer, int nat, char* atnam, double* acevolumes);
 /**
         main routine to read all charmm parameters for an atom group ag
 */
