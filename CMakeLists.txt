@@ -24,6 +24,7 @@ set(SOURCES
   mol.0.0.6/icharmm.c
   mol.0.0.6/init.c
   mol.0.0.6/io.c
+  mol.0.0.6/json.c
   mol.0.0.6/lbfgs.c
   mol.0.0.6/matrix.c
   mol.0.0.6/mem.c
