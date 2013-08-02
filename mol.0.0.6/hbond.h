@@ -75,10 +75,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 enum HBondProp { UNKNOWN_HPROP = 0, HBOND_DONOR = 1, HBOND_ACCEPTOR = 2, DONATABLE_HYDROGEN = 4, ROTATABLE_HYDROGEN = 8, FIXED_HYDROGEN = 16 };
 
 enum Hybridization_State { UNKNOWN_HYBRID = 0, SP1_HYBRID, SP2_HYBRID, SP3_HYBRID, RING_HYBRID };
-enum HB_Donor_Type { hbdon_NO = 0, hbdon_BB, hbdon_SC, hbdon_MAX };					// Donor Classes
-enum HB_Acceptor_Type { hbacc_NO = 0, hbacc_BB, hbacc_SP2,	hbacc_SP3, hbacc_RING,hbacc_MAX };	// Acceptor Classes
-enum HB_Type_Evaluation { hbe_NONE = 0,	hbe_BB,	hbe_BBTURN, hbe_BBHELIX, hbe_BBOTHER, hbe_SP2B, hbe_SP3B, hbe_RINGB, hbe_BSC, hbe_SP2SC, hbe_SP3SC,hbe_RINGSC,	hbe_MAX };
-enum HB_Weight_Type { hbw_NONE = 0, hbw_SR_BB,	hbw_LR_BB, hbw_BB_SC, hbw_SC, hbw_H2O};
+enum HB_Donor_Type { hbdon_NO = 0, hbdon_BB, hbdon_SC, hbdon_SM, hbdon_MAX }; // Small-mol added		// Donor Classes
+enum HB_Acceptor_Type { hbacc_NO = 0, hbacc_BB, hbacc_SP2,  hbacc_SP3, hbacc_RING, hbacc_SP2_SM,  hbacc_SP3_SM, hbacc_RING_SM ,hbacc_MAX }; // Acceptor Classes
+enum HB_Type_Evaluation { hbe_NONE = 0, hbe_BB, hbe_BBTURN, hbe_BBHELIX, hbe_BBOTHER, hbe_SP2B, hbe_SP3B, hbe_RINGB, hbe_BSC, hbe_SP2SC, hbe_SP3SC, hbe_RINGSC, /* Small Molecule Section -> */ hbe_BSM, hbe_SP2SCSM, hbe_SP3SCSM, hbe_RINGSCSM, hbe_SP2SMSC, hbe_SP3SMSC, hbe_RINGSMSC, hbe_SP2SMB, hbe_SP3SMB, hbe_RINGSMB,hbe_SP2SM, hbe_SP3SM, hbe_RINGSM, hbe_MAX };
+enum HB_Weight_Type { hbw_NONE = -1,  hbw_TOTAL, hbw_SR_BB, hbw_LR_BB, hbw_BB_SC, hbw_SC, hbw_BB_SM, hbw_SC_SM, hbw_SM, hbw_H2O};
 
 struct dvector
 {
@@ -143,6 +143,8 @@ void hbondengcat( struct atomgrp *ag, double *energy, struct nblist *nblst );
 
 void hbondeng_all( struct atomgrp *ag, double *energy, struct nblist *nblst );
 
+void hbondeng_bbexc( struct atomgrp *ag, double *energy, struct nblist *nblst );
+
 void water_mediated_hbondeng( struct atomgrp *ag, double *energy );
 
 void flow_hbondeng( struct atomgrp *ag, double *energy, struct nblist *nblst );
@@ -164,5 +166,87 @@ void print_acceptor_hybridization_states( struct atomgrp *ag );
 void check_fading_funcs( void );
 
 double get_pairwise_hbondeng_nblist( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id, double *engcat, double rc2, int comp_grad );
+
+
+/* --------------------------------------------------------------------------
+
+Hydrogen Bonding Energy Functions in presence of Small Molecules
+
+Receptor - Small Molecule Complex
+
+By: Mohammad Moghadasi          mohamad@bu.edu
+
+March 2013
+
+-------------------------------------------------------------------------- */
+
+struct tnode{
+        int rig_labl;       // the label for this rigid cluster
+        int atm_size;      //number of atoms in this rigid cluster
+        int *atm_num;      // atoms which are in this rigid cluster
+};
+
+struct rig_tree {
+        int v;          // number of nodes in this tree, as it is a tree we know that it has v-1 edges
+        struct tnode* vertex;     // pointers to the nodes of the tree
+        int *deg;       // The degree for each node
+        int **Adj;      // The Adjecent list for the tree
+        int *par;       // for each node keep its parent
+        int *e;         // list of edges in the tree
+        int *atom_e;    // for each edge, index of the atom for the rotatable bond
+        int total_atm_size; // total number of atoms in this tree
+        int *atm_rig_label; // for each atom we keep it belongs to which rigid cluster
+        int *bfs_qu;       // It is the queue of BFS
+        double *theta;     // It keeps for each rotatable bond, what is the corresponding rotation
+        int *e_index;      // it keeps for each edge according to the bfs queue which edge is responsible from the list of edges and save the index of that edge
+        //double *orig;      // it keeps the original coordinate of the atoms
+        double *rot;      // 3 parameters for the exponential coordinate of the whole body
+        double *trans;    // 3 parameters for the translation of the whole body
+        double *cent_t;    // the center of rotation for whole body
+        double *der;
+        int *tree_atoms;   // keep the list of the atoms which are in this tree and the size of it is total_atm_size
+};
+
+struct rigid_body {
+        int rig_size;           // number of atoms in this rigid block
+        int *rigid_atoms;       // list of the atom numbers which are in this block
+        //double *rigid_orig;
+        // original coordinate of the atoms which are in this rigid block
+
+double *rigid_der;      // derivative of the energy function ( 6 parameters ) with respect to translation and rotation
+        double *trans;          // 3 parameters for the translation of this rigid body
+        double *rot;            // 3 parameters for the rotation of this rigid body
+        double *cent_t;         // the center of rotation for whole body, by default it is the center of mass for rigid bodies
+};
+
+struct rig_forest {
+        int numf;
+        int numt;
+        int numr;
+        int numtor;
+
+        int *free_atoms;
+        double *free_cor;
+        double *free_der;
+
+        double *orig;         // the original coordinate of the atoms
+
+        struct rig_tree** tr;
+        struct rigid_body** r_b;
+        struct rig_tree** tor;
+};
+
+// Functions
+
+void hbondengcat_smallmol( struct atomgrp *ag, double *energy, struct nblist *nblst , struct rig_forest* prot );
+
+void get_categorized_hbondeng_smallmol( double *engcat, double *bb_bb_sr, double *bb_bb_lr, double *bb_sc, double *sc_sc, double *bb_sm, double *sc_sm, double *sm_sm );
+
+void set_categorized_hbondeng_smallmol( double *engcat, double bb_bb_sr, double bb_bb_lr, double bb_sc, double sc_sc, double bb_sm, double sc_sm, double sm_sm );
+
+void init_categorized_hbondeng_smallmol( double *engcat );
+
+double *alloc_categorized_hbondeng_smallmol( void );
+
 
 #endif
