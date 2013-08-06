@@ -581,8 +581,12 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			nb = atoi(buffer);
 			bonds = _mol_malloc(sizeof(int) * 2 * nb);
 			for (i = 0; i < nb; i++) {
-				fscanf(fp, "%d %d", &bonds[2 * i],
+				int scanned = fscanf(fp, "%d %d", &bonds[2 * i],
 				       &bonds[2 * i + 1]);
+				if (scanned != 2) {
+					fprintf(stderr, "error reading bonds from psf\n");
+					exit(EXIT_FAILURE);
+				}
 			}
 			continue;
 		}
@@ -590,8 +594,12 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			nang = atoi(buffer);
 			angs = _mol_malloc(sizeof(int) * 3 * nang);
 			for (i = 0; i < nang; i++) {
-				fscanf(fp, "%d %d %d", &angs[3 * i],
+				int scanned = fscanf(fp, "%d %d %d", &angs[3 * i],
 				       &angs[3 * i + 1], &angs[3 * i + 2]);
+				if (scanned != 3) {
+					fprintf(stderr, "error reading angles from psf\n");
+					exit(EXIT_FAILURE);
+				}
 			}
 			continue;
 		}
@@ -599,9 +607,13 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			ndih = atoi(buffer);
 			dihs = _mol_malloc(sizeof(int) * 4 * ndih);
 			for (i = 0; i < ndih; i++) {
-				fscanf(fp, "%d %d %d %d", &dihs[4 * i],
+				int scanned = fscanf(fp, "%d %d %d %d", &dihs[4 * i],
 				       &dihs[4 * i + 1], &dihs[4 * i + 2],
 				       &dihs[4 * i + 3]);
+				if (scanned != 4) {
+					fprintf(stderr, "error reading dihedrals from psf\n");
+					exit(EXIT_FAILURE);
+				}
 			}
 			continue;
 		}
@@ -609,9 +621,13 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			nimp = atoi(buffer);
 			imps = _mol_malloc(sizeof(int) * 4 * nimp);
 			for (i = 0; i < nimp; i++) {
-				fscanf(fp, "%d %d %d %d", &imps[4 * i],
+				int scanned = fscanf(fp, "%d %d %d %d", &imps[4 * i],
 				       &imps[4 * i + 1], &imps[4 * i + 2],
 				       &imps[4 * i + 3]);
+				if (scanned != 4) {
+					fprintf(stderr, "error reading impropers from psf\n");
+					exit(EXIT_FAILURE);
+				}
 			}
 			continue;
 		}
@@ -619,8 +635,12 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			ndon = atoi(buffer);
 			dons = _mol_malloc(sizeof(int) * 2 * ndon);
 			for (i = 0; i < ndon; i++) {
-				fscanf(fp, "%d %d", &dons[2 * i],
+				int scanned = fscanf(fp, "%d %d", &dons[2 * i],
 				       &dons[2 * i + 1]);
+				if (scanned != 2) {
+					fprintf(stderr, "error reading donors from psf\n");
+					exit(EXIT_FAILURE);
+				}
 			}
 			continue;
 		}
@@ -628,8 +648,12 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			nacc = atoi(buffer);
 			acpts = _mol_malloc(sizeof(int) * 2 * nacc);
 			for (i = 0; i < nacc; i++) {
-				fscanf(fp, "%d %d", &acpts[2 * i],
+				int scanned = fscanf(fp, "%d %d", &acpts[2 * i],
 				       &acpts[2 * i + 1]);
+				if (scanned != 2) {
+					fprintf(stderr, "error reading acceptors from psf\n");
+					exit(EXIT_FAILURE);
+				}
 			}
 			continue;
 		}
