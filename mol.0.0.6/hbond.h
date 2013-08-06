@@ -161,8 +161,6 @@ void get_categorized_hbondeng( double *engcat, double *bb_bb_sr, double *bb_bb_l
 
 void set_categorized_hbondeng( double *engcat, double bb_bb_sr, double bb_bb_lr, double bb_sc, double sc_sc );
 
-void print_acceptor_hybridization_states( struct atomgrp *ag );
-
 void check_fading_funcs( void );
 
 double get_pairwise_hbondeng_nblist( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id, double *engcat, double rc2, int comp_grad );

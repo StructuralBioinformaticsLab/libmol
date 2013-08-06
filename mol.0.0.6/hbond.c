@@ -458,98 +458,92 @@ void mark_hbond_donors(struct atomgrp *ag, struct prm *prm)
 	int atomi;
 
 	for (atomi = 0; atomi < ag->natoms; atomi++) {
+		if (!is_hydrogen(&ag->atoms[atomi], prm)) 
+			continue;
+
 		if (DEBUG_HBOND_DONOR)
 			printf("atom index: %d\n", atomi);
 
-		if (is_hydrogen(&ag->atoms[atomi], prm)) {
-			int j;
-			int donor_atomi;
-			int heavy_donor_base_atomi = 0;
-			mol_atom *donor_atom;
-			mol_atom *heavy_donor_base_atom = NULL;
-			const int hydrogen_atomi = atomi;
-			mol_atom *hydrogen_atom = &(ag->atoms[hydrogen_atomi]);
-			assert(hydrogen_atom->nbondis == 1);
+		int j;
+		int donor_atomi;
+		int heavy_donor_base_atomi = 0;
+		mol_atom *donor_atom;
+		mol_atom *heavy_donor_base_atom = NULL;
+		const int hydrogen_atomi = atomi;
+		mol_atom *hydrogen_atom = &(ag->atoms[hydrogen_atomi]);
+		assert(hydrogen_atom->nbondis == 1);
 
-			if (DEBUG_HBOND_DONOR) {
-				printf("\t----------------\n");
-				printf("\t(hydrogen)\n");
-				printf("\tatom type name prefix: %s\n",
-				       prm->atoms[hydrogen_atom->
-						  atom_typen].typemaj);
-				printf("\tatom type name suffix: %s\n",
-				       prm->atoms[hydrogen_atom->
-						  atom_typen].typemin);
+		if (DEBUG_HBOND_DONOR) {
+			printf("\t----------------\n");
+			printf("\t(hydrogen)\n");
+			printf("\tatom type name prefix: %s\n",
+			       prm->atoms[hydrogen_atom->atom_typen].typemaj);
+			printf("\tatom type name suffix: %s\n",
+			       prm->atoms[hydrogen_atom->atom_typen].typemin);
+		}
+
+		donor_atomi = bonded_atom_index(ag, hydrogen_atomi, 0);
+		assert(donor_atomi < ag->natoms);
+		hydrogen_atom->base = donor_atomi;
+		donor_atom = &(ag->atoms[donor_atomi]);
+		donor_atom->hprop |= HBOND_DONOR;
+
+		if (DEBUG_HBOND_DONOR) {
+			printf("\tdonor atom: \n");
+			printf("\tatom index: %d\n", donor_atomi);
+			printf("\t\tatom type name prefix: %s\n",
+			       prm->atoms[donor_atom->atom_typen].typemaj);
+			printf("\t\tatom type name suffix: %s\n",
+			       prm->atoms[donor_atom->atom_typen].typemin);
+			printf("\tdonor bonds: \n");
+		}
+
+		int heavy_donor_base_count = 0;	// number of non-H donor bases
+		for (j = 0; j < donor_atom->nbondis; j++) {
+			int donor_base_atomi;
+			mol_atom *donor_base_atom;
+
+			donor_base_atomi = bonded_atom_index(ag, donor_atomi, j);
+			assert(donor_base_atomi < ag->natoms);
+			donor_base_atom = &(ag->atoms[donor_base_atomi]);
+
+			if (is_hydrogen(donor_base_atom, prm))
+				continue;
+
+			if (DEBUG_HBOND_DONOR)
+				printf("\t\t(heavy atom)\n");
+			heavy_donor_base_count++;
+			// take the first one as the donor base
+			if (heavy_donor_base_count == 1) {
+				heavy_donor_base_atomi = donor_base_atomi;
+				heavy_donor_base_atom = donor_base_atom;
 			}
+			if (DEBUG_HBOND_DONOR)
+				printf("\t\tbond %d:\n", j);
+		}
 
-			donor_atomi = bonded_atom_index(ag, hydrogen_atomi, 0);
-			assert(donor_atomi < ag->natoms);
-			hydrogen_atom->base = donor_atomi;
-			donor_atom = &(ag->atoms[donor_atomi]);
-			donor_atom->hprop |= HBOND_DONOR;
+		if (heavy_donor_base_count == 1)	// rotatable hydrogen
+			hydrogen_atom->hprop |= ROTATABLE_HYDROGEN;
+		else
+			hydrogen_atom->hprop |= FIXED_HYDROGEN;
 
-			if (DEBUG_HBOND_DONOR) {
-				printf("\tdonor atom: \n");
-				printf("\tatom index: %d\n", donor_atomi);
-				printf("\t\tatom type name prefix: %s\n",
-				       prm->atoms[donor_atom->
-						  atom_typen].typemaj);
-				printf("\t\tatom type name suffix: %s\n",
-				       prm->atoms[donor_atom->
-						  atom_typen].typemin);
-				printf("\tdonor bonds: \n");
-			}
+		if (DEBUG_HBOND_DONOR) {
+			printf("\t\tthe chosen one:\n");
+			printf("\t\tatom index: %d\n",
+			       heavy_donor_base_atomi);
+			printf("\t\t\tatom type name prefix: %s\n",
+			       prm->
+			       atoms[heavy_donor_base_atom->atom_typen].
+			       typemaj);
+			printf("\t\t\tatom type name suffix: %s\n",
+			       prm->
+			       atoms[heavy_donor_base_atom->atom_typen].
+			       typemaj);
+		}
 
-			int heavy_donor_base_count = 0;	// number of non-H donor bases
-			for (j = 0; j < donor_atom->nbondis; j++) {
-				int donor_base_atomi;
-				mol_atom *donor_base_atom;
-
-				donor_base_atomi =
-				    bonded_atom_index(ag, donor_atomi, j);
-				assert(donor_base_atomi < ag->natoms);
-				donor_base_atom =
-				    &(ag->atoms[donor_base_atomi]);
-
-				if (!is_hydrogen(donor_base_atom, prm)) {
-					if (DEBUG_HBOND_DONOR)
-						printf("\t\t(heavy atom)\n");
-					heavy_donor_base_count++;
-					if (heavy_donor_base_count == 1)	// take the first one as the donor base
-					{
-						heavy_donor_base_atomi =
-						    donor_base_atomi;
-						heavy_donor_base_atom =
-						    donor_base_atom;
-					}
-				}
-				if (DEBUG_HBOND_DONOR)
-					printf("\t\tbond %d:\n", j);
-			}
-
-			if (heavy_donor_base_count == 1)	// rotatable hydrogen
-				hydrogen_atom->hprop |= ROTATABLE_HYDROGEN;
-			else
-				hydrogen_atom->hprop |= FIXED_HYDROGEN;
-
-			if (DEBUG_HBOND_DONOR) {
-				printf("\t\tthe chosen one:\n");
-				printf("\t\tatom index: %d\n",
-				       heavy_donor_base_atomi);
-				printf("\t\t\tatom type name prefix: %s\n",
-				       prm->
-				       atoms[heavy_donor_base_atom->atom_typen].
-				       typemaj);
-				printf("\t\t\tatom type name suffix: %s\n",
-				       prm->
-				       atoms[heavy_donor_base_atom->atom_typen].
-				       typemaj);
-			}
-
-			if (DEBUG_HBOND_DONOR) {
-				printf("\n");
-				printf("\t----------------\n");
-			}
+		if (DEBUG_HBOND_DONOR) {
+			printf("\n");
+			printf("\t----------------\n");
 		}
 	}
 }
@@ -651,16 +645,16 @@ void fix_acceptor_bases(struct atomgrp *ag, struct prm *prm)
 			int base_i = bonded_atom_index(ag, i, j);
 			mol_atom *base = &(ag->atoms[base_i]);
 
-			if (!is_hydrogen(base, prm)) {
-				if (atom->base == -1)
-					atom->base = base_i;
-				else if ((atom->base2 == -1)
-					 && (atom->base != base_i))
-					atom->base2 = base_i;
-			}
+			if (is_hydrogen(base, prm))
+				continue;
+
+			if (atom->base == -1)
+				atom->base = base_i;
+			else if ((atom->base2 == -1) && (atom->base != base_i))
+				atom->base2 = base_i;
 		}
 
-		if (atom->base2 == -1)
+		if (atom->base2 == -1) {
 			for (int j = 0; j < atom->nbondis; j++) {
 				int base_i = bonded_atom_index(ag, i, j);
 
@@ -669,20 +663,11 @@ void fix_acceptor_bases(struct atomgrp *ag, struct prm *prm)
 					break;
 				}
 			}
+		}
 	}
 }
 
-void print_acceptor_hybridization_states(struct atomgrp *ag)
-{
-	for (int i = 0; i < ag->natoms; i++) {
-		mol_atom *atom = &(ag->atoms[i]);
-
-		if (!(atom->hprop & HBOND_ACCEPTOR))
-			continue;
-	}
-}
-
-static int get_hbond_weight_type(int hbe_type)
+static enum HB_Weight_Type get_hbond_weight_type(int hbe_type)
 {
 	switch (hbe_type) {
 	case hbe_BBTURN:
@@ -743,17 +728,16 @@ static int get_acceptor_chem_type(mol_atom * acc)
 {
 	if (acc->backbone)
 		return hbacc_BB;
-	else {
-		switch (acc->hybridization) {
-		case SP2_HYBRID:
-			return hbacc_SP2;
-		case SP3_HYBRID:
-			return hbacc_SP3;
-		case RING_HYBRID:
-			return hbacc_RING;
-		default:
-			break;
-		}
+
+	switch (acc->hybridization) {
+	case SP2_HYBRID:
+		return hbacc_SP2;
+	case SP3_HYBRID:
+		return hbacc_SP3;
+	case RING_HYBRID:
+		return hbacc_RING;
+	default:
+		break;
 	}
 
 	return hbacc_NO;
@@ -769,11 +753,13 @@ static int get_hbe_type(mol_atom * atoms, mol_atom * hydro, mol_atom * acc)
 	int don_type = get_donor_chem_type(don);
 	int acc_type = get_acceptor_chem_type(acc);
 
-	if ((don_type == hbdon_BB) && (acc_type == hbacc_BB)) {
+	if ((don_type == hbdon_BB) && (acc_type == hbacc_BB))
 		return classify_BB_by_separation(don, acc);
-	} else if (acc_type == hbacc_BB) {
+
+	if (acc_type == hbacc_BB)
 		return hbe_BSC;
-	} else if (don_type == hbdon_BB) {
+
+	if (don_type == hbdon_BB) {
 		switch (acc_type) {
 		case hbacc_SP2:
 			return hbe_SP2B;
@@ -797,28 +783,6 @@ static int get_hbe_type(mol_atom * atoms, mol_atom * hydro, mol_atom * acc)
 		}
 	}
 }
-
-/*
-double sqrt_gmp( double v )
-{
-   mpf_t x, y;
-
-   mpf_init( x );            // use default precision
-   mpf_init( y );            // use default precision
-
-//   mpf_init2 ( y, 256 );     // precision at least 256 bits
-
-   mpf_set_d( x, v );
-   mpf_sqrt( y, x );
-   v = mpf_get_d ( y );
-
-   mpf_clear( x );
-   mpf_clear( y );
-
-   return v;
-}
-
-*/
 
 double *alloc_categorized_hbondeng(void)
 {
@@ -1473,7 +1437,7 @@ static double get_pairwise_hbondeng(mol_atom * atoms_hydro, int hydro_id,
 	if (hbond_energy_and_gradient_computation
 	    (hbe, atoms_hydro, hydro_id, atoms_acc, acc_id, &en, comp_grad)) {
 		if (engcat != NULL) {
-			int hbw = get_hbond_weight_type(hbe);
+			enum HB_Weight_Type hbw = get_hbond_weight_type(hbe);
 			engcat[hbw] += en;
 		}
 
@@ -1509,7 +1473,7 @@ double get_pairwise_hbondeng_nblist(mol_atom * atoms_hydro, int hydro_id,
 	if (hbond_energy_and_gradient_computation
 	    (hbe, atoms_hydro, hydro_id, atoms_acc, acc_id, &en, comp_grad)) {
 		if (engcat != NULL) {
-			int hbw = get_hbond_weight_type(hbe);
+			enum HB_Weight_Type hbw = get_hbond_weight_type(hbe);
 			engcat[hbw] += en;
 		}
 
@@ -1582,50 +1546,45 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 			    min_pt2bx_dist2(snode->lx, snode->ly, snode->lz,
 					    snode->dim, x, y, z);
 
-			if (d2 < rc2) {
-				if (atom_i->hprop & DONATABLE_HYDROGEN) {
-					for (int j = 0; j < snode->n; j++) {
-						int aj = snode->indices[j];
+			if (rc2 < d2)
+				continue;
 
-						if ((j >= nf) && (aj <= ai))
-							continue;
+			if (atom_i->hprop & DONATABLE_HYDROGEN) {
+				for (int j = 0; j < snode->n; j++) {
+					int aj = snode->indices[j];
 
-						mol_atom *atom_j =
-						    &(octree_static->atoms[aj]);
+					if ((j >= nf) && (aj <= ai))
+						continue;
 
-						if (!
-						    (atom_j->
-						     hprop & HBOND_ACCEPTOR))
-							continue;
+					mol_atom *atom_j =
+					    &(octree_static->atoms[aj]);
 
-						(*energy) +=
-						    get_pairwise_hbondeng
-						    (octree_moving->atoms, ai,
-						     octree_static->atoms, aj,
-						     ags, engcat, rc2, 1);
-					}
-				} else {
-					for (int j = 0; j < snode->n; j++) {
-						int aj = snode->indices[j];
+					if (!(atom_j->hprop & HBOND_ACCEPTOR))
+						continue;
 
-						if ((j >= nf) && (aj <= ai))
-							continue;
+					(*energy) += get_pairwise_hbondeng
+					    (octree_moving->atoms, ai,
+					     octree_static->atoms, aj,
+					     ags, engcat, rc2, 1);
+				}
+			} else {
+				for (int j = 0; j < snode->n; j++) {
+					int aj = snode->indices[j];
 
-						mol_atom *atom_j =
-						    &(octree_static->atoms[aj]);
+					if ((j >= nf) && (aj <= ai))
+						continue;
 
-						if (!
-						    (atom_j->
-						     hprop &
-						     DONATABLE_HYDROGEN))
-							continue;
+					mol_atom *atom_j =
+					    &(octree_static->atoms[aj]);
 
-						(*energy) +=
-						    get_pairwise_hbondeng
-						    (octree_static->atoms, aj,
-						     octree_moving->atoms, ai,
-						     ags, engcat, rc2, 1);
-					}
+					if (!(atom_j->hprop &
+					     DONATABLE_HYDROGEN))
+						continue;
+
+					(*energy) += get_pairwise_hbondeng
+					    (octree_static->atoms, aj,
+					     octree_moving->atoms, ai,
+					     ags, engcat, rc2, 1);
 				}
 			}
 		}
@@ -1644,52 +1603,45 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 			    min_pt2bx_dist2(mnode->lx, mnode->ly, mnode->lz,
 					    mnode->dim, x, y, z);
 
-			if (d2 < rc2) {
-				if (atom_i->hprop & DONATABLE_HYDROGEN) {
-					for (int j = mnode->nfixed;
-					     j < mnode->n; j++) {
-						int aj = mnode->indices[j];
+			if (rc2 < d2)
+				continue;
 
-						if ((i >= nf) && (aj >= ai))
-							continue;
+			if (atom_i->hprop & DONATABLE_HYDROGEN) {
+				for (int j = mnode->nfixed; j < mnode->n; j++) {
+					int aj = mnode->indices[j];
 
-						mol_atom *atom_j =
-						    &(octree_moving->atoms[aj]);
+					if ((i >= nf) && (aj >= ai))
+						continue;
 
-						if (!
-						    (atom_j->
-						     hprop & HBOND_ACCEPTOR))
-							continue;
+					mol_atom *atom_j =
+					    &(octree_moving->atoms[aj]);
 
-						(*energy) +=
-						    get_pairwise_hbondeng
-						    (octree_static->atoms, ai,
-						     octree_moving->atoms, aj,
-						     ags, engcat, rc2, 1);
-					}
-				} else {
-					for (int j = mnode->nfixed;
-					     j < mnode->n; j++) {
-						int aj = mnode->indices[j];
+					if (!(atom_j->hprop & HBOND_ACCEPTOR))
+						continue;
 
-						if ((i >= nf) && (aj >= ai))
-							continue;
+					(*energy) += get_pairwise_hbondeng
+					    (octree_static->atoms, ai,
+					     octree_moving->atoms, aj,
+					     ags, engcat, rc2, 1);
+				}
+			} else {
+				for (int j = mnode->nfixed; j < mnode->n; j++) {
+					int aj = mnode->indices[j];
 
-						mol_atom *atom_j =
-						    &(octree_moving->atoms[aj]);
+					if ((i >= nf) && (aj >= ai))
+						continue;
 
-						if (!
-						    (atom_j->
-						     hprop &
-						     DONATABLE_HYDROGEN))
-							continue;
+					mol_atom *atom_j =
+					    &(octree_moving->atoms[aj]);
 
-						(*energy) +=
-						    get_pairwise_hbondeng
-						    (octree_moving->atoms, aj,
-						     octree_static->atoms, ai,
-						     ags, engcat, rc2, 1);
-					}
+					if (!(atom_j->hprop &
+					     DONATABLE_HYDROGEN))
+						continue;
+
+					(*energy) += get_pairwise_hbondeng
+					    (octree_moving->atoms, aj,
+					     octree_static->atoms, ai,
+					     ags, engcat, rc2, 1);
 				}
 			}
 		}
@@ -1836,20 +1788,20 @@ void hbondeng_all(struct atomgrp *ag, double *energy, struct nblist *nblst)
 							 rc2, 1);
 
 			int hbe = get_hbe_type(ag->atoms, atom_i, atom_j);
-			int hbw = get_hbond_weight_type(hbe);
+			enum HB_Weight_Type hbw = get_hbond_weight_type(hbe);
 
 			if (en[0] >= 0)
 				continue;
 
 			(*energy) += en[0];
 
-			if (hbw > 0) {
-				en[hbw] += en[0];
-				printf("%d %d %s  %d %d %s  %d %d   %lf\n",
-				       ai + 1, atom_i->res_seq, atom_i->name,
-				       aj + 1, atom_j->res_seq, atom_j->name,
-				       hbe, hbw, en[0]);
-			}
+			if (hbw == hbw_NONE)
+				continue;
+
+			en[hbw] += en[0];
+			printf("%d %d %s  %d %d %s  %d %d   %lf\n", ai + 1,
+			       atom_i->res_seq, atom_i->name, aj + 1,
+			       atom_j->res_seq, atom_j->name, hbe, hbw, en[0]);
 		}
 	}
 
@@ -1877,21 +1829,17 @@ void hbondeng_bbexc(struct atomgrp *ag, double *energy, struct nblist *nblst)
 	for (int i = 0; i < ag->natoms; i++)
 		blacklist[i] = 0;
 
-	for (int i = 0; i < ag->natoms; i++) {
-		int ai = i;
+	for (int ai = 0; ai < ag->natoms; ai++) {
 		mol_atom *atom_i = &(ag->atoms[ai]);
 
 		if (!(atom_i->hprop & DONATABLE_HYDROGEN))
 			continue;
 
-		for (int j = 0; j < ag->natoms; j++) {
-			int aj = j;
+		for (int aj = 0; aj < ag->natoms; aj++) {
 			mol_atom *atom_j = &(ag->atoms[aj]);
 
-			if ((atom_i->comb_res_seq ==
-			     atom_j->
-			     comb_res_seq) /*( i == j ) */ ||hb_bonded(atom_i,
-								       atom_j))
+			if ((atom_i->comb_res_seq == atom_j->comb_res_seq) 
+			    ||hb_bonded(atom_i, atom_j))
 				continue;
 
 			if (!(atom_j->hprop & HBOND_ACCEPTOR))
@@ -1907,62 +1855,53 @@ void hbondeng_bbexc(struct atomgrp *ag, double *energy, struct nblist *nblst)
 			if ((en[0] < 0)
 			    && ((hbe == 1) || (hbe == 2) || (hbe == 3)
 				|| (hbe == 4))) {
-				blacklist[i] = 1;
-				blacklist[j] = 1;
+				blacklist[ai] = 1;
+				blacklist[aj] = 1;
 			}
 		}
 	}
 
-	for (int i = 0; i < ag->natoms; i++)
-		if (blacklist[i] == 0) {
+	for (int ai = 0; ai < ag->natoms; ai++) {
+		if (blacklist[ai] == 1)
+			continue;
 
-			int ai = i;
-			mol_atom *atom_i = &(ag->atoms[ai]);
+		mol_atom *atom_i = &(ag->atoms[ai]);
 
-			if (!(atom_i->hprop & DONATABLE_HYDROGEN))
+		if (!(atom_i->hprop & DONATABLE_HYDROGEN))
+			continue;
+
+		for (int aj = 0; aj < ag->natoms; aj++) {
+			if (blacklist[aj] == 1)
 				continue;
 
-			for (int j = 0; j < ag->natoms; j++)
-				if (blacklist[j] == 0) {
-					int aj = j;
-					mol_atom *atom_j = &(ag->atoms[aj]);
+			mol_atom *atom_j = &(ag->atoms[aj]);
 
-					if ((atom_i->comb_res_seq ==
-					     atom_j->
-					     comb_res_seq) /*( i == j ) */
-					    ||hb_bonded(atom_i, atom_j))
-						continue;
+			if ((atom_i->comb_res_seq == atom_j-> comb_res_seq) 
+			    ||hb_bonded(atom_i, atom_j))
+				continue;
 
-					if (!(atom_j->hprop & HBOND_ACCEPTOR))
-						continue;
+			if (!(atom_j->hprop & HBOND_ACCEPTOR))
+				continue;
 
-					en[0] =
-					    get_pairwise_hbondeng_nblist(ag->
-									 atoms,
-									 ai,
-									 ag->
-									 atoms,
-									 aj,
-									 NULL,
-									 rc2,
-									 1);
+			en[0] =
+			    get_pairwise_hbondeng_nblist(ag->atoms, ai,
+							 ag->atoms, aj, NULL,
+							 rc2, 1);
 
-					int hbe =
-					    get_hbe_type(ag->atoms, atom_i,
-							 atom_j);
-					int hbw = get_hbond_weight_type(hbe);
+			int hbe = get_hbe_type(ag->atoms, atom_i, atom_j);
+			enum HB_Weight_Type hbw = get_hbond_weight_type(hbe);
 
-					if (en[0] >= 0)
-						continue;
+			if (en[0] >= 0)
+				continue;
 
-					(*energy) += en[0];
+			(*energy) += en[0];
 
-					if (hbw > 0) {
-						en[hbw] += en[0];
-//               printf( "%d %d %s  %d %d %s  %d %d   %lf\n", ai + 1, atom_i->res_seq, atom_i->name, aj + 1, atom_j->res_seq, atom_j->name                       hbe, hbw, en[ 0 ] );
-					}
-				}
+			if (hbw == hbw_NONE)
+				continue;
+
+			en[hbw] += en[0];
 		}
+	}
 
 	printf("total = %lf, SR_BB = %lf, LR_BB = %lf, BB_SC = %lf, SC = %lf\n",
 	       (*energy), en[hbw_SR_BB], en[hbw_LR_BB], en[hbw_BB_SC],
@@ -1985,9 +1924,8 @@ void water_mediated_hbondeng(struct atomgrp *ag, double *energy)
 
 	(*energy) = 0;
 
-	for (int k = 0; k < ag->natoms; k++)	// Water Oxygen
+	for (int ak = 0; ak < ag->natoms; ak++)	// Water Oxygen
 	{
-		int ak = k;
 		mol_atom *atom_k = &(ag->atoms[ak]);
 
 		if ((ag->res_type[atom_k->res_num] != HOH)
@@ -1996,8 +1934,7 @@ void water_mediated_hbondeng(struct atomgrp *ag, double *energy)
 
 		int nb = 0;
 
-		for (int i = 0; i < ag->natoms; i++) {
-			int ai = i;
+		for (int ai = 0; ai < ag->natoms; ai++) {
 			mol_atom *atom_i = &(ag->atoms[ai]);
 
 			double dx = atom_k->X - atom_i->X;
@@ -2018,21 +1955,19 @@ void water_mediated_hbondeng(struct atomgrp *ag, double *energy)
 		if (nb < 10)
 			continue;
 
-		for (int i = 0; i < ag->natoms; i++)	// Donated Hydrogen which is NOT H of a Water molecule
+		for (int ai = 0; ai < ag->natoms; ai++)	// Donated Hydrogen which is NOT H of a Water molecule
 		{
-			int ai = i;
 			mol_atom *atom_i = &(ag->atoms[ai]);
 
 			if (!(atom_i->hprop & DONATABLE_HYDROGEN)
 			    || (ag->res_type[atom_i->res_num] == HOH))
 				continue;
 
-			for (int j = 0; j < ag->natoms; j++)	// Acceptor that is not the same as Atom_i and has no hbond with Atom_i
+			for (int aj = 0; aj < ag->natoms; aj++)	// Acceptor that is not the same as Atom_i and has no hbond with Atom_i
 			{
-				if (k == j)
+				if (ak == aj)
 					continue;
 
-				int aj = j;
 				mol_atom *atom_j = &(ag->atoms[aj]);
 
 				if ((atom_i->comb_res_seq ==
@@ -2791,64 +2726,63 @@ static int get_hbe_type_smallmol(mol_atom * atoms, mol_atom * hydro,
 	int don_type = get_donor_chem_type_smallmol(don, prot);
 	int acc_type = get_acceptor_chem_type_smallmol(acc, prot);
 
-	if ((don_type == hbdon_BB) && (acc_type == hbacc_BB))	// acc BB  don BB
+	if ((don_type == hbdon_BB) && (acc_type == hbacc_BB)) { // acc BB  don BB
 		return classify_BB_by_separation(don, acc);
-	else if ((acc_type == hbacc_BB))	// acc BB  don S*
+
+	} else if ((acc_type == hbacc_BB)) { // acc BB  don S*
 		switch (don_type) {
 		case hbdon_SC:
-			return hbe_BSC;	// acc BB  don SC
+			return hbe_BSC; // acc BB  don SC
 		case hbdon_SM:
-			return hbe_BSM;	// acc BB  don SM
-	} else if (don_type == hbdon_BB)	// acc S*  don BB
-	{
+			return hbe_BSM; // acc BB  don SM
+		} 
+	} else if (don_type == hbdon_BB) { // acc S*  don BB
 		switch (acc_type) {
 		case hbacc_SP2:
-			return hbe_SP2B;	// acc SC-SP2   don BB
+			return hbe_SP2B; // acc SC-SP2   don BB
 		case hbacc_SP3:
-			return hbe_SP3B;	// acc SC-SP3   don BB
+			return hbe_SP3B; // acc SC-SP3   don BB
 		case hbacc_RING:
-			return hbe_RINGB;	// acc SC-RING  don BB
+			return hbe_RINGB; // acc SC-RING  don BB
 
 		case hbacc_SP2_SM:
-			return hbe_SP2SMB;	// acc SM-SP2   don BB
+			return hbe_SP2SMB; // acc SM-SP2   don BB
 		case hbacc_SP3_SM:
-			return hbe_SP3SMB;	// acc SM-SP3   don BB
+			return hbe_SP3SMB; // acc SM-SP3   don BB
 		case hbacc_RING_SM:
-			return hbe_RINGSMB;	// acc SM-RING  don BB
+			return hbe_RINGSMB; // acc SM-RING  don BB
 		}
-	} else if (don_type == hbdon_SC)	// acc SM  don SC
-	{
+	} else if (don_type == hbdon_SC) { // acc SM  don SC
 		switch (acc_type) {
 		case hbacc_SP2:
-			return hbe_SP2SC;	// acc SC-SP2   don SC
+			return hbe_SP2SC; // acc SC-SP2   don SC
 		case hbacc_SP3:
-			return hbe_SP3SC;	// acc SC-SP3   don SC
+			return hbe_SP3SC; // acc SC-SP3   don SC
 		case hbacc_RING:
-			return hbe_RINGSC;	// acc SC-RING  don SC
+			return hbe_RINGSC; // acc SC-RING  don SC
 
 		case hbacc_SP2_SM:
-			return hbe_SP2SMSC;	// acc SM-SP2   don SC
+			return hbe_SP2SMSC; // acc SM-SP2   don SC
 		case hbacc_SP3_SM:
-			return hbe_SP3SMSC;	// acc SM-SP3   don SC
+			return hbe_SP3SMSC; // acc SM-SP3   don SC
 		case hbacc_RING_SM:
-			return hbe_RINGSMSC;	// acc SM-RING  don SC
+			return hbe_RINGSMSC; // acc SM-RING  don SC
 		}
-	} else if (don_type == hbdon_SM)	// acc SM  don SC
-	{
+	} else if (don_type == hbdon_SM) { // acc SM  don SC
 		switch (acc_type) {
 		case hbacc_SP2:
-			return hbe_SP2SCSM;	// acc SC-SP2   don SM
+			return hbe_SP2SCSM; // acc SC-SP2   don SM
 		case hbacc_SP3:
-			return hbe_SP3SCSM;	// acc SC-SP3   don SM
+			return hbe_SP3SCSM; // acc SC-SP3   don SM
 		case hbacc_RING:
-			return hbe_RINGSCSM;	// acc SC-RING  don SM
+			return hbe_RINGSCSM; // acc SC-RING  don SM
 
 		case hbacc_SP2_SM:
-			return hbe_SP2SM;	// acc SM-SP2   don SM
+			return hbe_SP2SM; // acc SM-SP2   don SM
 		case hbacc_SP3_SM:
-			return hbe_SP3SM;	// acc SM-SP3   don SM
+			return hbe_SP3SM; // acc SM-SP3   don SM
 		case hbacc_RING_SM:
-			return hbe_RINGSM;	// acc SM-RING  don SM
+			return hbe_RINGSM; // acc SM-RING  don SM
 		}
 	}
 	return hbe_NONE;
@@ -2884,7 +2818,7 @@ static int get_acceptor_chem_type_smallmol(mol_atom * acc,
 			if (smallmol_flag)
 				break;
 		}
-		if (smallmol_flag) {	// small molecule
+		if (smallmol_flag) { // small molecule
 			switch (acc->hybridization) {
 			case SP2_HYBRID:
 				return hbacc_SP2_SM;
@@ -2895,7 +2829,7 @@ static int get_acceptor_chem_type_smallmol(mol_atom * acc,
 			default:
 				break;
 			}
-		} else {	// side chain
+		} else { // side chain
 			switch (acc->hybridization) {
 			case SP2_HYBRID:
 				return hbacc_SP2;
