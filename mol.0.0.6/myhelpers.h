@@ -79,7 +79,9 @@ void* myrealloc(void* ptr, size_t size);
 
 #if defined _DARWIN_  && defined _DARWIN_SNOW_LEOPARD_
 
-int  getline (char **lineptr, size_t *n, FILE *stream);
+int  getline2(char **lineptr, size_t *n, FILE *stream);
+
+#define getline getline2
 
 #endif /* _DARWIN_ && _DARWIN_SNOW_LEOPARD_ */
 

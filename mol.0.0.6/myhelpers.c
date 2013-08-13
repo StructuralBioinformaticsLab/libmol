@@ -84,7 +84,7 @@ void* myrealloc (void* ptr, size_t size)
 #if defined _DARWIN_  && defined _DARWIN_SNOW_LEOPARD_
 
 int
-getline (char **lineptr, size_t *n, FILE *stream)
+getline2 (char **lineptr, size_t *n, FILE *stream)
 {
  char* read=(char*)malloc(10000*sizeof(char));
  char* result= fgets(read, 10000, stream);
