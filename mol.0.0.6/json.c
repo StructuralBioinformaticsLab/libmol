@@ -28,6 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
+#ifndef _NO_JANSSON_
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -426,3 +427,4 @@ void read_ff_json(const char *json_file, struct atomgrp *ag)
 	}
 	_mol_atom_group_copy_from_deprecated(ag);
 }
+#endif /* _NO_JANSSON_ */

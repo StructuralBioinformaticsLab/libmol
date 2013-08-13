@@ -33,9 +33,13 @@ else # assume BG/L
 	HEADER_INSTALL_DIR = $(HOME)/usr/include
 endif
 
+ifeq ($(JSON), none)
+	CPPFLAGS := -D _NO_JANSSON_ $(CPPFLAGS)
+endif
+
 ifeq ($(_os), Darwin)
 
-CPPFLAGS := -D _DARWIN_ $(CPPFLAGS)
+CPPFLAGS := -D _DARWIN_ -arch x86_64 $(CPPFLAGS)
 _os_ver = $(shell sw_vers -productVersion | cut -f 1-2 -d .)
 ifeq ($(_os_ver), 10.6) #lion
 CPPFLAGS := -D _DARWIN_SNOW_LEOPARD_ $(CPPFLAGS)
