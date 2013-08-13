@@ -2729,7 +2729,7 @@ static int get_hbe_type_smallmol(mol_atom * atoms, mol_atom * hydro,
 	if ((don_type == hbdon_BB) && (acc_type == hbacc_BB)) { // acc BB  don BB
 		return classify_BB_by_separation(don, acc);
 
-	} else if ((acc_type == hbacc_BB)) { // acc BB  don S*
+	} else if (acc_type == hbacc_BB) { // acc BB  don S*
 		switch (don_type) {
 		case hbdon_SC:
 			return hbe_BSC; // acc BB  don SC
