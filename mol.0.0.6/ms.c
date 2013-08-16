@@ -33,15 +33,18 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <math.h>
 #include <assert.h>
+
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 struct atomgrp* read_ms (const char* path, struct prm* prm)
 {
 	FILE* fp = myfopen (path, "r");
 
 	struct atomgrp* ag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
-	ag->natoms = 100; // just a guess, realloc as necessary
-	ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
 
 	char* line = NULL;
 	size_t len = 0;
@@ -52,6 +55,8 @@ struct atomgrp* read_ms (const char* path, struct prm* prm)
 
 	// read every line of the pdb file
 	int atomi = 0;
+	ag->natoms = 100; // just a guess, realloc as necessary
+	ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
 	while (getline (&line, &len, fp) != -1)
 	{
 		if (strncmp (line, "ATOM  ", 6) != 0) // check for ATOM line
@@ -160,14 +165,14 @@ struct atomgrp* read_ms_nopar (const char* path)
 	FILE* fp = myfopen (path, "r");
 
 	struct atomgrp* ag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
-	ag->natoms = 100; // just a guess, realloc as necessary
-	ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
 
 	char* line = NULL;
 	size_t len = 0;
 
 	// read every line of the pdb file
 	int atomi = 0;
+	ag->natoms = 100; // just a guess, realloc as necessary
+	ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
 	while (getline (&line, &len, fp) != -1)
 	{
 		if (strncmp (line, "ATOM  ", 6) != 0) // check for ATOM line
@@ -242,11 +247,12 @@ void fprint_ms (struct atomgrp* ag, struct prm* prm, const char* path)
 		int atomi;
 		for (atomi = 0; atomi < ags[agi]->natoms; atomi++, sum_atomi++)
 		{
+			float attl;
+            char atomname[5];
 			fprintf (fp, "%-6s", "ATOM"); // atom number
 			fprintf (fp, "%5d", sum_atomi+1); // atom number
 			fprintf (fp, " "); // 1 space
 
-            char atomname[5];
             if (strlen(prm->atoms[ags[agi]->atoms[atomi].atom_typen].typemin) == 4) {
                 strcpy(atomname, prm->atoms[ags[agi]->atoms[atomi].atom_typen].typemin);
             } else {
@@ -278,7 +284,7 @@ void fprint_ms (struct atomgrp* ag, struct prm* prm, const char* path)
 
 			fprintf (fp, "   "); // 3 spaces
 			//fprintf (fp, "%1d", ags[agi]->atoms[atomi].sa); // sa boolean
-			float attl=0.0;
+			attl=0.0;
 			if (ags[agi]->atoms[atomi].attl > 0.0)
 			{
 				attl += ags[agi]->atoms[atomi].attl;
@@ -330,6 +336,7 @@ void fprint_ms_nopar (struct atomgrp* ag, const char* inf, const char* ouf)
 	int atomi = 0;
 	while (getline (&line, &len, fp) != -1)
 	{
+		float attl;
 		if (strncmp (line, "ATOM  ", 6) != 0 && strncmp (line, "HETATM", 6) != 0)
 		{
 			fprintf (fop,"%s",line);
@@ -338,7 +345,7 @@ void fprint_ms_nopar (struct atomgrp* ag, const char* inf, const char* ouf)
 		sprintf(line+30,"%8.3f",ag->atoms[atomi].X );
 		sprintf(line+38,"%8.3f",ag->atoms[atomi].Y );
 		sprintf(line+46,"%8.3f",ag->atoms[atomi].Z );
-		float attl=0.0;
+		attl=0.0;
 		if (ag->atoms[atomi].attl > 0.0)
 		{
 			attl += ag->atoms[atomi].attl;

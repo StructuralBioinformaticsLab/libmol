@@ -30,7 +30,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <math.h>
 #include <float.h>
+
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 #include "minimize.h"
 #include "lbfgs.h"
 
@@ -51,6 +56,8 @@ void bracket(double* orig, double* dir, double step,
          double TooSmall=1E-10;
 
          int i, j;
+        
+         double parabp1, parabp2;
 
          *la=0;
          *lb=step;
@@ -75,8 +82,6 @@ void bracket(double* orig, double* dir, double step,
              new[i] = orig[i]+*lc*dir[i];
             
          egfun(ndim, new, prms, &fc, NULL);
-        
-         double parabp1, parabp2;
 
          while( (fc<=*fb))
          {
@@ -252,16 +257,6 @@ void brent(double* orig, double* dir,
         unsigned int numIt = 0;
         int doGolden,i;
         int numAct=ndim;
-        if( la<lc)
-        {
-            lbound1=la;
-            lbound2=lc;
-        }
-        else
-        {
-            lbound1=lc;
-            lbound2=la;
-        }
         double lcurmin=lb;
         double lprevmin=lb;
         double lprevmin2=lb;
@@ -276,8 +271,19 @@ void brent(double* orig, double* dir,
         double GOLD=0.381966;
         double*  new=_mol_malloc(numAct*sizeof(double) );
         double denom;
-        double lmidpoint = 0.5*(lbound1+lbound2);
+        double lmidpoint;
         double tempdMoved;   
+        if( la<lc)
+        {
+            lbound1=la;
+            lbound2=lc;
+        }
+        else
+        {
+            lbound1=lc;
+            lbound2=la;
+        }
+        lmidpoint = 0.5*(lbound1+lbound2);
 
         lim=tol*fabs(lcurmin)+s;
         while(fabs(lcurmin -lmidpoint)>(2*lim - 0.5*(lbound2-lbound1)) && numIt<maxtimes)
@@ -392,6 +398,24 @@ void dirbrent(double* orig, double* dir,
        int numIt=0;
        int doBisect, i, canUse1, canUse2;
        int numAct=ndim;
+       double db;
+       double lcurmin=lb;
+       double lprevmin=lb;
+       double lprevmin2=lb;
+       double fcurmin=fb;
+       double fprevmin=fb;
+       double fprevmin2=fb;
+       double distMoved=0;
+       double distMoved2=0;
+       double s= 1E-10;
+       double lim;
+       double sec1=0,sec2=0,lnew,fnew,dnew;
+       double*  new=_mol_malloc(numAct*sizeof(double) );
+       double lmidpoint;
+       double tempdistMoved;
+       double dcurmin;
+       double dprevmin;
+       double dprevmin2;
 
        if( la<lc)
        {
@@ -404,28 +428,14 @@ void dirbrent(double* orig, double* dir,
            lbound2=la;
        }
     
-       double db=0;
         
+       db=0;
        for(i=0; i<numAct; i++)
             db+=grad[i]*dir[i];
 
-       double lcurmin=lb;
-       double lprevmin=lb;
-       double lprevmin2=lb;
-       double dcurmin= db;
-       double dprevmin= db;
-       double dprevmin2= db;
-       double fcurmin=fb;
-       double fprevmin=fb;
-       double fprevmin2=fb;
-       double distMoved=0;
-       double distMoved2=0;
-       double s= 1E-10;
-       double lim;
-       double sec1=0,sec2=0,lnew,fnew,dnew;
-       double*  new=_mol_malloc(numAct*sizeof(double) );
-       double lmidpoint;
-       double tempdistMoved;
+       dcurmin= db;
+       dprevmin= db;
+       dprevmin2= db;
 
        for(numIt=0; numIt<maxtimes; numIt++ )
        {
@@ -713,14 +723,15 @@ void dirMin(double* orig,  unsigned int maxIt, double tol,
      double* grad = malloc(numAct*sizeof(double));
      double* mvec = malloc(numAct*sizeof(double));
 
-     for(i=0; i<numAct; i++)
-            curmin[i]=orig[i];
-        
      double val,t1,t2,t3,la,lb,lc,fbrac ;
      double s = 1E-5;
      double fprev;
-     egfun(ndim, orig, prms, &fprev, grad);
      double dnorm=0, maxnorm=1.5;
+
+     for(i=0; i<numAct; i++)
+            curmin[i]=orig[i];
+        
+     egfun(ndim, orig, prms, &fprev, grad);
 
      for(i=0; i<numAct; i++)
      {
@@ -880,15 +891,16 @@ void minimize_ag(mol_min_method min_type, unsigned int maxIt, double tol,struct 
      int ndim = ag->nactives*3;
      double* xyz =_mol_malloc(ndim*sizeof(double) ); 
      double* minv =_mol_malloc(ndim*sizeof(double) );
+	double fmim;
+        int i;
+        double* directions;
        	ag2array(xyz, ag);
-	double fmim; 
         /*my_en_grad(ndim, xyz, minprms, &fmim, NULL); 
 	 printf("Start E-value=%f\n" , fmim );
 	*/
 	if (min_type == MOL_CONJUGATE_GRADIENTS) dirMin(xyz,maxIt,tol,ndim,minprms, egfun,minv,&fmim);
 	if (min_type == MOL_POWELL) {
-        double* directions =_mol_malloc(ndim*ndim*sizeof(double) );
-        int i;
+        directions =_mol_malloc(ndim*ndim*sizeof(double) );
         for(i=0; i<ndim*ndim;i++) directions[i]=0;
         for(i=0; i<ndim; i++) directions[i*ndim+i]=1;
         powell(xyz,directions,maxIt,tol,ndim,minprms, egfun,minv,&fmim);
@@ -896,15 +908,15 @@ void minimize_ag(mol_min_method min_type, unsigned int maxIt, double tol,struct 
 	}
 
 	if (min_type == MOL_LBFGS ){
-
-		ag2array(minv,ag);
-
                 lbfgs_parameter_t param={
                 6, tol, 0, 1e-5,
                 maxIt, LBFGS_LINESEARCH_MORETHUENTE, 40,
                 1e-20, 1e20, 1e-4, 0.9, 0.9, 1.0e-16,
                 0.0, 0, -1,
                 };
+
+		ag2array(minv,ag);
+
 
                 lbfgs_new(ndim,minv,&fmim,egfun,progress,minprms,&param);
 	}

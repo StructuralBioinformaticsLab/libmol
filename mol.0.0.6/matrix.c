@@ -33,10 +33,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <math.h>
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 struct matrix2di* matrix2di_create (int ni, int nj)
 {
+	struct matrix2di* A;
+	int i;
 	// error checking
 	if (ni < 1 || nj < 1)
 	{
@@ -45,7 +51,7 @@ struct matrix2di* matrix2di_create (int ni, int nj)
 	}
 
 	// allocate memory for the matrix
-	struct matrix2di* A = _mol_malloc (sizeof (struct matrix2di));
+	A = _mol_malloc (sizeof (struct matrix2di));
 
 	// connect the matrix sizes
 	A->ni = ni;
@@ -58,7 +64,6 @@ struct matrix2di* matrix2di_create (int ni, int nj)
 	A->vals[0] = _mol_malloc (ni * nj * sizeof (int));
 
 	// point to the remaining rows
-	int i;
 	for (i = 0; i < A->ni; i++)
 	{
 		A->vals[i] = A->vals[0] + (i * A->nj);
@@ -69,6 +74,8 @@ struct matrix2di* matrix2di_create (int ni, int nj)
 }
 struct matrix2df* matrix2df_create (int ni, int nj)
 {
+	struct matrix2df* A;
+	int i;
 	// error checking
 	if (ni < 1 || nj < 1)
 	{
@@ -77,7 +84,7 @@ struct matrix2df* matrix2df_create (int ni, int nj)
 	}
 
 	// allocate memory for the matrix
-	struct matrix2df* A = _mol_malloc (sizeof (struct matrix2df));
+	A = _mol_malloc (sizeof (struct matrix2df));
 
 	// connect the matrix sizes
 	A->ni = ni;
@@ -90,7 +97,6 @@ struct matrix2df* matrix2df_create (int ni, int nj)
 	A->vals[0] = _mol_malloc (ni * nj * sizeof (int));
 
 	// point to the remaining rows
-	int i;
 	for (i = 0; i < A->ni; i++)
 	{
 		A->vals[i] = A->vals[0] + (i * A->nj);
@@ -218,6 +224,8 @@ struct matrix2di* matrix2di_read (const char* path)
 	int i, j; // loop index
 	int n; // n chars read in sscanf
 
+	struct matrix2di* A;
+
 	FILE* fp = myfopen (path, "r");
 
 	// count the number of newlines (number of rows)
@@ -234,7 +242,7 @@ struct matrix2di* matrix2di_read (const char* path)
 		tmpline += n;
 	}
 
-	struct matrix2di* A = matrix2di_create (ni, nj); // create the new matrix of size ni x nj
+	A = matrix2di_create (ni, nj); // create the new matrix of size ni x nj
 
 	rewind (fp); // reset the fp
 	// now read the matrix
@@ -278,6 +286,7 @@ struct matrix2df* matrix2df_read (const char* path)
 	int ni=0, nj=0; // matrix sizes
 	int i, j; // loop index
 	int n; // n chars read in sscanf
+	struct matrix2df* A;
 
 	FILE* fp = myfopen (path, "r");
 
@@ -295,7 +304,7 @@ struct matrix2df* matrix2df_read (const char* path)
 		tmpline += n;
 	}
 
-	struct matrix2df* A = matrix2df_create (ni, nj); // create the new matrix of size ni x nj
+	A = matrix2df_create (ni, nj); // create the new matrix of size ni x nj
 
 	rewind (fp); // reset the fp
 	// now read the matrix
@@ -363,6 +372,7 @@ void matrix2di_pairwise_div (struct matrix2di* A, struct matrix2di* B, struct ma
 }
 void matrix2di_pairwise_arith (struct matrix2di* A, struct matrix2di* B, struct matrix2di* C, int op)
 {
+	int i, j;
 	if (matrix2di_size_diff (A, B) ||
 		matrix2di_size_diff (A, C))
 	{
@@ -372,7 +382,6 @@ void matrix2di_pairwise_arith (struct matrix2di* A, struct matrix2di* B, struct 
 		exit (EXIT_FAILURE);
 	}
 
-	int i, j;
 	for (i = 0; i < A->ni; i++)
 	{
 		for (j = 0; j < A->nj; j++)
@@ -423,6 +432,7 @@ void matrix2df_pairwise_div (struct matrix2df* A, struct matrix2df* B, struct ma
 }
 void matrix2df_pairwise_arith (struct matrix2df* A, struct matrix2df* B, struct matrix2df* C, int op)
 {
+	int i, j;
 	if (matrix2df_size_diff (A, B) ||
 		matrix2df_size_diff (A, C))
 	{
@@ -432,7 +442,6 @@ void matrix2df_pairwise_arith (struct matrix2df* A, struct matrix2df* B, struct 
 		exit (EXIT_FAILURE);
 	}
 
-	int i, j;
 	for (i = 0; i < A->ni; i++)
 	{
 		for (j = 0; j < A->nj; j++)
@@ -467,6 +476,7 @@ void matrix2df_pairwise_arith (struct matrix2df* A, struct matrix2df* B, struct 
 
 void matrix2df_log (struct matrix2df* A, struct matrix2df* B)
 {
+	int i, j;
 	if (matrix2df_size_diff (A, B))
 	{
 		fprintf (stderr, "begin error\n");
@@ -476,7 +486,6 @@ void matrix2df_log (struct matrix2df* A, struct matrix2df* B)
 		exit (EXIT_FAILURE);
 	}
 
-	int i, j;
 	for (i = 0; i < A->ni; i++)
 	{
 		for (j = 0; j < A->nj; j++)
@@ -501,6 +510,7 @@ float matrix2df_element_sum (struct matrix2df* A)
 
 void matrix2df_scalar_mult (struct matrix2df* A, float val, struct matrix2df* B)
 {
+	int i, j;
 	if (matrix2df_size_diff (A, B))
 	{
 		fprintf (stderr, "begin error\n");
@@ -510,7 +520,6 @@ void matrix2df_scalar_mult (struct matrix2df* A, float val, struct matrix2df* B)
 		exit (EXIT_FAILURE);
 	}
 
-	int i, j;
 	for (i = 0; i < A->ni; i++)
 	{
 		for (j = 0; j < A->nj; j++)

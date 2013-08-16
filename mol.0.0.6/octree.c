@@ -31,11 +31,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#define inline static
+#else
 #include _MOL_INCLUDE_
+#endif
 
 //#define ALIGNMENT_BLOCK_SIZE 8
 
-double max (double x, double y)
+static double octree_max (double x, double y)
 {                                                                                   
    return x < y ? y : x;
 }
@@ -49,6 +55,7 @@ double max (double x, double y)
 */
 int init_free_node_server( OCTREE *octree )
 {
+   int i;
    octree->num_nodes = 0;
 
    octree->free_node_ptr = -1;
@@ -60,7 +67,7 @@ int init_free_node_server( OCTREE *octree )
 
    octree->num_nodes = INIT_NUM_OCTREE_NODES;
 
-   for ( int i = octree->num_nodes - 1; i >= 0; i-- )
+   for ( i = octree->num_nodes - 1; i >= 0; i-- )
      {
        octree->nodes[ i ].p_ptr = octree->free_node_ptr;
        octree->free_node_ptr = i;
@@ -82,9 +89,11 @@ int init_free_node_server( OCTREE *octree )
 */
 int next_free_node( OCTREE *octree )
 {
+   int next_node;
    if ( octree->free_node_ptr == -1 )
      {
        int new_num_nodes = 2 * octree->num_nodes;
+       int i;
 
        if ( new_num_nodes <= 0 ) new_num_nodes = INIT_NUM_OCTREE_NODES;
 
@@ -92,7 +101,7 @@ int next_free_node( OCTREE *octree )
 
        if ( octree->nodes == NULL ) return -1;              
 
-       for ( int i = new_num_nodes - 1; i >= octree->num_nodes; i-- )
+       for ( i = new_num_nodes - 1; i >= octree->num_nodes; i-- )
          {
            octree->nodes[ i ].p_ptr = octree->free_node_ptr;
            octree->free_node_ptr = i;
@@ -108,7 +117,7 @@ int next_free_node( OCTREE *octree )
         octree->num_nodes = new_num_nodes; 
      }
 
-   int next_node = octree->free_node_ptr;
+   next_node = octree->free_node_ptr;
 
    octree->free_node_ptr = octree->nodes[ next_node ].p_ptr;
 
@@ -148,8 +157,11 @@ inline void compute_root_bounding_box( int node_id, OCTREE *octree, double slack
 
    double minX = atoms[ s ].X, minY = atoms[ s ].Y, minZ = atoms[ s ].Z;
    double maxX = atoms[ s ].X, maxY = atoms[ s ].Y, maxZ = atoms[ s ].Z;
+   int i;
+   double cx, cy, cz;
+   double dim;
 
-   for ( int i = start_id + 1; i <= end_id; i++ )
+   for ( i = start_id + 1; i <= end_id; i++ )
      {
       int j = indices[ i ];
 
@@ -163,13 +175,11 @@ inline void compute_root_bounding_box( int node_id, OCTREE *octree, double slack
       if ( atoms[ j ].Z > maxZ ) maxZ = atoms[ j ].Z;
      }
 
-   double cx = ( minX + maxX ) / 2,
-    	 cy = ( minY + maxY ) / 2,
-   	 cz = ( minZ + maxZ ) / 2;
+   cx = ( minX + maxX ) / 2, cy = ( minY + maxY ) / 2, cz = ( minZ + maxZ ) / 2;
 
-   double dim = max( maxX - minX, maxY - minY );
+   dim = octree_max( maxX - minX, maxY - minY );
 
-   dim = max( dim, maxZ - minZ );
+   dim = octree_max( dim, maxZ - minZ );
    dim *= slack_factor;
    
    node->lx = cx - dim * 0.5;   
@@ -187,14 +197,18 @@ inline void compute_root_bounding_box( int node_id, OCTREE *octree, double slack
 inline void compute_non_root_bounding_box( int node_id, OCTREE *octree, int child_id )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
+   OCTREE_NODE *pnode;
+   double lx, ly, lz;
+   double dim;
    
    if ( node->p_ptr < 0 ) return;
    
-   OCTREE_NODE *pnode = &( octree->nodes[ node->p_ptr ] );
+   pnode = &( octree->nodes[ node->p_ptr ] );
    
    if ( child_id < 0 )
      {
-       for ( int i = 0; i < 8; i++ )
+       int i;
+       for ( i = 0; i < 8; i++ )
          if ( pnode->c_ptr[ i ] == node_id )
            {
              child_id = i;
@@ -204,10 +218,8 @@ inline void compute_non_root_bounding_box( int node_id, OCTREE *octree, int chil
        if ( child_id < 0 ) return;   
      }
      
-   double lx = pnode->lx,
-   	 ly = pnode->ly,
-   	 lz = pnode->lz;
-   double dim = pnode->dim;
+   lx = pnode->lx, ly = pnode->ly, lz = pnode->lz;
+   dim = pnode->dim;
    
    dim *= 0.5;
    
@@ -323,6 +335,8 @@ int expand_octree_node( int node_id, OCTREE *octree,
 
    if ( ( n <= octree->max_leaf_size ) || ( dim <= octree->max_leaf_dim ) )
      {     
+      int nfixed;
+      int i, k;
       node->leaf = 1;
 
       node->indices = ( int * ) _mol_malloc( 2 * n * sizeof ( int ) );
@@ -336,9 +350,9 @@ int expand_octree_node( int node_id, OCTREE *octree,
 
       node->id_cap = 2 * n;
       
-      int nfixed = 0;
+      nfixed = 0;
       
-      for ( int i = start_id; i <= end_id; i++ )
+      for ( i = start_id; i <= end_id; i++ )
         {
           int j = indices[ i ];
           
@@ -354,7 +368,7 @@ int expand_octree_node( int node_id, OCTREE *octree,
 
       if ( nfixed < n ) 
          {
-           for ( int i = start_id, k = nfixed; i <= end_id; i++ )
+           for ( i = start_id, k = nfixed; i <= end_id; i++ )
              {
                int j = indices[ i ];
                
@@ -372,25 +386,25 @@ int expand_octree_node( int node_id, OCTREE *octree,
      }
    else
      {
+      int count[ 8 ] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+      int i;
+      int start_index[ 8 ];
+      int cur_index[ 8 ];
       node->leaf = 0;
 
-      int count[ 8 ] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-      for ( int i = start_id; i <= end_id; i++ )
+      for ( i = start_id; i <= end_id; i++ )
         {
          int j = indices[ i ];
          int k = get_child_id( node, &( atoms[ j ] ) );
          count[ k ]++;
         }
 
-      int start_index[ 8 ];
-      int cur_index[ 8 ];
-
       cur_index[ 0 ] = start_index[ 0 ] = start_id;
-      for ( int i = 1; i < 8; i++ )
+      for ( i = 1; i < 8; i++ )
         cur_index[ i ] = start_index[ i ] = start_index[ i - 1 ] + count[ i - 1 ];
 
-      for ( int i = start_id; i <= end_id; i++ )
+      for ( i = start_id; i <= end_id; i++ )
         {
          int j = indices[ i ];
          int k = get_child_id( node, &( atoms[ j ] ) );
@@ -401,7 +415,7 @@ int expand_octree_node( int node_id, OCTREE *octree,
 
       node->nfixed = 0;
             
-      for ( int i = 0; i < 8; i++ )
+      for ( i = 0; i < 8; i++ )
        { 
         if ( count[ i ] > 0 )
           {
@@ -444,15 +458,16 @@ int expand_octree_node( int node_id, OCTREE *octree,
 void collect_atoms_from_leaves( int node_id, OCTREE *octree, int *indices, int start_id )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
+   int i;
    
    if ( node->leaf )
      {
-       for ( int i = 0; i < node->n; i++ )
+       for ( i = 0; i < node->n; i++ )
           indices[ start_id + i ] = node->indices[ i ];
      }   
    else
      {
-       for ( int i = 0; i < 8; i++ )
+       for ( i = 0; i < 8; i++ )
          if ( node->c_ptr[ i ] >= 0 )
            {
              int j = node->c_ptr[ i ];
@@ -478,6 +493,8 @@ int contract_octree_node( int node_id, OCTREE *octree )
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
    mol_atom *atoms = octree->atoms;
 
+   int i, k;
+
    int n = node->n;
    
    if ( ( node->leaf ) || ( n > octree->max_leaf_size ) ) return 1;
@@ -496,7 +513,7 @@ int contract_octree_node( int node_id, OCTREE *octree )
    node->leaf = 1;
    node->id_cap = 2 * n;
 
-   for ( int i = 0, k = 0; i < n; i++ )
+   for ( i = 0, k = 0; i < n; i++ )
      {
        int j = node->indices[ i ];
        
@@ -508,7 +525,7 @@ int contract_octree_node( int node_id, OCTREE *octree )
          }
      }
    
-   for ( int i = 0; i < n; i++ )
+   for ( i = 0; i < n; i++ )
      {
        int j = node->indices[ i ];
        atoms[ j ].octree_ptr = create_octree_ptr( node_id, i );       
@@ -527,6 +544,9 @@ int contract_octree_node( int node_id, OCTREE *octree )
 int build_octree( OCTREE *octree, int max_leaf_size, double max_leaf_dim, double slack_factor, mol_atom_group *ag )
 {
    int *indices, *indices_temp;
+   int i;
+   int octree_root;
+   int built;
 
    indices = ( int * ) _mol_malloc( sizeof ( int ) * ag->natoms );
 //   indices = ( int * ) memalign( ALIGNMENT_BLOCK_SIZE, sizeof ( int ) * ag->natoms );
@@ -541,7 +561,7 @@ int build_octree( OCTREE *octree, int max_leaf_size, double max_leaf_dim, double
       return 0;
      }
 
-   for ( int i = 0; i < ag->natoms; i++ )
+   for ( i = 0; i < ag->natoms; i++ )
      indices[ i ] = i;
 
    octree->max_leaf_size = max_leaf_size;
@@ -551,13 +571,13 @@ int build_octree( OCTREE *octree, int max_leaf_size, double max_leaf_dim, double
 
    init_free_node_server( octree );
 
-   int octree_root = next_free_node( octree );
+   octree_root = next_free_node( octree );
 
    compute_root_bounding_box( octree_root, octree, slack_factor, indices, 0, ag->natoms - 1 );
    
    octree->nodes[ octree_root ].p_ptr = -1;
 
-   int built = expand_octree_node( octree_root, octree, indices, indices_temp, 0, ag->natoms - 1 );
+   built = expand_octree_node( octree_root, octree, indices, indices_temp, 0, ag->natoms - 1 );
 
    freeMem( indices );
    freeMem( indices_temp );
@@ -576,8 +596,11 @@ int build_octree_excluding_fixed_atoms( OCTREE *octree, int max_leaf_size, doubl
 {
    int *indices, *indices_temp;
    int nflex = 0;
+   int i, k;
+   int octree_root;
+   int built;
    
-   for ( int i = 0; i < ag->natoms; i++ )
+   for ( i = 0; i < ag->natoms; i++ )
      if ( !ag->atoms[ i ].fixed ) nflex++;
      
    printf( "ag->natoms = %d, nflex = %d\n", ag->natoms, nflex );  
@@ -595,7 +618,7 @@ int build_octree_excluding_fixed_atoms( OCTREE *octree, int max_leaf_size, doubl
       return 0;
      }
 
-   for ( int i = 0, k = 0; i < ag->natoms; i++ )
+   for ( i = 0, k = 0; i < ag->natoms; i++ )
       if ( !ag->atoms[ i ].fixed ) indices[ k++ ] = i;
 
    octree->max_leaf_size = max_leaf_size;
@@ -604,13 +627,13 @@ int build_octree_excluding_fixed_atoms( OCTREE *octree, int max_leaf_size, doubl
 
    init_free_node_server( octree );
 
-   int octree_root = next_free_node( octree );
+   octree_root = next_free_node( octree );
 
    compute_root_bounding_box( octree_root, octree, slack_factor, indices, 0, nflex - 1 );
    
    octree->nodes[ octree_root ].p_ptr = -1;
 
-   int built = expand_octree_node( octree_root, octree, indices, indices_temp, 0, nflex - 1 );
+   built = expand_octree_node( octree_root, octree, indices, indices_temp, 0, nflex - 1 );
 
    freeMem( indices );
    freeMem( indices_temp );
@@ -626,17 +649,18 @@ int build_octree_excluding_fixed_atoms( OCTREE *octree, int max_leaf_size, doubl
 void traverse_octree( int node_id, OCTREE *octree )
 {   
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
+   int i;
  
    printf( "%d ( %d, %d, %lf ): ", node_id, node->n, node->nfixed, node->dim );
    
    if ( !node->leaf )
-      for ( int i = 0; i < 8; i++ )
+      for ( i = 0; i < 8; i++ )
         if ( node->c_ptr[ i ] >= 0 ) printf( "%d ", node->c_ptr[ i ] );
      
    printf( "\n" );  
 
    if ( !node->leaf )
-      for ( int i = 0; i < 8; i++ )
+      for ( i = 0; i < 8; i++ )
         if ( node->c_ptr[ i ] >= 0 ) 
            traverse_octree( node->c_ptr[ i ], octree );
 }
@@ -659,11 +683,12 @@ int get_subtree_size( int node_id, OCTREE *octree )
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
    
    int s = sizeof( OCTREE_NODE );
+   int i;
    
    s += node->id_cap * sizeof( int );
  
    if ( !node->leaf )
-      for ( int i = 0; i < 8; i++ )
+      for ( i = 0; i < 8; i++ )
         if ( node->c_ptr[ i ] >= 0 ) 
            s += get_subtree_size( node->c_ptr[ i ], octree );
            
@@ -1031,6 +1056,7 @@ inline int add_atom_to_leaf( int node_id, OCTREE *octree, int atom_id )
    if ( node->n > ( octree->max_leaf_size << 1 ) )
      {
        int *temp = ( int * ) _mol_malloc( node->n * sizeof( int ) );
+       int done;
 //       int *temp = ( int * ) memalign( ALIGNMENT_BLOCK_SIZE, node->n * sizeof( int ) );
        
        if ( temp == NULL ) 
@@ -1039,7 +1065,7 @@ inline int add_atom_to_leaf( int node_id, OCTREE *octree, int atom_id )
            return 0;
          }   
      
-       int done = expand_octree_node( node_id, octree, node->indices, temp, 0, node->n - 1 );
+       done = expand_octree_node( node_id, octree, node->indices, temp, 0, node->n - 1 );
        
        freeMem( temp );
        
@@ -1062,9 +1088,10 @@ int push_down( int node_id, OCTREE *octree, int atom_id )
    if ( node->leaf ) return add_atom_to_leaf( node_id, octree, atom_id ); 
    else 
      {
+       int i;
        add_atom_to_non_leaf( node_id, octree, atom_id );             
 
-       for ( int i = 0; i < 8; i++ )
+       for ( i = 0; i < 8; i++ )
          { 
           if ( node->c_ptr[ i ] >= 0 )
             {
@@ -1079,6 +1106,8 @@ int push_down( int node_id, OCTREE *octree, int atom_id )
    	            lz = node->lz;
    	             
               double hdim = 0.5 * node->dim;
+              int j;
+              OCTREE_NODE *cnode;
       
               if ( i & 1 ) lx += hdim;	       
               if ( i & 2 ) ly += hdim;
@@ -1088,13 +1117,13 @@ int push_down( int node_id, OCTREE *octree, int atom_id )
                    && ( atom->Y >= ly ) && ( atom->Y < ly + hdim ) 
                    && ( atom->Z >= lz ) && ( atom->Z < lz + hdim ) ) ) continue;
                                 
-              int j = next_free_node( octree );
+              j = next_free_node( octree );
                
               node = &( octree->nodes[ node_id ] );
                
               node->c_ptr[ i ] = j;
               
-              OCTREE_NODE *cnode = &( octree->nodes[ j ] );
+              cnode = &( octree->nodes[ j ] );
                              
               cnode->p_ptr = node_id;                     
               
@@ -1164,7 +1193,8 @@ int batch_pull_up( int node_id, OCTREE *octree, int *empty )
      {
        if ( node->p_ptr >= 0 )
          {
-           for ( int i = node->nfixed; i < node->n; i++ )
+           int i;
+           for ( i = node->nfixed; i < node->n; i++ )
              {
                int atom_id = node->indices[ i ];
                mol_atom *atom = &( octree->atoms[ atom_id ] );
@@ -1182,8 +1212,9 @@ int batch_pull_up( int node_id, OCTREE *octree, int *empty )
      {
        int m = node->id_num;
        int nc = 0;
+       int i;
        
-       for ( int i = 0; i < 8; i++ )
+       for ( i = 0; i < 8; i++ )
          if ( node->c_ptr[ i ] >= 0 ) 
            {
              int emp;
@@ -1196,7 +1227,7 @@ int batch_pull_up( int node_id, OCTREE *octree, int *empty )
 
        if ( node->p_ptr >= 0 )
          {           
-           for ( int i = m; i < node->id_num; i++ )
+           for ( i = m; i < node->id_num; i++ )
              {
                int atom_id = node->indices[ i ];
                mol_atom *atom = &( octree->atoms[ atom_id ] );
@@ -1212,13 +1243,13 @@ int batch_pull_up( int node_id, OCTREE *octree, int *empty )
          
        if ( nc == 0 )
          {
+           int nf = 0;
+
            node->leaf = 1;
            node->n = node->id_num;
            node->id_num = 0;
            
-           int nf = 0;
-           
-           for ( int i = 0; i < node->n; i++ )
+           for ( i = 0; i < node->n; i++ )
              {
                int j = node->indices[ i ];
                
@@ -1232,7 +1263,7 @@ int batch_pull_up( int node_id, OCTREE *octree, int *empty )
              
            node->nfixed = nf;             
            
-           for ( int i = 0; i < node->n; i++ )
+           for ( i = 0; i < node->n; i++ )
              {
                int j = node->indices[ i ];
                octree->atoms[ j ].octree_ptr = create_octree_ptr( node_id, i );       
@@ -1259,12 +1290,14 @@ int batch_pull_up( int node_id, OCTREE *octree, int *empty )
 int batch_push_down( int node_id, OCTREE *octree )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
+   int i;
 
    if ( node->leaf ) 
      {
        if ( node->n > ( octree->max_leaf_size << 1 ) )
          {
            int *temp = ( int * ) _mol_malloc( node->n * sizeof( int ) );
+           int done;
 //           int *temp = ( int * ) memalign( ALIGNMENT_BLOCK_SIZE, node->n * sizeof( int ) );
            
            if ( temp == NULL ) 
@@ -1273,7 +1306,7 @@ int batch_push_down( int node_id, OCTREE *octree )
                return 0;
              }   
          
-           int done = expand_octree_node( node_id, octree, node->indices, temp, 0, node->n - 1 );
+           done = expand_octree_node( node_id, octree, node->indices, temp, 0, node->n - 1 );
            
            freeMem( temp );
            
@@ -1282,10 +1315,11 @@ int batch_push_down( int node_id, OCTREE *octree )
        else return 1;     
      } 
 
-   for ( int i = node->id_num - 1; i >= 0; i-- )
+   for ( i = node->id_num - 1; i >= 0; i-- )
      {
        int atom_id = node->indices[ i ];
        mol_atom *atom = &( octree->atoms[ atom_id ] );
+       OCTREE_NODE *cnode;
        
        int k = get_child_id( node, atom );
        
@@ -1308,7 +1342,7 @@ int batch_push_down( int node_id, OCTREE *octree )
        
        if ( !remove_downward_migrating_atom_from_non_leaf( node_id, octree, i ) ) return 0;
        
-       OCTREE_NODE *cnode = &( octree->nodes[ node->c_ptr[ k ] ] );
+       cnode = &( octree->nodes[ node->c_ptr[ k ] ] );
 
        if ( cnode->leaf )
          {
@@ -1322,7 +1356,7 @@ int batch_push_down( int node_id, OCTREE *octree )
      
    node->id_num = 0;      
      
-   for ( int i = 0; i < 8; i++ )
+   for ( i = 0; i < 8; i++ )
      if ( node->c_ptr[ i ] >= 0 )
        { 
          if ( !batch_push_down( node->c_ptr[ i ], octree ) ) return 0;
@@ -1365,7 +1399,8 @@ int reorganize_octree( OCTREE *octree, int batch_update )
      }
    else
      {
-       for ( int i = 0; i < octree->natoms; i++ )
+       int i;
+       for ( i = 0; i < octree->natoms; i++ )
           {
             mol_atom *atom = &( octree->atoms[ i ] );
             if ( !atom->fixed ) update_octree( octree, atom );
@@ -1385,7 +1420,8 @@ void free_subtree_nodes( OCTREE *octree, int node_id )
    
    if ( !node->leaf )
      {
-       for ( int i = 0; i < 8; i++ )
+       int i;
+       for ( i = 0; i < 8; i++ )
          if ( node->c_ptr[ i ] >= 0 )
             free_subtree_nodes( octree, node->c_ptr[ i ] );
      }
@@ -1414,6 +1450,8 @@ double accumulate_excluding_far( OCTREE_PARAMS *octpar )
 {
    OCTREE_NODE *static_node = &( octpar->octree_static->nodes[ octpar->node_static ] );
    OCTREE_NODE *moving_node = &( octpar->octree_moving->nodes[ octpar->node_moving ] );
+   double energy;
+   int i, j;
 
    if ( moving_node->nfixed == moving_node->n ) return 0;     
 
@@ -1427,34 +1465,38 @@ double accumulate_excluding_far( OCTREE_PARAMS *octpar )
      {
        double sumRad = HALF_SQRT_THREE * ( static_node->dim + moving_node->dim );
        double maxD2 = ( sumRad + octpar->dist_cutoff );
+       double half_dim;
+       double mx, my, mz;
+       double dx, dy, dz;
+       double d2;
        maxD2 *= maxD2;
       
-       double half_dim = 0.5 * moving_node->dim;
-       double mx = moving_node->lx + half_dim,
-              my = moving_node->ly + half_dim,
-              mz = moving_node->lz + half_dim;
+       half_dim = 0.5 * moving_node->dim;
+       mx = moving_node->lx + half_dim;
+       my = moving_node->ly + half_dim;
+       mz = moving_node->lz + half_dim;
       
        transform_point( mx, my, mz, octpar->trans, &mx, &my, &mz );
       
        half_dim = 0.5 * static_node->dim;
       
-       double dx = static_node->lx + half_dim - mx,
-              dy = static_node->ly + half_dim - my,
-              dz = static_node->lz + half_dim - mz;      
+       dx = static_node->lx + half_dim - mx;
+       dy = static_node->ly + half_dim - my;
+       dz = static_node->lz + half_dim - mz;
        
-       double d2 = dx * dx + dy * dy + dz * dz;            
+       d2 = dx * dx + dy * dy + dz * dz;            
        
        if ( d2 >= maxD2 ) return 0;                                                     
      }
             
-   double energy = 0;
+   energy = 0;
 
    if ( static_node->leaf )  
      {
        if ( moving_node->leaf ) octpar->processing_function( octpar, &energy );
        else
          {
-           for ( int j = 0; j < 8; j++ )
+           for ( j = 0; j < 8; j++ )
              if ( moving_node->c_ptr[ j ] >= 0 )
                {
                  octpar->node_moving = moving_node->c_ptr[ j ];                           
@@ -1466,7 +1508,7 @@ double accumulate_excluding_far( OCTREE_PARAMS *octpar )
      {
        if ( moving_node->leaf )
          {
-           for ( int i = 0; i < 8; i++ )
+           for ( i = 0; i < 8; i++ )
              if ( static_node->c_ptr[ i ] >= 0 )
                {
                  octpar->node_static = static_node->c_ptr[ i ];
@@ -1475,9 +1517,9 @@ double accumulate_excluding_far( OCTREE_PARAMS *octpar )
          }
        else
          {
-           for ( int i = 0; i < 8; i++ )
+           for ( i = 0; i < 8; i++ )
              if ( static_node->c_ptr[ i ] >= 0 )
-                for ( int j = 0; j < 8; j++ )
+                for ( j = 0; j < 8; j++ )
                   if ( moving_node->c_ptr[ j ] >= 0 )
                     {
                       octpar->node_static = static_node->c_ptr[ i ];                                            

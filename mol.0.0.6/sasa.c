@@ -33,7 +33,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <math.h>
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 /* comparison function for qsort */
 //int accs_comp(const void *s1, const void *s2)
@@ -60,13 +64,13 @@ int accs_comp1(const void *s1, const void *s2)
 void mark_sasa (struct atomgrp* ag, int* sasas)
 {
 	int nsasas = numbersasas (sasas);
+	int atomi;
 	if (ag->natoms != nsasas)
 	{
 		fprintf (stderr, "error: ag->natoms (%d) != nsasas (%d)\n", ag->natoms, nsasas);
 		exit (EXIT_FAILURE);
 	}
 
-	int atomi;
 	for (atomi = 0; atomi < ag->natoms; atomi++)
 	{
 		ag->atoms[atomi].sa = sasas[atomi];
@@ -131,16 +135,18 @@ int numbersasas (int* sasas)
 //void msur (struct atomgrp* ag, struct prm* prm)
 void msur (struct atomgrp* ag, struct prm* prm, float msur_k)
 {
-	if (msur_k < 0)
-		return;
-
-	float r_solv=1.4*msur_k;
-
-	struct prm* rkprm = copy_prm (prm);
-	modify_prms_radii (rkprm, msur_k);
+	float r_solv;
+	struct prm* rkprm;
 	float sthresh=0.0;
 	short cont_acc=1;
 	short rpr=1;
+	if (msur_k < 0)
+		return;
+
+	r_solv=1.4*msur_k;
+
+	rkprm = copy_prm (prm);
+	modify_prms_radii (rkprm, msur_k);
 	baccs(ag, rkprm, r_solv, cont_acc, rpr, sthresh);
 
 	free_prm (rkprm); // (free_prms needs to be fixed)
@@ -215,10 +221,40 @@ void accs (struct atomgrp* ag, struct prm* prm, float r_solv, short cont_acc, sh
 	float pix2=2.0*pi;
 	float ri, xi, yi, zi;
 
+	float *x;
+	float *y;
+	float *z;
+	float *r;
+	float *r2;
+
+	float *dx;
+	float *dy;
+	float *d;
+	float *dsq;
+	float *arcif;
+	int *inov; 
+
+
+	float dmax;
+	int idim;
+	int jidim;
+	int kjidim;
+	int *itab;
+	int *natm;
+	int* cube;
+
+	int j, k, l, m, n, kji;
+
+	int ir, io, in, mkji, nm, nzp, karc;
+	float area, xr, yr, zr, rr, rrx2, rr2, b, zres, zgrid;
+	float rsec2r, rsecr, rsec2n, rsecn;
+	float calpha, alpha, beta, ti, tf, arcsum, parea, t, tt;
+
 /* eliminate atoms with zero radii */
 	int n_at=0;
+	int *restat;
 	i=n_at1*sint;
-	int* restat=_mol_malloc(i);
+	restat=_mol_malloc(i);
 	for(i=0; i<n_at1; i++)
 	{
 		as[i]=0.0;
@@ -237,20 +273,20 @@ void accs (struct atomgrp* ag, struct prm* prm, float r_solv, short cont_acc, sh
 
 /* allocate general atom related arrays */
 	i=n_at*sflo;
-	float* x=_mol_malloc(i);
-	float* y=_mol_malloc(i);
-	float* z=_mol_malloc(i);
-	float* r=_mol_malloc(i);
-	float* r2=_mol_malloc(i);
+	x=_mol_malloc(i);
+	y=_mol_malloc(i);
+	z=_mol_malloc(i);
+	r=_mol_malloc(i);
+	r2=_mol_malloc(i);
 
 /* allocate arrays for neighbouring atoms */
-	float* dx=_mol_malloc(i);
-	float* dy=_mol_malloc(i);
-	float* d=_mol_malloc(i);
-	float* dsq=_mol_malloc(i);
-	float* arcif=_mol_malloc(2*2*i);
+	dx=_mol_malloc(i);
+	dy=_mol_malloc(i);
+	d=_mol_malloc(i);
+	dsq=_mol_malloc(i);
+	arcif=_mol_malloc(2*2*i);
 	i=n_at*sint;
-	int* inov=_mol_malloc(i); 
+	inov=_mol_malloc(i); 
 
 /* calculate sizes and dimensions*/
 	for(i=0; i<n_at; i++)
@@ -288,17 +324,17 @@ void accs (struct atomgrp* ag, struct prm* prm, float r_solv, short cont_acc, sh
 		if(zmin>z[i])zmin=z[i];
 		if(zmax<z[i])zmax=z[i];
 	}
-	float dmax=rmax*2.0;
+	dmax=rmax*2.0;
 
 	i=(xmax-xmin)/dmax+1;
-	int idim=i<3?3:i;
+	idim=i<3?3:i;
 
 	i=(ymax-ymin)/dmax+1;
-	int jidim=i<3?3:i;
+	jidim=i<3?3:i;
 	jidim*=idim;
 
 	i=(zmax-zmin)/dmax+1;
-	int kjidim=i<3?3:i;
+	kjidim=i<3?3:i;
 	kjidim*=jidim;				/* total number of cubes */
 	
 
@@ -306,16 +342,14 @@ void accs (struct atomgrp* ag, struct prm* prm, float r_solv, short cont_acc, sh
 /* allocate cubical arrays */
 
 	i=kjidim*sint;
-	int* itab=_mol_malloc(i);		/* number of atoms in each cube */
+	itab=_mol_malloc(i);		/* number of atoms in each cube */
 	for(i=0; i<kjidim; i++)itab[i]=0;
 
 	i=NAC*kjidim*sint;
-	int* natm=_mol_malloc(i);		/* atom index in each cube */
+	natm=_mol_malloc(i);		/* atom index in each cube */
 
 	i=n_at*sint;
-	int* cube=_mol_malloc(i);		/* cube number for each atom */
-
-	int j, k, l, m, n, kji;
+	cube=_mol_malloc(i);		/* cube number for each atom */
 
 	for(l=0; l<n_at; l++)
 	{
@@ -333,13 +367,6 @@ void accs (struct atomgrp* ag, struct prm* prm, float r_solv, short cont_acc, sh
 		natm[kji*NAC+n-1]=l;
 		cube[l]=kji;
 	}
-	
-
-	int ir, io, in, mkji, nm, nzp, karc;
-	float area, xr, yr, zr, rr, rrx2, rr2, b, zres, zgrid;
-	float rsec2r, rsecr, rsec2n, rsecn;
-	float calpha, alpha, beta, ti, tf, arcsum, parea, t, tt;
-
 
 /* main loop over atoms */
 	zi=1.0/P+0.5;
@@ -517,6 +544,33 @@ void accs1 (struct atomgrp* ag, int n_at, int* restat, double r_solv, short cont
 	double pix2=2.0*pi;
 	double ri, xi, yi, zi;
 
+	double *x;
+	double *y;
+	double *z;
+	double *r;
+	double *r2;
+
+	double *dx;
+	double *dy;
+	double *d;
+	double *dsq;
+	double *arcif;
+	int *inov;
+
+	double dmax;
+	int idim;
+	int jidim;
+	int kjidim;
+	int *itab;
+	int* natm;
+	int* cube;
+	int j, k, l, m, n, kji;
+
+	int ir, io, in, mkji, nm, nzp, karc;
+	double area, xr, yr, zr, rr, rrx2, rr2, b, zres, zgrid;
+	double rsec2r, rsecr, rsec2n, rsecn;
+	double calpha, alpha, beta, ti, tf, arcsum, parea, t, tt;
+
 	for(i=0; i<n_at1; i++)as[i]=0.0;
 
 /* initialize boundary constants */
@@ -529,20 +583,20 @@ void accs1 (struct atomgrp* ag, int n_at, int* restat, double r_solv, short cont
 
 /* allocate general atom related arrays */
 	i=n_at*sdou;
-	double* x=_mol_malloc(i);
-	double* y=_mol_malloc(i);
-	double* z=_mol_malloc(i);
-	double* r=_mol_malloc(i);
-	double* r2=_mol_malloc(i);
+	x=_mol_malloc(i);
+	y=_mol_malloc(i);
+	z=_mol_malloc(i);
+	r=_mol_malloc(i);
+	r2=_mol_malloc(i);
 
 /* allocate arrays for neighbouring atoms */
-	double* dx=_mol_malloc(i);
-	double* dy=_mol_malloc(i);
-	double* d=_mol_malloc(i);
-	double* dsq=_mol_malloc(i);
-	double* arcif=_mol_malloc(2*2*i);
+	dx=_mol_malloc(i);
+	dy=_mol_malloc(i);
+	d=_mol_malloc(i);
+	dsq=_mol_malloc(i);
+	arcif=_mol_malloc(2*2*i);
 	i=n_at*sint;
-	int* inov=_mol_malloc(i);
+	inov=_mol_malloc(i);
 
 /* calculate sizes and dimensions*/
 	for(i=0; i<n_at; i++)
@@ -562,17 +616,17 @@ void accs1 (struct atomgrp* ag, int n_at, int* restat, double r_solv, short cont
 		if(zmin>z[i])zmin=z[i];
 		if(zmax<z[i])zmax=z[i];
 	}
-	double dmax=rmax*2;
+	dmax=rmax*2;
 
 	i=(xmax-xmin)/dmax+1;
-	int idim=i<3?3:i;
+	idim=i<3?3:i;
 
 	i=(ymax-ymin)/dmax+1;
-	int jidim=i<3?3:i;
+	jidim=i<3?3:i;
 	jidim*=idim;
 
 	i=(zmax-zmin)/dmax+1;
-	int kjidim=i<3?3:i;
+	kjidim=i<3?3:i;
 	kjidim*=jidim;			  /* total number of cubes */
 
 
@@ -580,17 +634,14 @@ void accs1 (struct atomgrp* ag, int n_at, int* restat, double r_solv, short cont
 /* allocate cubical arrays */
 
 	i=kjidim*sint;
-	int* itab=_mol_malloc(i);	  /* number of atoms in each cube */
+	itab=_mol_malloc(i);	  /* number of atoms in each cube */
 	for(i=0; i<kjidim; i++)itab[i]=0;
 
 	i=NAC*kjidim*sint;
-	int* natm=_mol_malloc(i);	  /* atom index in each cube */
+	natm=_mol_malloc(i);	  /* atom index in each cube */
 
 	i=n_at*sint;
-	int* cube=_mol_malloc(i);	  /* cube number for each atom */
-
-	int j, k, l, m, n, kji;
-
+	cube=_mol_malloc(i);	  /* cube number for each atom */
 
 	for(l=0; l<n_at; l++)
 	{
@@ -608,13 +659,6 @@ void accs1 (struct atomgrp* ag, int n_at, int* restat, double r_solv, short cont
 		natm[kji*NAC+n-1]=l;
 		cube[l]=kji;
 	}
-
-
-	int ir, io, in, mkji, nm, nzp, karc;
-	double area, xr, yr, zr, rr, rrx2, rr2, b, zres, zgrid;
-	double rsec2r, rsecr, rsec2n, rsecn;
-	double calpha, alpha, beta, ti, tf, arcsum, parea, t, tt;
-
 
 /* main loop over atoms */
 	zi=1.0/P+0.5;

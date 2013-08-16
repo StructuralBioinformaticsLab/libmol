@@ -28,12 +28,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 struct atomgrp** extract_nitrogen_residues (struct atomgrp* ag, struct prm* prm)
 {
-	char nitrogen[2] = "N\0";
+	char nitrogen[2] = "N";
 	struct atomgrp** ress; // array of residues result
+	int nresidues = 0;
+	int atomi; // atom index
+	int natoms = 0; // natoms in the residue
+	int maxnatoms = 0; // maximum number of atoms in a residue
 
 	// if no atoms or first atom is not N, return ag as index 0 and NULL as index 1 of ress
 	if (ag->natoms < 1 || strcmp (nitrogen, prm->atoms[ag->atoms[0].atom_typen].typemin) != 0)
@@ -44,10 +53,6 @@ struct atomgrp** extract_nitrogen_residues (struct atomgrp* ag, struct prm* prm)
 		return ress;
 	}
 
-	int nresidues = 0;
-	int atomi; // atom index
-	int natoms = 0; // natoms in the residue
-	int maxnatoms = 0; // maximum number of atoms in a residue
 	for (atomi = 0; atomi < ag->natoms; atomi++) // first count the number of residues
 	{
 		natoms++;
@@ -72,11 +77,11 @@ struct atomgrp** extract_nitrogen_residues (struct atomgrp* ag, struct prm* prm)
 	}
 	else
 	{
+		int resn = -1; // residue number
+		int resatomn = 0; // residue atom number
 		ress = (struct atomgrp**) _mol_malloc ((nresidues+1) * sizeof (struct atomgrp*));
 		ress[nresidues] = NULL; // flag the end with NULL
 
-		int resn = -1; // residue number
-		int resatomn = 0; // residue atom number
 		for (atomi = 0; atomi < ag->natoms; atomi++) // separate and store the ress
 		{
 			if (strcmp (nitrogen, prm->atoms[ag->atoms[atomi].atom_typen].typemin) == 0)
@@ -129,18 +134,21 @@ struct atomgrp *around(int nlist, int *list, struct atomgrp* ag, double distup)
         int natoms=ag->natoms;
         double x1,y1,z1,x2,y2,z2,d2;
         double du2=distup*distup;
+        int *tmplist;
+	int nout;
+        struct atomgrp *destag;
         if(natoms==0)
         {
            fprintf (stderr,
                 "around> ERROR: no atoms initially");
                 exit (EXIT_FAILURE); 
         }
-        int *tmplist=_mol_malloc(natoms*sizeof(int));
+        tmplist=_mol_malloc(natoms*sizeof(int));
 
         for(i=0; i<natoms; i++)tmplist[i]=1;
         for(i=0; i<nlist; i++)tmplist[list[i]]=0;
 
-        int nout=0;
+        nout=0;
         for(i=0; i<nlist; i++)
         {
            x1=ag->atoms[list[i]].X;
@@ -160,7 +168,7 @@ struct atomgrp *around(int nlist, int *list, struct atomgrp* ag, double distup)
               }
            }
         }
-        struct atomgrp* destag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
+        destag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
         destag->natoms = nout;
         destag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * destag->natoms);
         j=0;

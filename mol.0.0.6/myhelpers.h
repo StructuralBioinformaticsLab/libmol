@@ -77,7 +77,7 @@ void* mycalloc(size_t nmemb, size_t size);
 void* myrealloc(void* ptr, size_t size);
 #endif
 
-#if defined _DARWIN_  && defined _DARWIN_SNOW_LEOPARD_
+#if (defined _DARWIN_  && defined _DARWIN_SNOW_LEOPARD_) || defined(_WIN32)
 
 int  getline2(char **lineptr, size_t *n, FILE *stream);
 

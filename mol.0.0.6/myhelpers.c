@@ -31,7 +31,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <ctype.h>
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 #ifndef _DEBUG_
 void* mymalloc (size_t size)
@@ -65,13 +69,14 @@ void* myrealloc (void* ptr, size_t size)
 //	_PRINT_DEPRECATED_
 //	fprintf (stderr, "\t(please write your own realloc wrapper)\n");
 
+	void* v;
 	if (size < 1)
 	{
 		fprintf (stderr, "warning: _mol_realloc called with size 0, no realloc will occur\n");
 		return ptr;
 		
 	}
-	void* v = (void*) realloc (ptr, size);
+	v = (void*) realloc (ptr, size);
 	if (v == NULL && ptr != NULL)
 	{
 		perror ("realloc"), exit (EXIT_FAILURE);
@@ -81,7 +86,7 @@ void* myrealloc (void* ptr, size_t size)
 #endif /* _DEBUG_ */
 
 
-#if defined _DARWIN_  && defined _DARWIN_SNOW_LEOPARD_
+#if (defined _DARWIN_  && defined _DARWIN_SNOW_LEOPARD_) || defined(_WIN32)
 
 int
 getline2 (char **lineptr, size_t *n, FILE *stream)
@@ -104,6 +109,7 @@ void myexit (int status)
 
 FILE* myfopen (const char* path, const char* mode)
 {
+	FILE* fp;
     if ( strncmp(path, "-", 2) == 0 ) {
         if (strncmp(mode, "r", 1) == 0 ) {
             return stdin;
@@ -114,7 +120,7 @@ FILE* myfopen (const char* path, const char* mode)
             exit( EXIT_FAILURE );
         }
     }
-	FILE* fp = fopen (path, mode);
+	fp = fopen (path, mode);
 	if (fp == NULL) // file could not be opened
 	{
 		fprintf (stderr, "fopen error on %s:\n", path);
@@ -126,12 +132,13 @@ FILE* myfopen (const char* path, const char* mode)
 
 void myfclose (FILE* fp)
 {
+	int retval;
     if (fp == stdin || fp == stdout) {
         rewind(fp); //Ryan thinks this is a hack, David thinks it's beautiful
         return;     //if we are using a pdb from stdin, we often need to reuse
     }               //it, so we just rewind to the beginning
 
-	int retval = fclose (fp);
+	retval = fclose (fp);
 
 	if (retval != 0) // file could not be closed
 	{

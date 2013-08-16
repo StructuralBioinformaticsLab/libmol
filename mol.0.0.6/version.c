@@ -29,7 +29,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#define _MOL_VERSION_ "0.0.6"
+#define _GIT_VERSION_ "Windows Unknown"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 void
 mol_version (char** lineptr, size_t *n)

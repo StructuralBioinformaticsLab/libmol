@@ -30,10 +30,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <errno.h>
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 struct matrix2df* potential_matrix2df_ncontacts_bin (struct atomgrp* agA, struct atomgrp* agB, struct prm* prm, float r1, float r2, int only_sab)
 {
+	int Aatomi, Batomi; // loop iters
+	float r1sq;
+	float r2sq;
+	struct matrix2df *M;
+
 	if (r1 < 0.0 || r2 < 0.0)
 	{
 		fprintf (stderr, "begin error\n");
@@ -43,23 +52,26 @@ struct matrix2df* potential_matrix2df_ncontacts_bin (struct atomgrp* agA, struct
 		exit (EXIT_FAILURE);
 	}
 
-	int Aatomi, Batomi; // loop iters
 
 	// squared vals for euclidean dist
-	float r1sq = _mol_sq(r1);
-	float r2sq = _mol_sq(r2);
+	r1sq = _mol_sq(r1);
+	r2sq = _mol_sq(r2);
 
-	struct matrix2df* M = matrix2df_create (prm->natoms, prm->natoms);
+	M = matrix2df_create (prm->natoms, prm->natoms);
 	matrix2df_init (M, 0); // init all matrix vals to 0
 
 	// loop through every atom in agA
 	for (Aatomi = 0; Aatomi < agA->natoms; Aatomi++)
 	{
+		int Atypen;
+		float AX;
+		float AY;
+		float AZ;
+
 		if (only_sab && ! agA->atoms[Aatomi].sa)
 			continue;
 
-		int Atypen = agA->atoms[Aatomi].atom_typen;
-
+		Atypen = agA->atoms[Aatomi].atom_typen;
 		if (Atypen < 0 || Atypen > prm->natoms-1)
 		{
 			fprintf (stderr, "begin error\n");
@@ -70,17 +82,22 @@ struct matrix2df* potential_matrix2df_ncontacts_bin (struct atomgrp* agA, struct
 			exit (EXIT_FAILURE);
 		}
 
-		float AX = agA->atoms[Aatomi].X;
-		float AY = agA->atoms[Aatomi].Y;
-		float AZ = agA->atoms[Aatomi].Z;
+		AX = agA->atoms[Aatomi].X;
+		AY = agA->atoms[Aatomi].Y;
+		AZ = agA->atoms[Aatomi].Z;
 
 		// loop through every atom in agB
 		for (Batomi = 0; Batomi < agB->natoms; Batomi++)
 		{
+			int Btypen;
+			float BX;
+			float BY;
+			float BZ;
+			float rsq;
 			if (only_sab && ! agB->atoms[Batomi].sa)
 				continue;
 
-			int Btypen = agB->atoms[Batomi].atom_typen;
+			Btypen = agB->atoms[Batomi].atom_typen;
 
 			if (Atypen < 0 || Atypen > prm->natoms-1)
 			{
@@ -92,14 +109,14 @@ struct matrix2df* potential_matrix2df_ncontacts_bin (struct atomgrp* agA, struct
 				exit (EXIT_FAILURE);
 			}
 
-			float BX = agB->atoms[Batomi].X;
-			float BY = agB->atoms[Batomi].Y;
-			float BZ = agB->atoms[Batomi].Z;
+			BX = agB->atoms[Batomi].X;
+			BY = agB->atoms[Batomi].Y;
+			BZ = agB->atoms[Batomi].Z;
 
 			// calculate euclidean distance
-			float rsq = (_mol_sq(AX - BX) +
-			             _mol_sq(AY - BY) +
-			             _mol_sq(AZ - BZ));
+			rsq = (_mol_sq(AX - BX) +
+			       _mol_sq(AY - BY) +
+			       _mol_sq(AZ - BZ));
 
 			if (rsq >= r1sq && rsq < r2sq) // atom distance is within the bin
 			{
@@ -115,13 +132,14 @@ struct matrix2df* potential_matrix2df_ncontacts_bin (struct atomgrp* agA, struct
 
 struct matrix2df* potential_matrix2df_rowcol_subatom_join (struct matrix2df* A, struct prm* prm)
 {
+	int i, j;
 	// create subatom matrix
 	struct matrix2df* B = matrix2df_create (prm->nsubatoms, prm->nsubatoms);
 	matrix2df_init (B, 0); // init all matrix vals to 0
 
-	int i, j;
 	for (i = 0; i < A->ni; i++)
 	{
+		int subi;
 		if (i < 0 || i > prm->natoms-1)
 		{
 			fprintf (stderr, "begin error\n");
@@ -132,7 +150,7 @@ struct matrix2df* potential_matrix2df_rowcol_subatom_join (struct matrix2df* A, 
 			exit (EXIT_FAILURE);
 		}
 
-		int subi = prm->atoms[i].subid; // get subatom mapping
+		subi = prm->atoms[i].subid; // get subatom mapping
 
 		if (subi < 0)
 			continue; // ignore this subatom type
@@ -150,6 +168,7 @@ struct matrix2df* potential_matrix2df_rowcol_subatom_join (struct matrix2df* A, 
 
 		for (j = 0; j < A->nj; j++)
 		{
+			int subj;
 			if (j < 0 || j > prm->natoms-1)
 			{
 				fprintf (stderr, "begin error\n");
@@ -160,7 +179,7 @@ struct matrix2df* potential_matrix2df_rowcol_subatom_join (struct matrix2df* A, 
 				exit (EXIT_FAILURE);
 			}
 
-			int subj = prm->atoms[j].subid; // get subatom mapping
+			subj = prm->atoms[j].subid; // get subatom mapping
 
 			if (subj < 0)
 				continue; // ignore this subatom type

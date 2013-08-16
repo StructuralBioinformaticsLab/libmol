@@ -1,10 +1,19 @@
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef _WIN32
+#include "mol_stdbool.h"
+#else
 #include <stdbool.h>
+#endif
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
+
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 #ifndef linesize
    #undef linesize
@@ -15,12 +24,15 @@
 void extract_filename( const char *str, char *fname )
 {
    int l = 0;
+   int i;
+   int j;
+   int k;
    
    while ( str[ l ] ) l++;
       
    while ( ( l > 0 ) && isspace( str[ l - 1 ] ) ) l--;
    
-   int k = l - 1;
+   k = l - 1;
    
    while ( k >= 0 )
      {
@@ -28,9 +40,9 @@ void extract_filename( const char *str, char *fname )
        k--;
      }
      
-   int i = 0;
+   i = 0;
    
-   for ( int j = k + 1; j < l; j++ )
+   for ( j = k + 1; j < l; j++ )
      fname[ i++ ] = str[ j ];
      
    fname[ i ] = 0;    
@@ -54,6 +66,7 @@ int read_hybridization_states_from_mol2( const char* mol2file, struct atomgrp* a
      {
        if ( strstr( buffer, "<TRIPOS>MOLECULE" ) != NULL )     
          {
+           int nat;
            if ( fgets( buffer, linesize, fp ) == NULL )
              {
                print_error( "Failed to read %s!", mol2file );
@@ -79,7 +92,7 @@ int read_hybridization_states_from_mol2( const char* mol2file, struct atomgrp* a
                return 0;
              } 
              
-           int nat = atoi( buffer );                         
+           nat = atoi( buffer );                         
            
            if ( nat != ag->natoms )
              {
@@ -92,24 +105,25 @@ int read_hybridization_states_from_mol2( const char* mol2file, struct atomgrp* a
 
        if ( strstr( buffer, "<TRIPOS>ATOM" ) != NULL )     
          {
+           int i;
            if ( !mol_info_found )
              {
                print_error( "MOLECULE Record missing in %s!", mol2file );
                return 0;
              }
            
-           for ( int i = 0; i < ag->natoms; i++ )
+           for ( i = 0; i < ag->natoms; i++ )
              {
+               int atom_id;
+               char atom_name[ 20 ], atom_type[ 20 ];
+               double x, y, z;
+               
                if ( fgets( buffer, linesize, fp ) == NULL )
                  {
                    print_error( "Failed to read %s!", mol2file );
                    return 0;
                  }
                  
-               int atom_id;
-               char atom_name[ 20 ], atom_type[ 20 ];
-               double x, y, z;
-               
                if ( sscanf( buffer, "%d %s %lf %lf %lf %s", &atom_id, atom_name, &x, &y, &z, atom_type ) != 6 )
                  {
                    print_error( "Failed to read ATOM record from %s!", mol2file );

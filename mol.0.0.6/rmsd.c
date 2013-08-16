@@ -29,9 +29,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <unistd.h>
+#include <float.h>
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
+#include <unistd.h>
 #include _MOL_INCLUDE_
+#endif
 
 /*Recursive algorithm for detecting symmetry based on bonds and atom types of the molecule.
  Input molecule should have atom numbers arranged the way that atom number k has at least one connection with previous atoms.
@@ -44,6 +49,7 @@ void detectsymmetry_submit2(struct list *molecule,
 							struct pointlist *symmetry) {
 	int i, j, count;
 	struct list templist;
+	int value = -1;
 	templist.list = (int *)_mol_malloc(sizeof(int) * ag->natoms);
 	for (i = 0; i < ag->natoms; i++) {
 			templist.list[i] = 0;
@@ -51,7 +57,6 @@ void detectsymmetry_submit2(struct list *molecule,
 	for (i = 0; i < molecule->n; i++) {
 			templist.list[molecule->list[i]] = 2;
 	}
-	int value = -1;
 	count = 0;
 	for (i = 0; i < ag->atoms[molecule->n].nbonds; i++) {
 			struct atombond *bond = ag->atoms[molecule->n].bonds[i];
@@ -82,13 +87,13 @@ void detectsymmetry_submit2(struct list *molecule,
 					int c = 0;
 					int flag = 0;
 					for (j = 0; j < ac->nbonds; j++) {
+							int k;
 							bond = ac->bonds[j];
 							a1 = bond->a1;
 							a0 = bond->a0;
 							if (a1->ingrp == ac->ingrp) {
 									a1 = a0;
 							}
-							int k;
 							for (k = 0; k < molecule->n; k++)
 									if (molecule->list[k] ==
 										a1->ingrp) {
@@ -105,11 +110,12 @@ void detectsymmetry_submit2(struct list *molecule,
 					if ((!flag) && (c == count)) {
 							molecule->list[molecule->n] = ac->ingrp;
 							if (molecule->n == (ag->natoms - 1)) {
+									int *solution;
 									symmetry->list[symmetry->n] =
 											(int *)
 											_mol_malloc(sizeof(int) *
 														ag->natoms);
-									int *solution =
+									solution =
 											(int *)symmetry->
 											list[symmetry->n];
 									for (j = 0; j < ag->natoms; j++)
@@ -130,13 +136,13 @@ void detectsymmetry_submit2(struct list *molecule,
 struct pointlist *detectsymmetry(struct atomgrp *ag)
 {
 	struct pointlist *symmetry;
+	struct list molecule;
 	
 	int i;
 	symmetry = _mol_malloc(sizeof(struct pointlist));
 	symmetry->list =
 	    _mol_malloc(sizeof(int **) * ag->natoms * ag->natoms * ag->natoms);
 	symmetry->n = 0;
-	struct list molecule;
 	molecule.n = 0;
 	molecule.list = (int *)_mol_malloc(sizeof(int *) * ag->natoms);
 	if (ag->natoms > 1) {
@@ -151,9 +157,10 @@ struct pointlist *detectsymmetry(struct atomgrp *ag)
 		}
 	} else {
 //Default solution
+		int *solution;
 		symmetry->list[symmetry->n] =
 		    (int *)_mol_malloc(sizeof(int) * ag->natoms);
-		int *solution = (int *)symmetry->list[symmetry->n];
+		solution = (int *)symmetry->list[symmetry->n];
 		solution[0] = 0;
 		symmetry->n++;
 	}
@@ -166,14 +173,14 @@ float rmsd_sym(struct atomgrp *pA, struct atomgrp *pB, struct pointlist *sym)
 {
 	float sum;
 	int nis = pA->natoms;
-	if (nis == 0) {
-		fprintf(stderr, "error: no indices for rmsd calculation\n");
-		exit(EXIT_FAILURE);
-	}
 	int i, j;
 	int *curlist;
 	float rmsd_min = 1E+6;
 	float rmsd_val;
+	if (nis == 0) {
+		fprintf(stderr, "error: no indices for rmsd calculation\n");
+		exit(EXIT_FAILURE);
+	}
 	for (j = 0; j < sym->n; j++) {
 		curlist = (int *)sym->list[j];
 		sum = 0.0;
@@ -203,15 +210,18 @@ float rmsd_sym_no_bb(struct atomgrp *pA, struct atomgrp *pB,
 		     struct pointlist *sym)
 {
 	int nis = pA->natoms - 5;
+	float rmsd_min = FLT_MAX;
+	int j;
 	if (nis == 0) {
 		fprintf(stderr, "error: no indices for rmsd calculation\n");
 		exit(EXIT_FAILURE);
 	}
-	float rmsd_min = INFINITY;
-	for (int j = 0; j < sym->n; j++) {
+	for (j = 0; j < sym->n; j++) {
 		int *curlist = (int *)sym->list[j];
 		float sum = 0.0;
-		for (int i = 3; i < pA->natoms - 2; i++) {
+		int i;
+		float rmsd_val;
+		for (i = 3; i < pA->natoms - 2; i++) {
 			int ii = curlist[i];	// indices index
 			float dev_squared =
 			    ((pA->atoms[i].X -
@@ -226,7 +236,7 @@ float rmsd_sym_no_bb(struct atomgrp *pA, struct atomgrp *pB,
 
 			sum += dev_squared;
 		}
-		float rmsd_val = sqrtf(sum / (float)nis);
+		rmsd_val = sqrtf(sum / (float)nis);
 		if (rmsd_val < rmsd_min)
 			rmsd_min = rmsd_val;
 	}

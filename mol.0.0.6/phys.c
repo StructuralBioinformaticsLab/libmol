@@ -28,11 +28,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 float* moment_of_inertia (struct atomgrp* ag)
 {
-	struct tvector* com = center_of_mass (ag);
+	struct mol_vector3f *com = center_of_mass (ag);
 
 	float sq_x_com = _mol_sq(com->X);
 	float sq_y_com = _mol_sq(com->Y);
@@ -46,6 +51,8 @@ float* moment_of_inertia (struct atomgrp* ag)
 	float sum_mult_xz = 0;
 	float sum_mult_yz = 0;
 
+	float *moi_matrix = (float*) _mol_malloc (sizeof (float) * 9);
+
 	int i;
 	for (i = 0; i < ag->natoms; i++)
 	{
@@ -57,8 +64,6 @@ float* moment_of_inertia (struct atomgrp* ag)
 		sum_mult_xz += ag->atoms[i].X * ag->atoms[i].Z;
 		sum_mult_yz += ag->atoms[i].Y * ag->atoms[i].Z;
 	}
-
-	float* moi_matrix = (float*) _mol_malloc (sizeof (float) * 9);
 
 	moi_matrix[0] = sum_sq_y + sum_sq_z - (sq_y_com + sq_z_com) * ag->natoms;
 	moi_matrix[1] = -sum_mult_xy + com->X * com->Y * ag->natoms;

@@ -33,8 +33,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <limits.h>
 
-
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 // identifiers in the parameter file:
 #define VERSION_KEY   "version"
@@ -140,16 +143,18 @@ void read_prmversion (const char* path, const char* bin_version)
 
 void read_prmatom (struct prm* prm, const char* path)
 {
-	prm->atoms = NULL;
-	prm->natoms = 0;
-	prm->nsubatoms = -1;
 	int atomsi = 0;
 	char idstr[MAXLEN];
 
 	char* line = NULL;
 	size_t len = 0;
+	int i;
 
 	FILE* fp = myfopen (path, "r"); // open prm file
+
+	prm->atoms = NULL;
+	prm->natoms = 0;
+	prm->nsubatoms = -1;
 	
 	// preparse
 	while (getline (&line, &len, fp) != -1)
@@ -213,7 +218,7 @@ void read_prmatom (struct prm* prm, const char* path)
 
 	// qsort atoms for bsearch
 	qsort (prm->atoms, prm->natoms, sizeof (struct prmatom), comp_prmatom);
-	for (int i=0; i<prm->natoms; i++) // assign the id after sort
+	for (i=0; i<prm->natoms; i++) // assign the id after sort
 	{
 		prm->atoms[i].id=i;
 	}
@@ -230,15 +235,18 @@ void read_prmatom (struct prm* prm, const char* path)
 */
 void read_typeinfo_from_pdb (struct prm* prm, const char* path)
 {
-	prm->atoms = NULL;
-	prm->natoms = 0;
-	prm->nsubatoms = -1;
-
 	char* line = NULL;
 	size_t len = 0;
 
 	FILE* fp = myfopen (path, "r"); // open pdb file
+
+	int atomsi;
+        int atomi;
 	
+	prm->atoms = NULL;
+	prm->natoms = 0;
+	prm->nsubatoms = -1;
+
 	printf( "\n\n##%s##\n\n", path );
 	fflush( stdout );
 
@@ -257,7 +265,7 @@ void read_typeinfo_from_pdb (struct prm* prm, const char* path)
 	prm->atoms = (struct prmatom*) _mol_malloc (sizeof (struct prmatom) * prm->natoms);
 
 	// read every line of the pdb file
-	int atomsi = 0;
+	atomsi = 0;
 	while (getline (&line, &len, fp) != -1)
 	{
 		if (strncmp (line, "ATOM  ", 6) != 0 ) // check for ATOM line
@@ -286,7 +294,7 @@ void read_typeinfo_from_pdb (struct prm* prm, const char* path)
         atomsi = 0;
 	prm->atoms[atomsi].id=atomsi;
 	
-        int atomi = 1;
+        atomi = 1;
         while (atomi < prm->natoms)
         {
         	if ( ( strcmp( prm->atoms[atomsi].typemaj, prm->atoms[atomi].typemaj ) == 0 ) 
@@ -320,7 +328,6 @@ void read_prmpwpot (struct prm* prm, const char* path)
 	int lambdasi=0;
 	int Xsi=0,j;
 	char idstr[MAXLEN];
-	prm->pwpot = NULL;
 	float tmpscanfloat = 0.0;
 
 	char* line = NULL;
@@ -330,6 +337,10 @@ void read_prmpwpot (struct prm* prm, const char* path)
 
 
 	FILE* fp = myfopen (path, "r"); // open prm file
+
+	float eij;
+	
+	prm->pwpot = NULL;
 
 	// preparse
 	while (getline (&line, &len, fp) != -1)
@@ -432,7 +443,6 @@ void read_prmpwpot (struct prm* prm, const char* path)
 	}
 
 	//artem modifications
-	float eij;
 	for(i=0;i<prm->nsubatoms;i++){
 	  for(j=0;j<prm->nsubatoms;j++){
 	    eij = 0;
@@ -447,8 +457,6 @@ void read_prmpwpot (struct prm* prm, const char* path)
 
 void read_prmbond (struct prm* prm, const char* path)
 {
-	prm->bonds = NULL;
-	prm->nbonds = 0;
 	int bondsi = 0;
 	char idstr[MAXLEN];
 
@@ -456,6 +464,9 @@ void read_prmbond (struct prm* prm, const char* path)
 	size_t len = 0;
 
 	FILE* fp = myfopen (path, "r"); // open prm file
+
+	prm->bonds = NULL;
+	prm->nbonds = 0;
 
 	// preparse
 	while (getline (&line, &len, fp) != -1)
@@ -519,13 +530,14 @@ void read_prmbond (struct prm* prm, const char* path)
 int atomid (struct prm* prm, const char* typemaj, const char* typemin)
 {
 	struct prmatom atomkey;
+	struct prmatom* atomres;
 	atomkey.typemaj = (char*) _mol_malloc (20 * sizeof (char));
 	atomkey.typemin = (char*) _mol_malloc (20 * sizeof (char));
 
 	atomkey.typemaj = strncpy (atomkey.typemaj, typemaj, 20);
 	atomkey.typemin = strncpy (atomkey.typemin, typemin, 20);
 
-	struct prmatom* atomres = bsearch (&atomkey, prm->atoms, prm->natoms, sizeof (struct prmatom), comp_prmatom);
+	atomres = bsearch(&atomkey, prm->atoms, prm->natoms, sizeof (struct prmatom), comp_prmatom);
 
 	free (atomkey.typemaj);
 	free (atomkey.typemin);
@@ -538,6 +550,7 @@ int atomid (struct prm* prm, const char* typemaj, const char* typemin)
 
 static void copy_prmpwpot (struct prmpwpot* copy, struct prmpwpot* orig, int nsubatoms)
 {
+	int i;
 	copy->r1 = orig->r1;
 	copy->r2 = orig->r2;
 	copy->k = orig->k;
@@ -546,7 +559,7 @@ static void copy_prmpwpot (struct prmpwpot* copy, struct prmpwpot* orig, int nsu
 	copy->Xs = _mol_malloc(copy->k * copy->k * sizeof(float));
 	memcpy(copy->Xs, orig->Xs, copy->k * copy->k * sizeof(float));
 	copy->eng = (float**)_mol_malloc(nsubatoms*sizeof(float*));
-	for(int i=0;i<nsubatoms;i++){
+	for(i=0;i<nsubatoms;i++){
 		copy->eng[i] = (float*) _mol_malloc(nsubatoms*sizeof(float));
 		memcpy(copy->eng[i], orig->eng[i], nsubatoms*sizeof(float));
 	}
@@ -770,9 +783,10 @@ destroy_prmatom (struct prmatom* atom)
 static void
 destroy_prmpwpot (struct prmpwpot* pwpot, int nsubatoms)
 {
+    int i;
     free (pwpot->lambdas);
     free (pwpot->Xs);
-    for (int i=0; i<nsubatoms; i++) {
+    for (i=0; i<nsubatoms; i++) {
         free(pwpot->eng[i]);
     }
     free (pwpot->eng);
@@ -788,7 +802,8 @@ free_prmpwpot (struct prmpwpot* pwpot, int nsubatoms)
 void
 destroy_prm (struct prm* prm)
 {
-    for (int i=0; i<prm->natoms; i++)
+    int i;
+    for (i=0; i<prm->natoms; i++)
     {
         destroy_prmatom (&(prm->atoms[i]));
     }

@@ -31,7 +31,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#ifdef _WIN32
+#include "mol_stdbool.h"
+#else
 #include <stdbool.h>
+#endif
 #include <string.h>
 #include <ctype.h>
 
@@ -45,7 +49,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void assign_combined_residue_sequence( struct atomgrp *ag )
 {
    int k = 1;
-   for ( int i = 0; i < ag->natoms; i++ )
+   int i;
+   for ( i = 0; i < ag->natoms; i++ )
      {
        if ( i && ( ag->atoms[ i ].res_seq != ag->atoms[ i - 1 ].res_seq ) )
          {
@@ -83,8 +88,6 @@ struct atomgrp* read_pdb (const char* path, struct prm* prm)
 	FILE* fp = myfopen (path, "r");
 
 	struct atomgrp* ag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
-	ag->natoms = 100; // just a guess, realloc as necessary
-	ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
 
 	char* line = NULL;
 	size_t len = 0;
@@ -94,6 +97,8 @@ struct atomgrp* read_pdb (const char* path, struct prm* prm)
 
 	// read every line of the pdb file
 	int atomi = 0;
+	ag->natoms = 100; // just a guess, realloc as necessary
+	ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
 	while (getline (&line, &len, fp) != -1)
 	{
 		if (strncmp (line, "ATOM  ", 6) != 0 ) // check for ATOM line
@@ -196,13 +201,9 @@ struct atomgrp* read_pdb (const char* path, struct prm* prm)
 */
 struct atomgrp* read_pdb_with_compressed_typeinfo (const char* path, struct prm* prm)
 {
-        read_typeinfo_from_pdb (prm, path);
-
 	FILE* fp = myfopen (path, "r");
 
 	struct atomgrp* ag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
-	ag->natoms = 100; // just a guess, realloc as necessary
-	ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
 
 	char* line = NULL;
 	size_t len = 0;
@@ -212,6 +213,9 @@ struct atomgrp* read_pdb_with_compressed_typeinfo (const char* path, struct prm*
 
 	// read every line of the pdb file
 	int atomi = 0;
+        read_typeinfo_from_pdb (prm, path);
+	ag->natoms = 100; // just a guess, realloc as necessary
+	ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
 	while (getline (&line, &len, fp) != -1)
 	{
 		if (strncmp (line, "ATOM  ", 6) != 0 ) // check for ATOM line
@@ -290,8 +294,6 @@ struct atomgrp* read_pdb_nopar (const char* path)
         FILE* fp = myfopen (path, "r");
 
         struct atomgrp* ag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
-        ag->natoms = 100; // just a guess, realloc as necessary
-        ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
 
         char* line = NULL;
         size_t len = 0;
@@ -299,8 +301,12 @@ struct atomgrp* read_pdb_nopar (const char* path)
 
         // read every line of the pdb file
         int atomi = 0;
+        ag->natoms = 100; // just a guess, realloc as necessary
+        ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
         while (getline (&line, &len, fp) != -1)
         {
+		char *atom_name;
+		char *atom_name_2;
                 if (strncmp (line, "ATOM  ", 6) != 0 && strncmp (line, "HETATM", 6) != 0)
                         continue;
                 if (atomi+1 > ag->natoms)
@@ -332,10 +338,10 @@ struct atomgrp* read_pdb_nopar (const char* path)
 		else
 			ag->atoms[atomi].backbone = 0;
 
-		char * atom_name = _mol_calloc(5, sizeof(char));
+		atom_name = _mol_calloc(5, sizeof(char));
 		strncpy(atom_name, line+12, 4);
 		rstrip(atom_name);
-		char * atom_name_2 = atom_name;
+		atom_name_2 = atom_name;
 		while (isspace(*atom_name_2))
 			atom_name_2++;
 		if (atom_name != atom_name_2)
@@ -387,6 +393,7 @@ struct atomgrp** read_pdb_models (const char* path, struct prm* prm, int* rmodel
         int  modeli=-1;
         while (getline (&line, &len, fp) != -1)
 	{
+	    int atomi;
             if (strncmp (line, "MODEL", 5) != 0) // check for MODEL line
 			continue;
             //We are now in model loop
@@ -402,7 +409,7 @@ struct atomgrp** read_pdb_models (const char* path, struct prm* prm, int* rmodel
 	    ag_models[modeli] = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
 	    ag_models[modeli]->natoms = 100; // just a guess, realloc as necessary
             ag_models[modeli]->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag_models[modeli]->natoms);
-	    int atomi = 0;
+	    atomi = 0;
 	    while (getline (&line, &len, fp) != -1)
 	    {
 	    	if (strncmp (line, "ENDMDL", 6) == 0) //if ENDMDL we finished group reading
@@ -497,6 +504,7 @@ struct atomgrp **read_pdb_modelsnopar(const char *path, int *rmodels)
 	size_t len = 0;
 	int modeli = -1;
 	while (getline(&line, &len, fp) != -1) {
+		int atomi;
 		if (strncmp(line, "MODEL", 5) != 0)	// check for MODEL line
 			continue;
 		//We are now in model loop
@@ -516,7 +524,7 @@ struct atomgrp **read_pdb_modelsnopar(const char *path, int *rmodels)
 		    _mol_malloc(sizeof(struct atom) *
 				ag_models[modeli]->natoms);
                 ag_models[modeli]->prm = NULL;
-		int atomi = 0;
+		atomi = 0;
 		while (getline(&line, &len, fp) != -1) {
 			if (strncmp(line, "ENDMDL", 6) == 0)	//if ENDMDL we finished group reading
 			{
@@ -591,12 +599,12 @@ void fprint_pdb (struct atomgrp* ag, struct prm* prm, const char* path)
 		int atomi;
 		for (atomi = 0; atomi < ags[agi]->natoms; atomi++, sum_atomi++)
 		{
+            char atomname[5];
 			fprintf (fp, "%-6s", "ATOM"); // atom number
 			fprintf (fp, "%5d", sum_atomi+1); // atom number
 			//fprintf (fp, "  "); // 2 spaces
 			fprintf (fp, " "); // 1 space
 
-            char atomname[5];
             if (strlen(prm->atoms[ags[agi]->atoms[atomi].atom_typen].typemin) == 4) {
                 strcpy(atomname, prm->atoms[ags[agi]->atoms[atomi].atom_typen].typemin);
             } else {

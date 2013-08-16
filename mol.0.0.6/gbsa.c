@@ -28,11 +28,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE 700
 #endif
+#define _USE_MATH_DEFINES
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 //Init ACE
 void ace_ini(struct atomgrp* ag,struct acesetup* ac_s){
@@ -46,6 +52,7 @@ void ace_ini(struct atomgrp* ag,struct acesetup* ac_s){
 	double   pi2 = 1.0 / (M_PI*M_PI);
 	double width=1.2;
 	double ri,ri2,rk,vk,rk2,alpha,alpha2,alpha4,prod2,prod4,ratio,tik2,qik,qterm,temp,fik,omik,s2ik,s3ik,uik,omgik;
+	int nbsize;
 	ac_s->ntypes=ag->num_atom_types+1;
 	ac_s->rsolv=(double*)_mol_malloc(sizeof(double)*ac_s->ntypes);
 	ac_s->vsolv=(double*)_mol_malloc(sizeof(double)*ac_s->ntypes);
@@ -60,6 +67,7 @@ void ace_ini(struct atomgrp* ag,struct acesetup* ac_s){
 	}
 	for (i=0;i<ag->natoms;i++){
 		if (ac_s->vsolv[ag->atoms[i].atom_ftypen]<=0.0){
+			struct atombond bp;	
 			ac_s->vsolv[ag->atoms[i].atom_ftypen]=ag->atoms[i].acevolume;
 			ac_s->rsolv[ag->atoms[i].atom_ftypen]=_mol_max(ag->atoms[i].rminh,minr);
 			//Hydrogen correction
@@ -69,7 +77,6 @@ void ace_ini(struct atomgrp* ag,struct acesetup* ac_s){
 				ac_s->rsolv[ag->atoms[i].atom_ftypen]=_mol_max(0.83, ac_s->rsolv[ag->atoms[i].atom_ftypen]);
 			}
 			//	printf(" %d %.3f \n",ag->atoms[i].atom_ftypen,ag->atoms[i].rminh);
-			struct atombond bp;	
 			for (j=0;j<ag->nbonds;j++){
 				bp=ag->bonds[j];
 				if (bp.a0->atom_ftypen == ag->atoms[i].atom_ftypen) {
@@ -143,7 +150,7 @@ void ace_ini(struct atomgrp* ag,struct acesetup* ac_s){
 		}
 	}       
 	ac_s->nbsize=1; 
-	int nbsize=1;
+	nbsize=1;
 	ac_s->eself=_mol_malloc(ag->natoms*sizeof(double));
 	ac_s->rborn=_mol_malloc(ag->natoms*sizeof(double));
 	ac_s->swarr=_mol_malloc(nbsize*sizeof(double));
@@ -163,8 +170,9 @@ void ace_ini(struct atomgrp* ag,struct acesetup* ac_s){
 int*  compute_0123_list(struct atomgrp* ag, int* n0123, int *list03,int n03,int *list02,int n02,int *na01,int **pna01){
 	int i,j,n2,ind;
 	int* p;
+	int *list0123;
 	*n0123=(ag->nbonds+n03+n02);
-	int * list0123=(int*)_mol_malloc(*n0123*2*sizeof(int));
+	list0123=(int*)_mol_malloc(*n0123*2*sizeof(int));
 	ind=0;
 	//list03 goes first
 	for(i=0; i<n03; i++)
@@ -237,6 +245,7 @@ void ace_eselfupdate(int i1,int i2, int it, int kt,int ij,double dx, double dy, 
 		}
 		//printf("SF %d %d %.8f %.8f %.8f\n",i1+1,i2+1,r2,ac_s->s2ace[it*ac_s->ntypes+kt],exp(-r2/ac_s->s2ace[it*ac_s->ntypes+kt]));
 		if (ac_s->vsolv[it]>0){
+			int ind;
 			expterm = ac_s->wace[kt*ac_s->ntypes+it] * exp(-r2/ac_s->s2ace[kt*ac_s->ntypes+it]);
 			u4ace=pow(ac_s->uace[kt*ac_s->ntypes+it],4);
 			rmu = r4 + u4ace;
@@ -244,7 +253,7 @@ void ace_eselfupdate(int i1,int i2, int it, int kt,int ij,double dx, double dy, 
 			temp=2.0*(expterm+term)*sw;
 			eself[i2]-= temp;
 			ffk=((-8*term*(3*u4ace-r4)/(r2*rmu))+(4*expterm/ac_s->s2ace[kt*ac_s->ntypes+it]))*sw-temp*dsw;
-			int ind=ij+nbsize;
+			ind=ij+nbsize;
 			xsf[ind]=-ffk*dx;
 			ysf[ind]=-ffk*dy;
 			zsf[ind]=-ffk*dz;
@@ -344,7 +353,7 @@ void aceeng(struct atomgrp* ag,double* en,struct acesetup* ac_s,struct agsetup* 
 	double etotal=0;
 	double ecoul=0;
 	int* list0123=ac_s->list0123;
-	int n0123=ac_s->n0123;;
+	int n0123=ac_s->n0123;
 	double* eself=ac_s->eself;
 	double* rborn=ac_s->rborn;
 	double* swarr=ac_s->swarr;
@@ -361,10 +370,17 @@ void aceeng(struct atomgrp* ag,double* en,struct acesetup* ac_s,struct agsetup* 
 	double* diarr=ac_s->diarr;
 	double rul3=1.0/pow((nb2cof-nb2cot),3.0);
 	double rul12=12.0*rul3;
+	double kelec;
+	double factor_E;
+	double tau;
+	double ehydr;
+	double fac1;
+	double facc1;
 	//NBLST RBORN
 	for (i=0;i<ag->natoms;i++){
+		double ri;
 		it =ag->atoms[i].atom_ftypen;
-		double ri=ac_s->rsolv[it];
+		ri=ac_s->rsolv[it];
 		// gself is -2*gself/tau*qi2
 		eself[i] = 1.0/ri + 2.0*ac_s->lwace[it];
 		b0 = b0 +ag->atoms[i].acevolume;
@@ -413,12 +429,13 @@ void aceeng(struct atomgrp* ag,double* en,struct acesetup* ac_s,struct agsetup* 
 		//printf("DE %d %d %d %.3f\n",i1+1,i2+1,ij-1,darr[ij-1]);
 	}
 	//Electrostatic constant need to carry over to constants
-	double kelec=332.0716;
-	double factor_E=-kelec/2.0;
+	kelec=332.0716;
+	factor_E=-kelec/2.0;
 	//change to epsilons;
-	double tau=((1/4.0)-(1/78.0));
-	double ehydr=0;
+	tau=((1/4.0)-(1/78.0));
+	ehydr=0;
 	for (i=0;i<ag->natoms;i++){
+		double c2;
 		it=ag->atoms[i].atom_ftypen;
 		ehydr+=-ac_s->hydr[it]*eself[i];
 		if (eself[i] >= 1.0/b0) {
@@ -429,7 +446,7 @@ void aceeng(struct atomgrp* ag,double* en,struct acesetup* ac_s,struct agsetup* 
 			rborn[i] = 1.0 * b0 * (2.0-b0*eself[i]);
 			dbrdes[i]=b0*b0/factor_E;
 		}
-		double c2=ag->atoms[i].chrg*ag->atoms[i].chrg*tau;
+		c2=ag->atoms[i].chrg*ag->atoms[i].chrg*tau;
 		eself[i]=factor_E*eself[i]*c2;
 		diarr[i]=c2-(ac_s->hydr[it]/factor_E);
 		//printf("HYD %d %.5f %.5f\n",i,c2,ac_s->hydr[it]/factor_E);
@@ -438,8 +455,8 @@ void aceeng(struct atomgrp* ag,double* en,struct acesetup* ac_s,struct agsetup* 
 	}
 	//Second loop calculating energy nb
 	ij=0;
-	double fac1=-kelec*tau;
-	double facc1=kelec/(4.0);
+	fac1=-kelec*tau;
+	facc1=kelec/(4.0);
 	for(i=0; i<ags->nblst->nfat; i++)
 	{
 		i1=ags->nblst->ifat[i];
@@ -585,9 +602,11 @@ void aceeng(struct atomgrp* ag,double* en,struct acesetup* ac_s,struct agsetup* 
 			for(j=0; j<n2; j++)
 			{
 				if (darr[ij]>0){
+					double fdiarr1;
+					double fdiarr2;
 					i2=p[j];
-					double fdiarr1=-factor_E*diarr[i1];
-					double fdiarr2=-factor_E*diarr[i2];
+					fdiarr1=-factor_E*diarr[i1];
+					fdiarr2=-factor_E*diarr[i2];
 					ag->atoms[i2].GX+=fdiarr1*xsf[ij];
 					ag->atoms[i2].GY+=fdiarr1*ysf[ij];
 					ag->atoms[i2].GZ+=fdiarr1*zsf[ij];

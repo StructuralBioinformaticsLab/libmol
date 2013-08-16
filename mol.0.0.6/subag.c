@@ -25,12 +25,17 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 void setup_subag(struct atomgrp *ag, struct atomgrp *new_actives, int nlist,
 		 int *list)
 {
-	for (int i = 0; i < nlist; i++) {
+	int i;
+	for (i = 0; i < nlist; i++) {
 		int j = list[i];
 		ag->atoms[j].X = new_actives->atoms[i].X;
 		ag->atoms[j].Y = new_actives->atoms[i].Y;
@@ -41,7 +46,8 @@ void setup_subag(struct atomgrp *ag, struct atomgrp *new_actives, int nlist,
 void unsetup_subag(struct atomgrp *ag, struct atomgrp *new_actives, int nlist,
 		   int *list)
 {
-	for (int i = 0; i < nlist; i++) {
+	int i;
+	for (i = 0; i < nlist; i++) {
 		int j = list[i];
 		new_actives->atoms[i].X = ag->atoms[j].X;
 		new_actives->atoms[i].Y = ag->atoms[j].Y;

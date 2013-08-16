@@ -33,12 +33,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <errno.h>
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 
 File_Type file_ext (const char* path)
 {
-	char* ri = rindex (path, '.');
+	char* ri = strrchr(path, '.');
 
 	if (ri == NULL)
 		return FILE_UNKNOWN;
@@ -88,9 +92,10 @@ void fprint_file_atomgrp (const char* path, struct atomgrp* ag, struct prm* prm)
 void read_mod_vdw(char *mfile, int *nmod, int **mod, double **modeps, double **modrminh)
 {
    int linesz=91;
+   int na;
    char *buffer=mymalloc(sizeof(char)*linesz);
-   *nmod=0;
    FILE* fp = myfopen (mfile, "r");
+   *nmod=0;
    while (fgets(buffer, linesz-1, fp)!=NULL)
    {
       if(!strncmp(buffer,"ATOM",4))(*nmod)++;
@@ -100,7 +105,7 @@ void read_mod_vdw(char *mfile, int *nmod, int **mod, double **modeps, double **m
    *modeps=mymalloc(*nmod*sizeof(double));
    *modrminh=mymalloc(*nmod*sizeof(double));
    fp = fopen (mfile, "r");
-   int na=0;
+   na=0;
    while(fgets(buffer, linesz-1, fp)!=NULL)
    {
       if(!strncmp(buffer,"ATOM",4))

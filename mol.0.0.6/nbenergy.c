@@ -30,7 +30,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <errno.h>
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 #define MAXPAIR 36
 #define CCELEC 332.0716
@@ -412,7 +416,8 @@ void eleng(struct atomgrp *ag, double eps, double* een, struct nblist *nblst)
 
 void destroy_nblist(struct nblist *nblst)
 {
-        for(int i=0; i<nblst->nfat; i++)
+        int i;
+        for(i=0; i<nblst->nfat; i++)
         {
            if(nblst->nsat[i]>0)
               free(nblst->isat[i]);
@@ -460,6 +465,9 @@ void gen_nblist(struct atomgrp *ag, struct cubeset *cust, struct clusterset *cls
 
         int natoms=ag->natoms;
 
+        int *ifat;
+        double nbcuts;
+        int ntotp;
 /* prepare nonbond list arrays. */
         int *p;
         for(i=0; i<nblst->nfat; i++)
@@ -472,7 +480,7 @@ void gen_nblist(struct atomgrp *ag, struct cubeset *cust, struct clusterset *cls
         nblst->nsat=_mol_realloc(nblst->nsat,natoms*sizeof(int));
         nblst->isat=_mol_realloc(nblst->isat,natoms*sizeof(int*));
 //ifat is temporal
-        int *ifat=_mol_malloc(natoms*sizeof(int));
+        ifat=_mol_malloc(natoms*sizeof(int));
         for(i=0; i<natoms; i++)
         {
            nblst->nsat[i]=0;
@@ -481,7 +489,7 @@ void gen_nblist(struct atomgrp *ag, struct cubeset *cust, struct clusterset *cls
         }
 
         nbcut=nblst->nbcut;
-        double nbcuts=nbcut*nbcut;
+        nbcuts=nbcut*nbcut;
 
 /* loop over the filled cubes. */
 	for (i=0; i<cust->nfcubes; i++)
@@ -580,7 +588,7 @@ void gen_nblist(struct atomgrp *ag, struct cubeset *cust, struct clusterset *cls
            }
 	}
 /* cleanup, total pair calculation. */
-        int ntotp=0;
+        ntotp=0;
         free(ifat);
         if(nblst->nfat > 0)  {
             nblst->ifat=_mol_realloc(nblst->ifat,(nblst->nfat)*sizeof(int));
@@ -609,6 +617,9 @@ void gen_nblist_new(struct atomgrp *ag, struct cubeset *cust, struct clusterset 
 
         int natoms=ag->natoms;
 
+        int *ifat;
+        double nbcuts;
+        int ntotp;
 //prepare nonbond list arrays
         int *p;
         for(i=0; i<nblst->nfat; i++)
@@ -621,7 +632,7 @@ void gen_nblist_new(struct atomgrp *ag, struct cubeset *cust, struct clusterset 
         nblst->nsat=_mol_realloc(nblst->nsat,natoms*sizeof(int));
         nblst->isat=_mol_realloc(nblst->isat,natoms*sizeof(int*));
 //ifat is temporal
-        int *ifat=_mol_malloc(natoms*sizeof(int));
+        ifat=_mol_malloc(natoms*sizeof(int));
         for(i=0; i<natoms; i++)
         {
            nblst->nsat[i]=0;
@@ -630,7 +641,7 @@ void gen_nblist_new(struct atomgrp *ag, struct cubeset *cust, struct clusterset 
         }
 
         nbcut=nblst->nbcut;
-        double nbcuts=nbcut*nbcut;
+        nbcuts=nbcut*nbcut;
 
 //loop over the filled cubes
 	for (i=0; i<cust->nfcubes; i++)
@@ -839,7 +850,7 @@ void gen_nblist_new(struct atomgrp *ag, struct cubeset *cust, struct clusterset 
            }
 	}	
 //cleanup, total pair calculation
-        int ntotp=0;
+        ntotp=0;
         free(ifat);
         if(nblst->nfat > 0)  {
             nblst->ifat=_mol_realloc(nblst->ifat,(nblst->nfat)*sizeof(int));
@@ -1040,9 +1051,9 @@ void free_clset(struct clusterset *clst)
 void gen_clset(int natoms, struct clusterset *clst,
                int nclust, int *clust)
 {
+        int i, j;
 	clst->nclusters=nclust;
         clst->clusters=_mol_malloc(nclust*sizeof(struct cluster));
-        int i, j;
         for(i=0; i<nclust; i++)
             clst->clusters[i].natoms=0;
         for(i=0; i<natoms; i++)
@@ -1076,7 +1087,6 @@ void gen_clset(int natoms, struct clusterset *clst,
 void clust14(struct atomgrp* ag, int *nclust, int *clust)
 {
 
-	*nclust=0;
 	int npair;
 	int ma, mapair, ipair;
 	int *pairs=_mol_malloc(MAXPAIR*2*sizeof(int));
@@ -1084,6 +1094,7 @@ void clust14(struct atomgrp* ag, int *nclust, int *clust)
         struct atombond *b;
 	struct atom *a0, *a1, *a2;
         /*All atoms were unassigned (flag -1) to any cluster. */
+	*nclust=0;
 	for(i=0; i<n; i++)
 	{
 		clust[i]=-1;
@@ -1279,19 +1290,18 @@ void comp_n23(int natoms, int *na01, int **pna01, int *n02, int *n03)
 
 int trim_comp(const void *s1, const void *s2)
 {
-     const int *v1, *v2;
-     v1=(const int *)s1;
-     v2=(const int *)s2;
+     const int *v1=(const int *)s1;
+     const int *v2=(const int *)s2;
 
      const int i11=*v1;
      const int i21=*v2;
+     const int i12=*(v1+1);
+     const int i22=*(v2+1);
      if(i11<i21)
         return -1;
      if(i11>i21)
         return 1;
 
-     const int i12=*(v1+1);
-     const int i22=*(v2+1);
      if(i12<i22)
         return -1;
      if(i12>i22)
@@ -1464,9 +1474,9 @@ void trim_list03(int natoms,
                  int *na02, int **pna02,
                  int *n03, int *list03)
 {
-	qsort(list03, *n03, 2*sizeof(list03[0]), trim_comp);
         int i, j, k, l, m, n, o, *p;
         int *list=_mol_malloc(*n03*sizeof(int));
+	qsort(list03, *n03, 2*sizeof(list03[0]), trim_comp);
         for(i=1; i<*n03; i++)
         {
            j=2*i;
@@ -1613,6 +1623,7 @@ void excl_dims(int natoms, int *na01, int **pna01,
 int exta(int a1, int a2, int *excl_list, int **pd1, int **pd2, int ndm)
 {
 	int i=a2-a1-1;
+        int *p;
         if(i<0)
         {
            printf("exta: ERROR a1<=a2\n");
@@ -1622,7 +1633,6 @@ int exta(int a1, int a2, int *excl_list, int **pd1, int **pd2, int ndm)
            return 0;
         if(i<10)
            return excl_list[10*a1+i];
-        int *p;
         if(i<20)
         {
            p=pd1[a1];
@@ -1781,21 +1791,36 @@ void init_nblst(struct atomgrp* ag, struct agsetup* ags)
 	int **pna01=_mol_malloc((ag->natoms)*sizeof(int*));
         int *na02=_mol_malloc((ag->natoms)*sizeof(int));
         int **pna02=_mol_malloc((ag->natoms)*sizeof(int*));
+        int i,j;
+        int n02, n03,nf03;
+        int *list02;
+        int *list03;
+	int *listf03;
+        int nd1,nd2,ndm;
+	int *atmind;
+	int *excl_list;
+        int **pd1;
+        int **pd2;
+	int *clust;
+        int nclust;
+        struct clusterset *clst;
+        struct nblist *nblst;
+        double nbcut;
+        double nbcof;
+        // Calculate a list of atoms connected by two bonds list02.
 
         // Calculate a one dimensional bonded list list01 for the atomgroup ag.
         /* na01[i] - number of bonded atoms for the atom i
             list01 - sequential blocks of numbers of bonded atoms
             pna01[i] - pointer to the block of bonded atoms in list01 for the atom i. */
         comp_list01(ag, list01, na01, pna01);
-        int i,j;
 
-        int n02, n03,nf03;
         // Calculate a total number of bonded triplets of atoms n02 and quadruplets n03.
         /* Based on number of connections na01 and an array of pointers pna01 to the list01. */
 	comp_n23(ag->natoms, na01, pna01, &n02, &n03);
-        int *list02=_mol_malloc(2*n02*sizeof(int));
-        int *list03=_mol_malloc(2*n03*sizeof(int));
-	int *listf03=_mol_malloc(2*n03*sizeof(int));
+        list02=_mol_malloc(2*n02*sizeof(int));
+        list03=_mol_malloc(2*n03*sizeof(int));
+	listf03=_mol_malloc(2*n03*sizeof(int));
         // Calculate a list of atoms connected by two bonds list02.
         /* Based on number of connections na01 and an array of pointers pna01 to the list01.
             na02[i] number of atom pairs connected by two bonds with the smallest atom index i
@@ -1816,8 +1841,7 @@ void init_nblst(struct atomgrp* ag, struct agsetup* ags)
            listf03=_mol_realloc(listf03,2*nf03*sizeof(int));
         else
            listf03=_mol_realloc(listf03,2*sizeof(int));
-        int nd1,nd2,ndm;
-	int *atmind=_mol_malloc(2*(ag->natoms)*sizeof(int));
+	atmind=_mol_malloc(2*(ag->natoms)*sizeof(int));
         // Evaluate dimensions of the exclusion list.
         /* The dimensions of the exclusion
             list relate to how close the connected atoms are
@@ -1827,9 +1851,9 @@ void init_nblst(struct atomgrp* ag, struct agsetup* ags)
                        &nd1, &nd2, &ndm, atmind);
 
 	i=10*((ag->natoms)+nd1+1)+(nd2+1)*(ndm-20);
-	int *excl_list=_mol_malloc(i*sizeof(int));
-        int **pd1=(int**)_mol_malloc((ag->natoms)*sizeof(int*));
-        int **pd2=(int**)_mol_malloc((ag->natoms)*sizeof(int*));
+	excl_list=_mol_malloc(i*sizeof(int));
+        pd1=(int**)_mol_malloc((ag->natoms)*sizeof(int*));
+        pd2=(int**)_mol_malloc((ag->natoms)*sizeof(int*));
         // Create an exclusion list (excl_list).
         /* Exclusion list is a compact array of numbers coding connected through 1,
             2, or 3 bonds pairs of atoms. It is used later by the function exta() to
@@ -1863,8 +1887,7 @@ void init_nblst(struct atomgrp* ag, struct agsetup* ags)
         free(na02);
         free(atmind);
 //***************Generating cluster------------------------
-	int *clust=_mol_malloc((ag->natoms)*sizeof(int));
-        int nclust;
+	clust=_mol_malloc((ag->natoms)*sizeof(int));
         // Assign atoms to clusters based on three bonds connectivity.
         /* 1-4 clustering was performed the following way.
             1. All atoms were unassigned (flag -1) to any cluster.
@@ -1881,7 +1904,7 @@ void init_nblst(struct atomgrp* ag, struct agsetup* ags)
         
         clust14(ag, &nclust, clust);
 
-        struct clusterset *clst= _mol_malloc(sizeof(struct clusterset));
+        clst= _mol_malloc(sizeof(struct clusterset));
 
         // Convert an array clust to a structure clusterset clst.
         gen_clset(ag->natoms, clst, nclust, clust);
@@ -1889,9 +1912,9 @@ void init_nblst(struct atomgrp* ag, struct agsetup* ags)
 //**********************free****************************************
         free(clust);
 
-        struct nblist *nblst=_mol_malloc(sizeof(struct nblist));
-        double nbcut=13.0;
-        double nbcof=12.0;
+        nblst=_mol_malloc(sizeof(struct nblist));
+        nbcut=13.0;
+        nbcof=12.0;
         nblst->nbcut=nbcut;
         nblst->nbcof=nbcof;
         nblst->crds=_mol_malloc(3*(ag->natoms)*sizeof(float));
@@ -1915,6 +1938,7 @@ void init_nblst(struct atomgrp* ag, struct agsetup* ags)
 void update_nblst(struct atomgrp* ag, struct agsetup* ags)
 {
 	int i;
+        struct cubeset *cust;
         /* save snapshot of coordinates at the update stage. */
         for(i=0; i<ag->natoms; i++)
         {
@@ -1926,7 +1950,7 @@ void update_nblst(struct atomgrp* ag, struct agsetup* ags)
         /* sum of nblist cutoff and margin size gives the cubesize. */
         findmarg(ag, ags->clst);
 
-        struct cubeset *cust = _mol_malloc(sizeof(struct cubeset));
+        cust = _mol_malloc(sizeof(struct cubeset));
         // Generate a set of cubes cust based on the clusterset ags->clst.
         /* 0. sum of nblist cutoff and margin size gives the cubesize. 
             1. calculate coordinate span of cluster centers
@@ -1998,9 +2022,9 @@ void give_012(struct atomgrp* ag, struct agsetup* ags,
 
      if(n>0)
      {
+        int i;
         *la012=_mol_malloc(2*n*sizeof(int));
         *lf012=_mol_malloc(2*n*sizeof(int));
-        int i;
         for(i=0; i<n01; i++)
         {
            a0=ag->bonds[i].a0;
@@ -2174,21 +2198,23 @@ void vdweng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
        static node, then iterate through the nonfixed atoms in the moving 
        node in the outer loop */
     if ( ( trans_mat != NULL ) || ( mnode->n - mnode->nfixed <= snode->n ) )
-      {        
+      {
+        int i;
         /* iterate through the nofixed atoms of the moving node */
-        for ( int i = mnode->nfixed; i < mnode->n; i++ )
+        for ( i = mnode->nfixed; i < mnode->n; i++ )
           {
             int ai = mnode->indices[ i ];
             mol_atom *atom_i = &( octree_moving->atoms[ ai ] );
       
             double x = atom_i->X, y = atom_i->Y, z = atom_i->Z;
+            double d2;
       
             /* transform the atomic positions if a transformation matrix is given */ 
             if ( trans_mat != NULL ) transform_point( x, y, z, trans_mat, &x, &y, &z );    // defined in octree.h
       
             /* calculate the smallest distance from the atom center < x, y, z >
                to the static node bounding box */
-            double d2 = min_pt2bx_dist2( snode->lx, snode->ly, snode->lz, snode->dim, x, y, z );
+            d2 = min_pt2bx_dist2( snode->lx, snode->ly, snode->lz, snode->dim, x, y, z );
 
 #ifdef DEBUG_VDW                        
             if ( d2 < minD2 ) minD2 = d2;
@@ -2206,17 +2232,26 @@ void vdweng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
                 double gx = 0, gy = 0, gz = 0;
               
                 /* iterate through all atoms of the static node */        
-                for ( int j = 0; j < snode->n; j++ )
+                int j;
+                for ( j = 0; j < snode->n; j++ )
                   {
                     int aj = snode->indices[ j ];
+                    mol_atom *atom_j;
+                    double dx, dy, dz;
+                    double id2;
+                    double e_ij, r_ij;
+                    double Rd6, Rr6, dr6;
+                    double Rd12, Rr12;
+                    double dven;
+                    double g;
       
                     if ( ( j >= nf ) && ( aj <= ai ) ) continue; /* avoing double-counting nonfixed-nonfixed interactions */
       
-                    mol_atom *atom_j = &( octree_static->atoms[ aj ] );
+                    atom_j = &( octree_static->atoms[ aj ] );
       
-                    double dx = atom_j->X - x, 
-                           dy = atom_j->Y - y,
-                           dz = atom_j->Z - z;
+                    dx = atom_j->X - x;
+                    dy = atom_j->Y - y;
+                    dz = atom_j->Z - z;
       
                     /* squared distance between atom_i (of moving node) and atom_j (of static node) */
                     d2 = dx * dx + dy * dy + dz * dz;
@@ -2240,26 +2275,26 @@ void vdweng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
 #endif      
                     /* compute 6-12 vdW interaction */
                     
-                    double id2 = 1 / d2;
+                    id2 = 1 / d2;
       
-                    double e_ij = e_i * atom_j->eps, r_ij = r_i + atom_j->rminh;
+                    e_ij = e_i * atom_j->eps, r_ij = r_i + atom_j->rminh;
                     r_ij *= r_ij;
       
-                    double Rd6 = r_ij * id2, Rr6 = r_ij * irc2, dr6 = d2 * irc2;
+                    Rd6 = r_ij * id2, Rr6 = r_ij * irc2, dr6 = d2 * irc2;
       
                     Rd6 = Rd6 * Rd6 * Rd6;
                     Rr6 = Rr6 * Rr6 * Rr6;
                     dr6 = dr6 * dr6 * dr6;
       
-                    double Rd12 = Rd6 * Rd6, Rr12 = Rr6 * Rr6;
+                    Rd12 = Rd6 * Rd6, Rr12 = Rr6 * Rr6;
       
                     /* compute energy */
                     en += e_ij * ( Rd12 - 2 * Rd6 + Rr6 * ( 4.0 - 2 * dr6 ) + Rr12 * ( 2 * dr6 - 3.0 ) );
 
                     /* compute gradients */      
-                    double dven = e_ij * 12 * ( -Rd12 + Rd6 + dr6 * ( Rr12 - Rr6 ) ) * id2;
+                    dven = e_ij * 12 * ( -Rd12 + Rd6 + dr6 * ( Rr12 - Rr6 ) ) * id2;
 
-                    double g = dven * dx;
+                    g = dven * dx;
       
                     gx += g;
                     ( atom_j->GX ) -= g;
@@ -2285,7 +2320,8 @@ void vdweng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
     else
       {
         /* iterate through all atoms of the static node */
-        for ( int i = 0; i < snode->n; i++ )
+        int i;
+        for ( i = 0; i < snode->n; i++ )
           {
             int ai = snode->indices[ i ];
             mol_atom *atom_i = &( octree_static->atoms[ ai ] );
@@ -2312,18 +2348,27 @@ void vdweng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
       
                 double gx = 0, gy = 0, gz = 0;
       
-                /* iterate through the nonfixed atoms of the moving node */ 
-                for ( int j = mnode->nfixed; j < mnode->n; j++ )
+                /* iterate through the nonfixed atoms of the moving node */
+                int j;
+                for ( j = mnode->nfixed; j < mnode->n; j++ )
                   {
                     int aj = mnode->indices[ j ];
+                    mol_atom *atom_j;
+                    double dx, dy, dz;
+                    double id2;
+                    double e_ij, r_ij;
+                    double Rd6, Rr6, dr6;
+                    double Rd12, Rr12;
+                    double dven;
+                    double g;
       
                     if ( ( i >= nf ) && ( aj >= ai ) ) continue;  /* avoing double-counting nonfixed-nonfixed interactions */
       
-                    mol_atom *atom_j = &( octree_moving->atoms[ aj ] );
+                    atom_j = &( octree_moving->atoms[ aj ] );
       
-                    double dx = atom_j->X - x, 
-                           dy = atom_j->Y - y,
-                           dz = atom_j->Z - z;
+                    dx = atom_j->X - x;
+                    dy = atom_j->Y - y;
+                    dz = atom_j->Z - z;
 
                     /* squared distance between atom_i (of moving node) and atom_j (of static node) */      
                     d2 = dx * dx + dy * dy + dz * dz;
@@ -2348,26 +2393,26 @@ void vdweng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
 
                     /* compute 6-12 vdW interaction */      
                     
-                    double id2 = 1 / d2;
+                    id2 = 1 / d2;
       
-                    double e_ij = e_i * atom_j->eps, r_ij = r_i + atom_j->rminh;
+                    e_ij = e_i * atom_j->eps, r_ij = r_i + atom_j->rminh;
                     r_ij *= r_ij;
       
-                    double Rd6 = r_ij * id2, Rr6 = r_ij * irc2, dr6 = d2 * irc2;
+                    Rd6 = r_ij * id2, Rr6 = r_ij * irc2, dr6 = d2 * irc2;
       
                     Rd6 = Rd6 * Rd6 * Rd6;
                     Rr6 = Rr6 * Rr6 * Rr6;
                     dr6 = dr6 * dr6 * dr6;
       
-                    double Rd12 = Rd6 * Rd6, Rr12 = Rr6 * Rr6;
+                    Rd12 = Rd6 * Rd6, Rr12 = Rr6 * Rr6;
       
                     /* compute energy */      
                     en += e_ij * ( Rd12 - 2 * Rd6 + Rr6 * ( 4.0 - 2 * dr6 ) + Rr12 * ( 2 * dr6 - 3.0 ) );
       
                     /* compute gradients */            
-                    double dven = e_ij * 12 * ( -Rd12 + Rd6 + dr6 * ( Rr12 - Rr6 ) ) * id2;
+                    dven = e_ij * 12 * ( -Rd12 + Rd6 + dr6 * ( Rr12 - Rr6 ) ) * id2;
       
-                    double g = dven * dx;
+                    g = dven * dx;
       
                     gx += g;
                     ( atom_j->GX ) -= g;
@@ -2453,20 +2498,22 @@ void eleng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
        node in the outer loop */
     if ( ( trans_mat != NULL ) || ( mnode->n - mnode->nfixed <= snode->n ) )
       {
-        /* iterate through the nofixed atoms of the moving node */      
-        for ( int i = mnode->nfixed; i < mnode->n; i++ )
+        /* iterate through the nofixed atoms of the moving node */
+        int i;
+        for ( i = mnode->nfixed; i < mnode->n; i++ )
           {
             int ai = mnode->indices[ i ];
             mol_atom *atom_i = &( octree_moving->atoms[ ai ] );
       
             double x = atom_i->X, y = atom_i->Y, z = atom_i->Z;
+            double d2;
 
             /* transform the atomic positions if a transformation matrix is given */       
             if ( trans_mat != NULL ) transform_point( x, y, z, trans_mat, &x, &y, &z );    // defined in octree.h
       
             /* calculate the smallest distance from the atom center < x, y, z >
                to the static node bounding box */
-            double d2 = min_pt2bx_dist2( snode->lx, snode->ly, snode->lz, snode->dim, x, y, z );
+            d2 = min_pt2bx_dist2( snode->lx, snode->ly, snode->lz, snode->dim, x, y, z );
 
 #ifdef DEBUG_ELENG                        
             if ( d2 < minD2 ) minD2 = d2;
@@ -2483,18 +2530,26 @@ void eleng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
       
                 double gx = 0, gy = 0, gz = 0;
 
-                /* iterate through all atoms of the static node */                              
-                for ( int j = 0; j < snode->n; j++ )
+                /* iterate through all atoms of the static node */
+                int j;                              
+                for ( j = 0; j < snode->n; j++ )
                   {
                     int aj = snode->indices[ j ];
+                    mol_atom *atom_j;
+                    double dx, dy, dz;
+                    double d1;
+                    double id2;
+                    double c_ij;
+                    double esh, desh;
+                    double g;
       
                     if ( ( j >= nf ) && ( aj <= ai ) ) continue;   /* avoing double-counting nonfixed-nonfixed interactions */
       
-                    mol_atom *atom_j = &( octree_static->atoms[ aj ] );
+                    atom_j = &( octree_static->atoms[ aj ] );
       
-                    double dx = atom_j->X - x, 
-                           dy = atom_j->Y - y,
-                           dz = atom_j->Z - z;
+                    dx = atom_j->X - x;
+                    dy = atom_j->Y - y;
+                    dz = atom_j->Z - z;
 
                     /* squared distance between atom_i (of moving node) and atom_j (of static node) */      
                     d2 = dx * dx + dy * dy + dz * dz;
@@ -2517,12 +2572,12 @@ void eleng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
                     n++;
 #endif      
                     /* compute electrostatic interaction */
-                    double d1 = sqrt( d2 );
-                    double id2 = 1 / d2;
+                    d1 = sqrt( d2 );
+                    id2 = 1 / d2;
                     
-                    double c_ij = c_i * atom_j->chrg;
+                    c_ij = c_i * atom_j->chrg;
                     
-                    double esh = 1.0 - d1 / rc, desh = ( id2 - irc2 ) / d1;
+                    esh = 1.0 - d1 / rc, desh = ( id2 - irc2 ) / d1;
                     
                     esh *= ( esh / d1 );
                     
@@ -2530,7 +2585,7 @@ void eleng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
                     en += c_ij * esh;
 
                     /* compute gradients */                          
-                    double g = c_ij * desh * dx;
+                    g = c_ij * desh * dx;
                     
                     gx -= g;
                     ( atom_j->GX ) += g;
@@ -2555,8 +2610,9 @@ void eleng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
       }
     else
       {
-        /* iterate through all atoms of the static node */      
-        for ( int i = 0; i < snode->n; i++ )
+        /* iterate through all atoms of the static node */
+        int i;
+        for ( i = 0; i < snode->n; i++ )
           {
             int ai = snode->indices[ i ];
             mol_atom *atom_i = &( octree_static->atoms[ ai ] );
@@ -2582,18 +2638,26 @@ void eleng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
       
                 double gx = 0, gy = 0, gz = 0;
 
-                /* iterate through the nonfixed atoms of the moving node */       
-                for ( int j = mnode->nfixed; j < mnode->n; j++ )
+                /* iterate through the nonfixed atoms of the moving node */
+                int j;
+                for ( j = mnode->nfixed; j < mnode->n; j++ )
                   {
                     int aj = mnode->indices[ j ];
+                    mol_atom *atom_j;
+                    double dx, dy, dz;
+                    double d1;
+                    double id2;
+                    double c_ij;
+                    double esh, desh;
+                    double g;
       
                     if ( ( i >= nf ) && ( aj >= ai ) ) continue;  /* avoing double-counting nonfixed-nonfixed interactions */
       
-                    mol_atom *atom_j = &( octree_moving->atoms[ aj ] );
+                    atom_j = &( octree_moving->atoms[ aj ] );
       
-                    double dx = atom_j->X - x, 
-                           dy = atom_j->Y - y,
-                           dz = atom_j->Z - z;
+                    dx = atom_j->X - x;
+                    dy = atom_j->Y - y;
+                    dz = atom_j->Z - z;
       
                    /* squared distance between atom_i (of moving node) and atom_j (of static node) */      
                     d2 = dx * dx + dy * dy + dz * dz;
@@ -2616,12 +2680,12 @@ void eleng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
                     n++;
 #endif                    
                     /* compute electrostatic interaction */
-                    double d1 = sqrt( d2 );
-                    double id2 = 1 / d2;
+                    d1 = sqrt( d2 );
+                    id2 = 1 / d2;
                     
-                    double c_ij = c_i * atom_j->chrg;
+                    c_ij = c_i * atom_j->chrg;
                     
-                    double esh = 1.0 - d1 / rc, desh = ( id2 - irc2 ) / d1;
+                    esh = 1.0 - d1 / rc, desh = ( id2 - irc2 ) / d1;
                     
                     esh *= ( esh / d1 );
 
@@ -2629,7 +2693,7 @@ void eleng_octree_single_mol( OCTREE_PARAMS *octpar, double *energy )
                     en += c_ij * esh;
 
                     /* compute gradients */                                
-                    double g = c_ij * desh * dx;
+                    g = c_ij * desh * dx;
                     
                     gx -= g;
                     ( atom_j->GX ) += g;

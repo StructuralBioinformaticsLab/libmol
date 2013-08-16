@@ -176,12 +176,17 @@ typedef struct
 } REC_PARAMS;
 */
 
+#ifdef _WIN32
+#define _mol_sinline static
+#else
+#define _mol_sinline static inline
+#endif
 
 /**
    Given a 3 x 4 transformation matrix pointed to by trans_mat, this function transforms
    point < x, y, z > to point < *nx, *ny, *nz >.
 */
-static inline void transform_point( double x, double y, double z, double *trans_mat, double *nx, double *ny, double *nz )
+_mol_sinline void transform_point( double x, double y, double z, double *trans_mat, double *nx, double *ny, double *nz )
 {
    *nx = trans_mat[  0 ] * x + trans_mat[  1 ] * y + trans_mat[  2 ] * z + trans_mat[  3 ];
    *ny = trans_mat[  4 ] * x + trans_mat[  5 ] * y + trans_mat[  6 ] * z + trans_mat[  7 ];
@@ -193,7 +198,7 @@ static inline void transform_point( double x, double y, double z, double *trans_
    coordinates given by bx, by and bz, respectively, this function returns the squared distance
    from < x, y, z > to the closest point on the box.
 */
-static inline double min_pt2bx_dist2( double bx, double by, double bz, double dim, double x, double y, double z )
+_mol_sinline double min_pt2bx_dist2( double bx, double by, double bz, double dim, double x, double y, double z )
 {
    double dx, dy, dz;
    double dl, dr;
@@ -219,7 +224,7 @@ static inline double min_pt2bx_dist2( double bx, double by, double bz, double di
    of at least 'ext'. If not, returns 1 provided the separation between the smallest spheres bounding 
    the two boxes is less than 'ext'.    
 */
-static inline int within_distance_cutoff( double x_1, double y_1, double z_1, double dim_1, double x_2, double y_2, double z_2, double dim_2, double ext )
+_mol_sinline int within_distance_cutoff( double x_1, double y_1, double z_1, double dim_1, double x_2, double y_2, double z_2, double dim_2, double ext )
 {
    double d_1 = dim_1 + ext, d_2 = - ( dim_2 + ext );
 
@@ -243,7 +248,7 @@ static inline int within_distance_cutoff( double x_1, double y_1, double z_1, do
    Returns nonzero if the center of *atom is inside the cubic volume spanned
    by *node (an octree node), otherwise return zero.  
 */
-static inline int inside_node( OCTREE_NODE *node, mol_atom *atom )
+_mol_sinline int inside_node( OCTREE_NODE *node, mol_atom *atom )
 {
    return ( ( atom->X - node->lx >= 0 ) && ( atom->X - node->lx < node->dim )
          && ( atom->Y - node->ly >= 0 ) && ( atom->Y - node->ly < node->dim ) 

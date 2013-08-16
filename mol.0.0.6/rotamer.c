@@ -27,7 +27,12 @@ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include <math.h>
+
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 void get_detransform(const struct atomgrp *ag, const int residue_index,
 		     struct mol_matrix3f *rot_to_bb, struct mol_vector3f *trans_to_bb)

@@ -2,6 +2,7 @@
 *.slo
 *.lo
 *.o
+*.obj
 
 # Compiled Dynamic libraries
 *.so
@@ -10,6 +11,7 @@
 *.lai
 *.la
 *.a
+*.lib
 
 # Vim undo files
 *.un~

@@ -28,7 +28,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef _MOL_ATOM_GROUP_H_
 #define _MOL_ATOM_GROUP_H_
+#ifdef _WIN32
+#include "mol_stdbool.h"
+#else
 #include <stdbool.h>
+#endif
 
 #include "atom.h"
 #include "bond.h"

@@ -34,7 +34,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <assert.h>
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 // warning: this function does not handle all of mol_atom_group
 void
@@ -266,6 +270,13 @@ void full_free_atomgrp (struct atomgrp* ag)
 
 struct atomgrp* fullcopy_atomgrp (struct atomgrp* srcag)
 {
+	int i;
+	int j;
+	size_t atom_offset;
+	size_t bond_offset;
+	size_t ang_offset;
+	size_t imp_offset;
+	size_t tor_offset;
 	struct atomgrp* destag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
 
 	destag->natoms = srcag->natoms;
@@ -328,23 +339,23 @@ struct atomgrp* fullcopy_atomgrp (struct atomgrp* srcag)
         //}
 
 	//point to correct atoms
-	size_t atom_offset = destag->atoms - srcag->atoms;
-	for (int i = 0; i < destag->nbonds; i++) {
+	atom_offset = destag->atoms - srcag->atoms;
+	for (i = 0; i < destag->nbonds; i++) {
 		destag->bonds[i].a0 += atom_offset;
 		destag->bonds[i].a1 += atom_offset;
 	}
-	for (int i = 0; i < destag->nangs; i++) {
+	for (i = 0; i < destag->nangs; i++) {
 		destag->angs[i].a0 += atom_offset;
 		destag->angs[i].a1 += atom_offset;
 		destag->angs[i].a2 += atom_offset;
 	}
-	for (int i = 0; i < destag->ntors; i++) {
+	for (i = 0; i < destag->ntors; i++) {
 		destag->tors[i].a0 += atom_offset;
 		destag->tors[i].a1 += atom_offset;
 		destag->tors[i].a2 += atom_offset;
 		destag->tors[i].a3 += atom_offset;
 	}
-	for (int i = 0; i < destag->nimps; i++) {
+	for (i = 0; i < destag->nimps; i++) {
 		destag->imps[i].a0 += atom_offset;
 		destag->imps[i].a1 += atom_offset;
 		destag->imps[i].a2 += atom_offset;
@@ -352,33 +363,33 @@ struct atomgrp* fullcopy_atomgrp (struct atomgrp* srcag)
 	}
 
 	//point to atoms to correct bonds, angs, tors, imps
-	size_t bond_offset = destag->bonds - srcag->bonds;
-	size_t ang_offset  = destag->angs  - srcag->angs;
-	size_t imp_offset  = destag->imps  - srcag->imps;
-	size_t tor_offset  = destag->tors  - srcag->tors;
-	for (int i = 0; i < destag->natoms; i++) {
+	bond_offset = destag->bonds - srcag->bonds;
+	ang_offset  = destag->angs  - srcag->angs;
+	imp_offset  = destag->imps  - srcag->imps;
+	tor_offset  = destag->tors  - srcag->tors;
+	for (i = 0; i < destag->natoms; i++) {
 //		struct atom local_atom = destag->atoms[i];
 		destag->atoms[i].name = strdup(srcag->atoms[i].name);
 		destag->atoms[i].ftype_name = strdup(srcag->atoms[i].ftype_name);
 
 		destag->atoms[i].bonds = _mol_malloc( destag->atoms[i].nbonds*sizeof(struct atombond*));
 		memcpy(destag->atoms[i].bonds, srcag->atoms[i].bonds, sizeof(struct atombond*) * destag->atoms[i].nbonds);
-		for (int j = 0; j < destag->atoms[i].nbonds; j++) {
+		for (j = 0; j < destag->atoms[i].nbonds; j++) {
 			destag->atoms[i].bonds[j] += bond_offset;
 		}
 		destag->atoms[i].angs = _mol_malloc( destag->atoms[i].nangs*sizeof(struct atomangle*));
 		memcpy(destag->atoms[i].angs, srcag->atoms[i].angs, sizeof(struct atomangle*) * destag->atoms[i].nangs);
-		for (int j = 0; j < destag->atoms[i].nangs; j++) {
+		for (j = 0; j < destag->atoms[i].nangs; j++) {
 			destag->atoms[i].angs[j] += ang_offset;
 		}
 		destag->atoms[i].tors = _mol_malloc( destag->atoms[i].ntors*sizeof(struct atomtorsion*));
 		memcpy(destag->atoms[i].tors, srcag->atoms[i].tors, sizeof(struct atomtorsion*) * destag->atoms[i].ntors);
-		for (int j = 0; j < destag->atoms[i].ntors; j++) {
+		for (j = 0; j < destag->atoms[i].ntors; j++) {
 			destag->atoms[i].tors[j] += tor_offset;
 		}
 		destag->atoms[i].imps = _mol_malloc( destag->atoms[i].nimps*sizeof(struct atomimproper*));
 		memcpy(destag->atoms[i].imps, srcag->atoms[i].imps, sizeof(struct atomimproper*) * destag->atoms[i].nimps);
-		for (int j = 0; j < destag->atoms[i].nimps; j++) {
+		for (j = 0; j < destag->atoms[i].nimps; j++) {
 			destag->atoms[i].imps[j] += imp_offset;
 		}
 	}
@@ -394,10 +405,10 @@ struct atomgrp* fullcopy_atomgrp (struct atomgrp* srcag)
 
 struct atomgrp* copy_atomgrp (struct atomgrp* srcag)
 {
+        int atomn;
         struct atomgrp* destag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
         destag->natoms = srcag->natoms;
         destag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * destag->natoms);
-        int atomn;
         for (atomn = 0; atomn < destag->natoms; atomn++)
         {
                 copy_atom (&srcag->atoms[atomn], &destag->atoms[atomn]);
@@ -559,12 +570,12 @@ void full_sa (struct atomgrp* ag)
 
 struct atomgrp* join_atomgrps (struct atomgrp** ags)
 {
+	int agai = 0; // ag atom index
+	int agi = 0; // index into ags
 	struct atomgrp* ag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
 	ag->natoms = 100; // just a guess, realloc as necessary
 	ag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms);
 
-	int agai = 0; // ag atom index
-	int agi = 0; // index into ags
 	while (ags[agi] != NULL)
 	{
 		int agsai; // ags atom index
@@ -592,19 +603,20 @@ struct atomgrp* join_atomgrps (struct atomgrp** ags)
 
 struct atomgrp* join_2atomgrps (struct atomgrp* ag1, struct atomgrp* ag2)
 {
+	struct atomgrp* ag;
 	struct atomgrp** ags = (struct atomgrp**) _mol_malloc (3 * sizeof (struct atomgrp*));
 	ags[0] = ag1;
 	ags[1] = ag2;
 	ags[2] = NULL;
-	struct atomgrp* ag = join_atomgrps  (ags);
+	ag = join_atomgrps  (ags);
 	free (ags);
 	return ag;
 }
 
 void print_atomgrp (struct atomgrp* ag, struct prm* prm)
 {
-	printf ("number of atoms: %d\n\n", ag->natoms);
 	int i;
+	printf ("number of atoms: %d\n\n", ag->natoms);
 	for (i = 0; i < ag->natoms; i++)
 	{
 		printf ("atom index: %d\n", i);
@@ -648,6 +660,8 @@ void fill_ingrp (struct atomgrp* ag)
 void
 replace_coordinates(struct atomgrp* ag, const char* pdb_path)
 {
+    int i;
+    int *list = _mol_malloc(sizeof(int) * ag->natoms);
     struct atomgrp* ag_new = read_pdb_nopar(pdb_path);
 
     if (ag_new->natoms != ag->natoms) {
@@ -655,18 +669,19 @@ replace_coordinates(struct atomgrp* ag, const char* pdb_path)
         exit(EXIT_FAILURE);
     }
 
-    int list[ag->natoms];
-    for (int i=0; i<ag->natoms; i++) {
+    for (i=0; i<ag->natoms; i++) {
         list[i] = i;
     }
 
     setup_subag(ag, ag_new, ag->natoms, list);
 
+    free(list);
     free_atomgrp(ag_new);
 }
 
 void transform_atomgrpf(struct atomgrp* ag, struct mol_matrix3f rotation, struct mol_vector3f translation) {
-	for (int i=0; i < ag->natoms; i++) {
+	int i;
+	for (i=0; i < ag->natoms; i++) {
 		double X = ag->atoms[i].X;
 		double Y = ag->atoms[i].Y;
 		double Z = ag->atoms[i].Z;
@@ -681,6 +696,13 @@ void transform_atomgrpf(struct atomgrp* ag, struct mol_matrix3f rotation, struct
 
 struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 {
+	int i;
+	int j;
+	size_t atom_offset;
+	size_t bond_offset;
+	size_t ang_offset;
+	size_t imp_offset;
+	size_t tor_offset;
 	struct atomgrp* ag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));
 
 	//sum counts
@@ -712,23 +734,23 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 	memcpy(ag->imps, rec->imps, sizeof(struct atomimproper) * rec->nimps);
 
 	//point to correct atoms
-	size_t atom_offset = ag->atoms - rec->atoms;
-	for (int i = 0; i < rec->nbonds; i++) {
+	atom_offset = ag->atoms - rec->atoms;
+	for (i = 0; i < rec->nbonds; i++) {
 		ag->bonds[i].a0 += atom_offset;
 		ag->bonds[i].a1 += atom_offset;
 	}
-	for (int i = 0; i < rec->nangs; i++) {
+	for (i = 0; i < rec->nangs; i++) {
 		ag->angs[i].a0 += atom_offset;
 		ag->angs[i].a1 += atom_offset;
 		ag->angs[i].a2 += atom_offset;
 	}
-	for (int i = 0; i < rec->ntors; i++) {
+	for (i = 0; i < rec->ntors; i++) {
 		ag->tors[i].a0 += atom_offset;
 		ag->tors[i].a1 += atom_offset;
 		ag->tors[i].a2 += atom_offset;
 		ag->tors[i].a3 += atom_offset;
 	}
-	for (int i = 0; i < rec->nimps; i++) {
+	for (i = 0; i < rec->nimps; i++) {
 		ag->imps[i].a0 += atom_offset;
 		ag->imps[i].a1 += atom_offset;
 		ag->imps[i].a2 += atom_offset;
@@ -736,32 +758,32 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 	}
 
 	//point to atoms to correct bonds, angs, tors, imps
-	size_t bond_offset = ag->bonds - rec->bonds;
-	size_t ang_offset  = ag->angs  - rec->angs;
-	size_t imp_offset  = ag->imps  - rec->imps;
-	size_t tor_offset  = ag->tors  - rec->tors;
-	for (int i = 0; i < rec->natoms; i++) {
+	bond_offset = ag->bonds - rec->bonds;
+	ang_offset  = ag->angs  - rec->angs;
+	imp_offset  = ag->imps  - rec->imps;
+	tor_offset  = ag->tors  - rec->tors;
+	for (i = 0; i < rec->natoms; i++) {
 		ag->atoms[i].name = strdup(rec->atoms[i].name);
 		ag->atoms[i].ftype_name = strdup(rec->atoms[i].ftype_name);
 
 		ag->atoms[i].bonds = _mol_malloc( rec->atoms[i].nbonds*sizeof(struct atombond*));
 		memcpy(ag->atoms[i].bonds, rec->atoms[i].bonds, sizeof(struct atombond*) * rec->atoms[i].nbonds);
-		for (int j = 0; j < ag->atoms[i].nbonds; j++) {
+		for (j = 0; j < ag->atoms[i].nbonds; j++) {
 			ag->atoms[i].bonds[j] += bond_offset;
 		}
 		ag->atoms[i].angs = _mol_malloc( rec->atoms[i].nangs*sizeof(struct atomangle*));
 		memcpy(ag->atoms[i].angs, rec->atoms[i].angs, sizeof(struct atomangle*) * rec->atoms[i].nangs);
-		for (int j = 0; j < ag->atoms[i].nangs; j++) {
+		for (j = 0; j < ag->atoms[i].nangs; j++) {
 			ag->atoms[i].angs[j] += ang_offset;
 		}
 		ag->atoms[i].tors = _mol_malloc( rec->atoms[i].ntors*sizeof(struct atomtorsion*));
 		memcpy(ag->atoms[i].tors, rec->atoms[i].tors, sizeof(struct atomtorsion*) * rec->atoms[i].ntors);
-		for (int j = 0; j < ag->atoms[i].ntors; j++) {
+		for (j = 0; j < ag->atoms[i].ntors; j++) {
 			ag->atoms[i].tors[j] += tor_offset;
 		}
 		ag->atoms[i].imps = _mol_malloc( rec->atoms[i].nimps*sizeof(struct atomimproper*));
 		memcpy(ag->atoms[i].imps, rec->atoms[i].imps, sizeof(struct atomimproper*) * rec->atoms[i].nimps);
-		for (int j = 0; j < ag->atoms[i].nimps; j++) {
+		for (j = 0; j < ag->atoms[i].nimps; j++) {
 			ag->atoms[i].imps[j] += imp_offset;
 		}
 	}
@@ -776,22 +798,22 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 
 	//point to correct atoms
 	atom_offset = ag->atoms - lig->atoms + rec->natoms;
-	for (int i = rec->nbonds; i < ag->nbonds; i++) {
+	for (i = rec->nbonds; i < ag->nbonds; i++) {
 		ag->bonds[i].a0 += atom_offset;
 		ag->bonds[i].a1 += atom_offset;
 	}
-	for (int i = rec->nangs; i < ag->nangs; i++) {
+	for (i = rec->nangs; i < ag->nangs; i++) {
 		ag->angs[i].a0 += atom_offset;
 		ag->angs[i].a1 += atom_offset;
 		ag->angs[i].a2 += atom_offset;
 	}
-	for (int i = rec->ntors; i < ag->ntors; i++) {
+	for (i = rec->ntors; i < ag->ntors; i++) {
 		ag->tors[i].a0 += atom_offset;
 		ag->tors[i].a1 += atom_offset;
 		ag->tors[i].a2 += atom_offset;
 		ag->tors[i].a3 += atom_offset;
 	}
-	for (int i = rec->nimps; i < ag->nimps; i++) {
+	for (i = rec->nimps; i < ag->nimps; i++) {
 		ag->imps[i].a0 += atom_offset;
 		ag->imps[i].a1 += atom_offset;
 		ag->imps[i].a2 += atom_offset;
@@ -803,7 +825,7 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 	ang_offset  = ag->angs  - lig->angs + rec->nangs;
 	imp_offset  = ag->imps  - lig->imps + rec->nimps;
 	tor_offset  = ag->tors  - lig->tors + rec->ntors;
-	for (int i = rec->natoms; i < ag->natoms; i++) {
+	for (i = rec->natoms; i < ag->natoms; i++) {
 //		struct atom local_atom = ag->atoms[i];
 		ag->atoms[i].atom_ftypen += rec->num_atom_types;
 		ag->atoms[i].name = strdup(lig->atoms[i-(rec->natoms)].name);
@@ -811,22 +833,22 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 
 		ag->atoms[i].bonds = _mol_malloc( lig->atoms[i-(rec->natoms)].nbonds*sizeof(struct atombond*));
 		memcpy(ag->atoms[i].bonds, lig->atoms[i-(rec->natoms)].bonds, sizeof(struct atombond*) * lig->atoms[i-(rec->natoms)].nbonds);
-		for (int j = 0; j < ag->atoms[i].nbonds; j++) {
+		for (j = 0; j < ag->atoms[i].nbonds; j++) {
 			ag->atoms[i].bonds[j] += bond_offset;
 		}
 		ag->atoms[i].angs = _mol_malloc( lig->atoms[i-(rec->natoms)].nangs*sizeof(struct atomangle*));
 		memcpy(ag->atoms[i].angs, lig->atoms[i-(rec->natoms)].angs, sizeof(struct atomangle*) * lig->atoms[i-(rec->natoms)].nangs);
-		for (int j = 0; j < ag->atoms[i].nangs; j++) {
+		for (j = 0; j < ag->atoms[i].nangs; j++) {
 			ag->atoms[i].angs[j] += ang_offset;
 		}
 		ag->atoms[i].tors = _mol_malloc( lig->atoms[i-(rec->natoms)].ntors*sizeof(struct atomtorsion*));
 		memcpy(ag->atoms[i].tors, lig->atoms[i-(rec->natoms)].tors, sizeof(struct atomtorsion*) * lig->atoms[i-(rec->natoms)].ntors);
-		for (int j = 0; j < ag->atoms[i].ntors; j++) {
+		for (j = 0; j < ag->atoms[i].ntors; j++) {
 			ag->atoms[i].tors[j] += tor_offset;
 		}
 		ag->atoms[i].imps = _mol_malloc( lig->atoms[i-(rec->natoms)].nimps*sizeof(struct atomimproper*));
 		memcpy(ag->atoms[i].imps, lig->atoms[i-(rec->natoms)].imps, sizeof(struct atomimproper*) * lig->atoms[i-(rec->natoms)].nimps);
-		for (int j = 0; j < ag->atoms[i].nimps; j++) {
+		for (j = 0; j < ag->atoms[i].nimps; j++) {
 			ag->atoms[i].imps[j] += imp_offset;
 		}
 	}

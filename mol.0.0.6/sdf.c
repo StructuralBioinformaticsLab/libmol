@@ -31,7 +31,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 /* Documentation for the sdf file format can be found at
  * http://accelrys.com/products/informatics/cheminformatics/ctfile-formats/no-fee.php
@@ -39,6 +48,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 {
+	int i;
 	FILE *fp = myfopen(path, "r");
 	int nmodels = 100;	//Initial guess
 	struct atomgrp **ag_models =
@@ -47,6 +57,10 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 	size_t len = 0;
 	int modeli = -1;
 	while (getline(&line, &len, fp) != -1) {
+		size_t name_size;
+		char tmp[4]; //temporary holding for variables
+		int atomi;
+		ssize_t status;
 		if ((modeli + 1 > (*rmodels - 1)) && ((*rmodels) != -1))	//If were over requested models and we don't read everyhting
 			break;
 		if (modeli + 1 > nmodels) {
@@ -59,7 +73,7 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 		ag_models[modeli] = _mol_calloc(1, sizeof(struct atomgrp));
 
 		rstrip(line);
-		size_t name_size = strlen(line);
+		name_size = strlen(line);
 		ag_models[modeli]->atom_group_name = _mol_calloc((1+name_size),sizeof(char));
 		strncpy(ag_models[modeli]->atom_group_name, line, name_size);
 		rstrip(ag_models[modeli]->atom_group_name);
@@ -70,7 +84,6 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 
 		
 
-		char tmp[4]; //temporary holding for variables
 		tmp[3] = '\0';
 		strncpy(tmp, line, 3); //copy the number of atoms into tmp
 
@@ -85,7 +98,7 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 				ag_models[modeli]->natoms);
                 ag_models[modeli]->prm = NULL;
 
-		for (int atomi = 0; atomi < ag_models[modeli]->natoms; atomi++) {
+		for (atomi = 0; atomi < ag_models[modeli]->natoms; atomi++) {
 			if (getline(&line, &len, fp) == -1) {
 				fprintf(stderr, "Not enough atom lines in sdf file\n");
 			}
@@ -97,7 +110,6 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 			       ag_models[modeli]->atoms[atomi].name );
 
 		}
-		ssize_t status;
 		do {
 			status=getline(&line, &len, fp);
 		} while ( (status != -1) && (strncmp(line, "$$$$", 4) != 0) );
@@ -112,7 +124,7 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 	*rmodels = modeli + 1;
 	return ag_models;
 	return_error:
-		for (int i = 0; i<= modeli; i++) {
+		for (i = 0; i<= modeli; i++) {
 			full_free_atomgrp(ag_models[i]);
 		}
 		free(ag_models);
@@ -124,6 +136,7 @@ struct atomgrp **read_sdf_v2000(const char *path, int *rmodels)
 
 struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 {
+	int i;
 	FILE *fp = myfopen(path, "r");
 	int nmodels = 100;	//Initial guess
 	struct atomgrp **ag_models =
@@ -132,6 +145,9 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 	size_t len = 0;
 	int modeli = -1;
 	while (getline(&line, &len, fp) != -1) {
+		size_t name_size;
+		ssize_t status;
+		int atomi;
 		if ((modeli + 1 > (*rmodels - 1)) && ((*rmodels) != -1))	//If were over requested models and we don't read everyhting
 			break;
 		if (modeli + 1 > nmodels) {
@@ -144,7 +160,7 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 		ag_models[modeli] = _mol_calloc(1, sizeof(struct atomgrp));
 
 		rstrip(line);
-		size_t name_size = strlen(line);
+		name_size = strlen(line);
 		ag_models[modeli]->atom_group_name = _mol_calloc((1+name_size),sizeof(char));
 		strncpy(ag_models[modeli]->atom_group_name, line, name_size);
 		rstrip(ag_models[modeli]->atom_group_name);
@@ -152,7 +168,6 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 		if (getline(&line, &len, fp) == -1) {goto return_error;}
 		if (getline(&line, &len, fp) == -1) {goto return_error;}
 		if (getline(&line, &len, fp) == -1) {goto return_error;}
-		ssize_t status;
 		do {
 			status=getline(&line, &len, fp);
 		} while ( (status != -1) && (strncmp(line, "M  V30 BEGIN CTAB", 17) != 0) );
@@ -169,7 +184,7 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 			status=getline(&line, &len, fp);
 		} while ( (status != -1) && (strncmp(line, "M  V30 BEGIN ATOM", 17) != 0) );
 
-		for (int atomi = 0; atomi < ag_models[modeli]->natoms; atomi++) {
+		for (atomi = 0; atomi < ag_models[modeli]->natoms; atomi++) {
 			if (getline(&line, &len, fp) == -1) {
 				fprintf(stderr, "Not enough atom lines in sdf file\n");
 			}
@@ -194,7 +209,7 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 	*rmodels = modeli + 1;
 	return ag_models;
 	return_error:
-		for (int i = 0; i<= modeli; i++) {
+		for (i = 0; i<= modeli; i++) {
 			full_free_atomgrp(ag_models[i]);
 		}
 		free(ag_models);
@@ -209,15 +224,16 @@ struct atomgrp **read_sdf(const char *path, int *rmodels)
 	FILE *fp = myfopen(path, "r");
 	char *line = NULL;
 	size_t len = 0;
+	ssize_t line_length;
+	char version[5];
 	if (getline(&line, &len, fp) == -1) {return NULL;}
 	if (getline(&line, &len, fp) == -1) {return NULL;}
 	if (getline(&line, &len, fp) == -1) {return NULL;}
-	int line_length = getline(&line, &len, fp);
+	line_length = getline(&line, &len, fp);
 	if (line_length < 39) {
 		fprintf(stderr, "No SDF version found\n");
 		return NULL;
 	}
-	char version[5];
 	strncpy(version, line+34, 5);
 	fclose(fp);
 	if (line)
@@ -256,15 +272,16 @@ struct sdf_reader  *open_sdf_reader(const char *path)
 	FILE *fp = myfopen(path, "r");
 	char *line = NULL;
 	size_t len = 0;
+	ssize_t line_length;
+	char version[5];
 	if (getline(&line, &len, fp) == -1) {return NULL;}
 	if (getline(&line, &len, fp) == -1) {return NULL;}
 	if (getline(&line, &len, fp) == -1) {return NULL;}
-	int line_length = getline(&line, &len, fp);
+	line_length = getline(&line, &len, fp);
 	if (line_length < 39) {
 		fprintf(stderr, "No SDF version found\n");
 		return NULL;
 	}
-	char version[5];
 	strncpy(version, line+34, 5);
 	fclose(fp);
 	if (line)
@@ -280,15 +297,19 @@ struct sdf_reader  *open_sdf_reader(const char *path)
 
 struct atomgrp *next_sdf_v2000(struct sdf_reader *reader)
 {
-	reader->beginning = ftell(reader->fp);
 	struct atomgrp* ag = _mol_calloc(1, sizeof(struct atomgrp));
 	char *line = NULL;
 	size_t len = 0;
+	size_t name_size;
+	int atomi;
+	ssize_t status;
+	char tmp[4]; //temporary holding for variables
+	reader->beginning = ftell(reader->fp);
 	if (getline(&line, &len, reader->fp) == -1) {
 		return NULL;
 	}
 	rstrip(line);
-	size_t name_size = strlen(line);
+	name_size = strlen(line);
 	ag->atom_group_name = _mol_calloc((1+name_size),sizeof(char));
 	strncpy(ag->atom_group_name, line, name_size);
 	rstrip(ag->atom_group_name);
@@ -298,7 +319,6 @@ struct atomgrp *next_sdf_v2000(struct sdf_reader *reader)
 	if (getline(&line, &len, reader->fp) == -1) {goto return_error;}
 	if (getline(&line, &len, reader->fp) == -1) {goto return_error;}
 
-	char tmp[4]; //temporary holding for variables
 	tmp[3] = '\0';
 	strncpy(tmp, line, 3); //copy the number of atoms into tmp
 
@@ -310,7 +330,7 @@ struct atomgrp *next_sdf_v2000(struct sdf_reader *reader)
 	}
 	ag->atoms = _mol_calloc(ag->natoms, sizeof(struct atom));
 	ag->prm = NULL;
-	for (int atomi = 0; atomi < ag->natoms; atomi++) {
+	for (atomi = 0; atomi < ag->natoms; atomi++) {
 		if (getline(&line, &len, reader->fp) == -1) {
 			fprintf(stderr, "Not enough atom lines in sdf file\n");
 		}
@@ -321,7 +341,6 @@ struct atomgrp *next_sdf_v2000(struct sdf_reader *reader)
 		       &(ag->atoms[atomi].Z),
 		       ag->atoms[atomi].name );
 	}
-	ssize_t status;
 	do {
 		status=getline(&line, &len, reader->fp);
 	} while ( (status != -1) && (strncmp(line, "$$$$", 4) != 0) ); //get to next molecule
@@ -338,16 +357,19 @@ struct atomgrp *next_sdf_v2000(struct sdf_reader *reader)
 
 struct atomgrp *next_sdf_v3000(struct sdf_reader *reader)
 {
-	reader->beginning = ftell(reader->fp);
 	struct atomgrp* ag = _mol_calloc(1, sizeof(struct atomgrp));
 	char *line = NULL;
 	size_t len = 0;
+	size_t name_size;
+	ssize_t status;
+	int atomi;
+	reader->beginning = ftell(reader->fp);
 	if (getline(&line, &len, reader->fp) == -1) {
 		free(ag);
 		return NULL;
 	}
 	rstrip(line);
-	size_t name_size = strlen(line);
+	name_size = strlen(line);
 	ag->atom_group_name = _mol_calloc((1+name_size),sizeof(char));
 	strncpy(ag->atom_group_name, line, name_size);
 	rstrip(ag->atom_group_name);
@@ -356,7 +378,6 @@ struct atomgrp *next_sdf_v3000(struct sdf_reader *reader)
 	if (getline(&line, &len, reader->fp) == -1) {goto return_error;}
 	if (getline(&line, &len, reader->fp) == -1) {goto return_error;}
 
-	ssize_t status;
 	do {
 		status=getline(&line, &len, reader->fp);
 	} while ( (status != -1) && (strncmp(line, "M  V30 BEGIN CTAB", 17) != 0) );
@@ -372,7 +393,7 @@ struct atomgrp *next_sdf_v3000(struct sdf_reader *reader)
 		status=getline(&line, &len, reader->fp);
 	} while ( (status != -1) && (strncmp(line, "M  V30 BEGIN ATOM", 17) != 0) );
 
-	for (int atomi = 0; atomi < ag->natoms; atomi++) {
+	for (atomi = 0; atomi < ag->natoms; atomi++) {
 		if (getline(&line, &len, reader->fp) == -1) {
 			fprintf(stderr, "Not enough atom lines in sdf file\n");
 		}

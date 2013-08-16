@@ -32,7 +32,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _PRINT_DEPRECATED_ fprintf (stderr, "%s: Deprecated function\n", __func__);
 #endif
 #ifndef _mol_error
+#ifdef _WIN32
+#define _mol_error(format,...) fprintf (stderr, "%s@%d: " format "\n", __FILE__, __LINE__, __VA_ARGS__)
+#define _mol_errorf(string) fprintf (stderr, "%s@%d: " string "\n", __FILE__, __LINE__)
+#else
 #define _mol_error(format,...) fprintf (stderr, "%s in %s@%d: " format "\n", __func__, __FILE__, __LINE__, __VA_ARGS__)
+#define _mol_errorf(string) fprintf (stderr, "%s in %s@%d: " string "\n", __func__, __FILE__, __LINE__)
+#endif
 #endif
 #ifndef strequal
 #define strequal(s1,s2) (!strcmp(s1,s2))

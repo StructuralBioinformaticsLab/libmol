@@ -116,6 +116,7 @@ void free_atom(struct atom* atm)
 
 void fullcopy_atom (struct atom* src, struct atom* dest)
 {
+        int i;
 	if (src == NULL || dest == NULL)
 	{
 		fprintf (stderr, "err in function copy_atom: src or dest arg is NULL\n");
@@ -145,7 +146,6 @@ void fullcopy_atom (struct atom* src, struct atom* dest)
         dest->acevolume = src->acevolume;
         dest->chrg = src->chrg;
         dest->B = src->B;
-        int i;
         dest->nbonds = src->nbonds;
         dest->bonds=_mol_malloc(dest->nbonds*sizeof(struct atombond* ));
         for(i=0; i<dest->nbonds; i++)

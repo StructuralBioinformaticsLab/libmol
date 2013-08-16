@@ -30,11 +30,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
-#include <stdbool.h>
 #include <stdint.h>
 #include <ctype.h>
+#ifdef _WIN32
+#include "mol_stdbool.h"
+#else
+#include <stdbool.h>
+#endif
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 // POLY_OUT is the polynomial value outside of clip interval [xmin xmax]
 #define POLY_OUT 0.0
@@ -375,8 +383,8 @@ FLOAT eval_spline(FLOAT * x, FLOAT * y, FLOAT * y2, int n, FLOAT v);
 static void name##_bspline_value_deriv( FLOAT x, FLOAT *val, FLOAT *der ) { \
      if ( ( x < name##_x[ 2 ] ) || ( x > name##_x[ name##_n - 1 ] ) ) { *val = *der = 0; } \
      else { \
-            *val = eval_spline( name##_x, name##_y, name##_y2, name##_n, x ); \
             FLOAT h = 0.00001; \
+            *val = eval_spline( name##_x, name##_y, name##_y2, name##_n, x ); \
             *der = ( eval_spline( name##_x, name##_y, name##_y2, name##_n, x + h ) - ( *val ) ) / h; \
           } \
 }
@@ -395,6 +403,9 @@ create_bspline_fade_interval(hbeng_HOH)
 FLOAT eval_spline(FLOAT * x, FLOAT * y, FLOAT * y2, int n, FLOAT v)
 {
 	int l = 1, h = n;
+	FLOAT d;
+	FLOAT a;
+	FLOAT b;
 
 	while (h - l > 1) {
 		int k = (h + l) >> 1;
@@ -404,9 +415,9 @@ FLOAT eval_spline(FLOAT * x, FLOAT * y, FLOAT * y2, int n, FLOAT v)
 			l = k;
 	}
 
-	FLOAT d = x[h] - x[l];
-	FLOAT a = (x[h] - v) / d;
-	FLOAT b = (v - x[l]) / d;
+	d = x[h] - x[l];
+	a = (x[h] - v) / d;
+	b = (v - x[l]) / d;
 
 	return (a * y[l] + b * y[h] +
 		(a * (a * a - 1) * y2[l] +
@@ -458,19 +469,22 @@ void mark_hbond_donors(struct atomgrp *ag, struct prm *prm)
 	int atomi;
 
 	for (atomi = 0; atomi < ag->natoms; atomi++) {
-		if (!is_hydrogen(&ag->atoms[atomi], prm)) 
-			continue;
-
-		if (DEBUG_HBOND_DONOR)
-			printf("atom index: %d\n", atomi);
-
 		int j;
 		int donor_atomi;
 		int heavy_donor_base_atomi = 0;
 		mol_atom *donor_atom;
 		mol_atom *heavy_donor_base_atom = NULL;
 		const int hydrogen_atomi = atomi;
-		mol_atom *hydrogen_atom = &(ag->atoms[hydrogen_atomi]);
+		mol_atom *hydrogen_atom;
+		int heavy_donor_base_count;
+
+		if (!is_hydrogen(&ag->atoms[atomi], prm)) 
+			continue;
+
+		if (DEBUG_HBOND_DONOR)
+			printf("atom index: %d\n", atomi);
+
+		hydrogen_atom = &(ag->atoms[hydrogen_atomi]);
 		assert(hydrogen_atom->nbondis == 1);
 
 		if (DEBUG_HBOND_DONOR) {
@@ -498,7 +512,7 @@ void mark_hbond_donors(struct atomgrp *ag, struct prm *prm)
 			printf("\tdonor bonds: \n");
 		}
 
-		int heavy_donor_base_count = 0;	// number of non-H donor bases
+		heavy_donor_base_count = 0;	// number of non-H donor bases
 		for (j = 0; j < donor_atom->nbondis; j++) {
 			int donor_base_atomi;
 			mol_atom *donor_base_atom;
@@ -633,7 +647,9 @@ void mark_hbond_acceptors(struct atomgrp *ag, struct prm *prm)
 
 void fix_acceptor_bases(struct atomgrp *ag, struct prm *prm)
 {
-	for (int i = 0; i < ag->natoms; i++) {
+	int i;
+	for (i = 0; i < ag->natoms; i++) {
+		int j;
 		mol_atom *atom = &(ag->atoms[i]);
 
 		if (!(atom->hprop & HBOND_ACCEPTOR))
@@ -641,7 +657,7 @@ void fix_acceptor_bases(struct atomgrp *ag, struct prm *prm)
 
 		atom->base2 = -1;
 
-		for (int j = 0; j < atom->nbondis; j++) {
+		for (j = 0; j < atom->nbondis; j++) {
 			int base_i = bonded_atom_index(ag, i, j);
 			mol_atom *base = &(ag->atoms[base_i]);
 
@@ -655,7 +671,7 @@ void fix_acceptor_bases(struct atomgrp *ag, struct prm *prm)
 		}
 
 		if (atom->base2 == -1) {
-			for (int j = 0; j < atom->nbondis; j++) {
+			for (j = 0; j < atom->nbondis; j++) {
 				int base_i = bonded_atom_index(ag, i, j);
 
 				if (atom->base != base_i) {
@@ -745,13 +761,17 @@ static int get_acceptor_chem_type(mol_atom * acc)
 
 static int get_hbe_type(mol_atom * atoms, mol_atom * hydro, mol_atom * acc)
 {
+	mol_atom *don;
+
+	int don_type;
+	int acc_type;
 	if ((hydro->base < 0) && (!(acc->hprop & HBOND_ACCEPTOR)))
 		return hbe_NONE;
 
-	mol_atom *don = &(atoms[hydro->base]);
+	don = &(atoms[hydro->base]);
 
-	int don_type = get_donor_chem_type(don);
-	int acc_type = get_acceptor_chem_type(acc);
+	don_type = get_donor_chem_type(don);
+	acc_type = get_acceptor_chem_type(acc);
 
 	if ((don_type == hbdon_BB) && (acc_type == hbacc_BB))
 		return classify_BB_by_separation(don, acc);
@@ -791,10 +811,11 @@ double *alloc_categorized_hbondeng(void)
 
 void init_categorized_hbondeng(double *engcat)
 {
+	int i;
 	if (engcat == NULL)
 		return;
 
-	for (int i = 0; i <= hbw_SC; i++)
+	for (i = 0; i <= hbw_SC; i++)
 		engcat[i] = 0.0;
 }
 
@@ -832,16 +853,18 @@ int create_donor_orientation_unit_vector(mol_atom * atoms, mol_atom * hydro,
 					 struct dvector *HDunit,
 					 FLOAT * invHDdis)
 {
+	mol_atom *donor;
+	FLOAT HDdis;
 	if (hydro->base < 0)
 		return 0;
 
-	mol_atom *donor = &(atoms[hydro->base]);
+	donor = &(atoms[hydro->base]);
 
 	HDunit->X = donor->X - hydro->X;
 	HDunit->Y = donor->Y - hydro->Y;
 	HDunit->Z = donor->Z - hydro->Z;
 
-	FLOAT HDdis =
+	HDdis =
 	    HDunit->X * HDunit->X + HDunit->Y * HDunit->Y +
 	    HDunit->Z * HDunit->Z;
 
@@ -873,6 +896,7 @@ int create_base_to_acceptor_unit_vector(int hbe_type, mol_atom * atoms,
 					FLOAT * invBAdis)
 {
 	mol_atom *base, *base2;
+	FLOAT BAdis;
 
 	if (acc->base < 0)
 		return 0;
@@ -913,7 +937,7 @@ int create_base_to_acceptor_unit_vector(int hbe_type, mol_atom * atoms,
 	BAunit->Y = acc->Y - B->Y;
 	BAunit->Z = acc->Z - B->Z;
 
-	FLOAT BAdis =
+	BAdis =
 	    _mol_sq(BAunit->X) + _mol_sq(BAunit->Y) + _mol_sq(BAunit->Z);
 
 	if (BAdis <= 0) {
@@ -946,6 +970,15 @@ int hbond_energy_computation(int hbe,
 			     FLOAT * energy,
 			     FLOAT * dE_dr, FLOAT * dE_dxD, FLOAT * dE_dxH)
 {
+	FLOAT dAHdis = AHdis;
+	FLOAT dxD = xD;
+	FLOAT dxH = xH;
+
+	FLOAT FSr = 0.0, FLr = 0.0, FxD = 0.0, FxH = 0.0; // fading intervals values
+	FLOAT dFSr = 0.0, dFLr = 0.0, dFxD = 0.0, dFxH = 0.0; // fading intervals derivatives
+	FLOAT Pr = 0.0, PSxD = 0.0, PSxH = 0.0, PLxD = 0.0, PLxH = 0.0; // polynomials values
+	FLOAT dPr = 0.0, dPSxD = 0.0, dPSxH = 0.0, dPLxD = 0.0, dPLxH = 0.0; // polynomials derivatives
+
 	if (energy != NULL)
 		*energy = HB_ENG_MAX + 1.0f;
 	if (dE_dr != NULL)
@@ -974,15 +1007,6 @@ int hbond_energy_computation(int hbe,
 	if ((AHdis > MAX_AH) || (AHdis < MIN_AH) || (xH < MIN_xH)
 	    || (xD < MIN_xD) || (xH > MAX_xH) || (xD > MAX_xD))
 		return 0;
-
-	FLOAT dAHdis = AHdis;
-	FLOAT dxD = xD;
-	FLOAT dxH = xH;
-
-	FLOAT FSr = 0.0, FLr = 0.0, FxD = 0.0, FxH = 0.0; // fading intervals values
-	FLOAT dFSr = 0.0, dFLr = 0.0, dFxD = 0.0, dFxH = 0.0; // fading intervals derivatives
-	FLOAT Pr = 0.0, PSxD = 0.0, PSxH = 0.0, PLxD = 0.0, PLxH = 0.0; // polynomials values
-	FLOAT dPr = 0.0, dPSxD = 0.0, dPSxH = 0.0, dPLxD = 0.0, dPLxH = 0.0; // polynomials derivatives
 
 // fade functions
 
@@ -1100,13 +1124,21 @@ int water_mediated_hbond_compute_energy_and_gradient(int hbe, mol_atom * atoms_h
 	struct dvector WHunit, HDunit, BAunit, AWunit, WDunit, B;
 	FLOAT invHDdis, invBAdis, invAWdis, invWHdis, d_wp;
 
-	if (energy != NULL)
-		*energy = HB_ENG_MAX + 1.0f;
-
 	mol_atom *hydro = &(atoms_hydro[hydro_id]);
 	mol_atom *acc = &(atoms_acc[acc_id]);
 	mol_atom *don = &(atoms_hydro[hydro->base]);
 	mol_atom *wox = &(atoms_wox[wox_id]);
+	FLOAT AWdis;
+	FLOAT WHdis;
+	FLOAT WDdis;
+	FLOAT cosPsi;
+	FLOAT cosOmg;
+	FLOAT cosTht;
+	FLOAT dE_dr;
+	FLOAT u;
+
+	if (energy != NULL)
+		*energy = HB_ENG_MAX + 1.0f;
 
 	if (!create_donor_orientation_unit_vector
 	    (atoms_hydro, hydro, &HDunit, &invHDdis))
@@ -1133,23 +1165,23 @@ int water_mediated_hbond_compute_energy_and_gradient(int hbe, mol_atom * atoms_h
 	WDunit.Z = don->Z - wox->Z;
 
 #ifdef USE_LONG_DOUBLE
-	FLOAT AWdis =
+	AWdis =
 	    sqrtl(AWunit.X * AWunit.X + AWunit.Y * AWunit.Y +
 		  AWunit.Z * AWunit.Z);
-	FLOAT WHdis =
+	WHdis =
 	    sqrtl(WHunit.X * WHunit.X + WHunit.Y * WHunit.Y +
 		  WHunit.Z * WHunit.Z);
-	FLOAT WDdis =
+	WDdis =
 	    sqrtl(WDunit.X * WDunit.X + WDunit.Y * WDunit.Y +
 		  WDunit.Z * WDunit.Z);
 #else
-	FLOAT AWdis =
+	AWdis =
 	    sqrt(AWunit.X * AWunit.X + AWunit.Y * AWunit.Y +
 		 AWunit.Z * AWunit.Z);
-	FLOAT WHdis =
+	WHdis =
 	    sqrt(WHunit.X * WHunit.X + WHunit.Y * WHunit.Y +
 		 WHunit.Z * WHunit.Z);
-	FLOAT WDdis =
+	WDdis =
 	    sqrt(WDunit.X * WDunit.X + WDunit.Y * WDunit.Y +
 		 WDunit.Z * WDunit.Z);
 #endif
@@ -1180,9 +1212,9 @@ int water_mediated_hbond_compute_energy_and_gradient(int hbe, mol_atom * atoms_h
 	WHunit.Y *= invWHdis;
 	WHunit.Z *= invWHdis;
 
-	FLOAT cosPsi = -dot_product(&BAunit, &AWunit);
-	FLOAT cosOmg = -dot_product(&AWunit, &WHunit);
-	FLOAT cosTht = -dot_product(&WHunit, &HDunit);
+	cosPsi = -dot_product(&BAunit, &AWunit);
+	cosOmg = -dot_product(&AWunit, &WHunit);
+	cosTht = -dot_product(&WHunit, &HDunit);
 
 	if ((cosPsi > 0.0) || (cosPsi < -0.939693))
 		return 0; // Psi (in degrees) is not in the allowed range [ 90, 160 ]
@@ -1196,16 +1228,12 @@ int water_mediated_hbond_compute_energy_and_gradient(int hbe, mol_atom * atoms_h
 	if ((d_wp < 2.6) || (d_wp > 3.6))
 		return 0;
 
-	FLOAT dE_dr;
-
 	hbeng_HOH_bspline_value_deriv(d_wp, energy, &dE_dr);
 
 	if (!comp_grad)
 		return 1;
 
 	// RAC: not sure about the gradients computed below...
-
-	FLOAT u;
 
 	u = dE_dr * AWunit.X;
 	wox->GX += -u;
@@ -1242,6 +1270,16 @@ int hbond_energy_and_gradient_computation(int hbe, mol_atom * atoms_hydro,	// at
 {
 	struct dvector AHunit, HDunit, BAunit, B;
 	FLOAT invAHdis, invHDdis, invBAdis;
+	FLOAT AHdis;
+	FLOAT xD;
+	FLOAT xH;
+	FLOAT dE_dr, dE_dxD, dE_dxH;
+	FLOAT en;
+	FLOAT u;
+	FLOAT v;
+	int en_comp;
+	mol_atom *base;
+	mol_atom *base2;
 
 	mol_atom *hydro = &(atoms_hydro[hydro_id]);
 	mol_atom *acc = &(atoms_acc[acc_id]);
@@ -1265,11 +1303,11 @@ int hbond_energy_and_gradient_computation(int hbe, mol_atom * atoms_hydro,	// at
 	AHunit.Z = hydro->Z - acc->Z;
 
 #ifdef USE_LONG_DOUBLE
-	FLOAT AHdis =
+	AHdis =
 	    sqrtl(AHunit.X * AHunit.X + AHunit.Y * AHunit.Y +
 		  AHunit.Z * AHunit.Z);
 #else
-	FLOAT AHdis =
+	AHdis =
 	    sqrt(AHunit.X * AHunit.X + AHunit.Y * AHunit.Y +
 		 AHunit.Z * AHunit.Z);
 #endif
@@ -1285,12 +1323,10 @@ int hbond_energy_and_gradient_computation(int hbe, mol_atom * atoms_hydro,	// at
 	AHunit.Y *= invAHdis;
 	AHunit.Z *= invAHdis;
 
-	FLOAT xD = dot_product(&AHunit, &HDunit);
-	FLOAT xH = dot_product(&BAunit, &AHunit);
-	FLOAT dE_dr, dE_dxD, dE_dxH;
-	FLOAT en;
+	xD = dot_product(&AHunit, &HDunit);
+	xH = dot_product(&BAunit, &AHunit);
 
-	int en_comp =
+	en_comp =
 	    hbond_energy_computation(hbe, AHdis, xD, xH, &en, &dE_dr, &dE_dxD,
 				     &dE_dxH);
 
@@ -1307,8 +1343,8 @@ int hbond_energy_and_gradient_computation(int hbe, mol_atom * atoms_hydro,	// at
 	if (!comp_grad)
 		return 1;
 
-	mol_atom *base = &(atoms_acc[acc->base]);
-	mol_atom *base2 = NULL;
+	base = &(atoms_acc[acc->base]);
+	base2 = NULL;
 
 	if ((hbe == hbe_RINGSC) || (hbe == hbe_RINGB) || (hbe == hbe_SP3SC)
 	    || (hbe == hbe_SP3B)) {
@@ -1318,8 +1354,6 @@ int hbond_energy_and_gradient_computation(int hbe, mol_atom * atoms_hydro,	// at
 		}
 		base2 = &(atoms_acc[acc->base2]);
 	}
-
-	FLOAT u;
 
 	u = dE_dr * AHunit.X;
 	hydro->GX += -u;
@@ -1332,8 +1366,6 @@ int hbond_energy_and_gradient_computation(int hbe, mol_atom * atoms_hydro,	// at
 	u = dE_dr * AHunit.Z;
 	hydro->GZ += -u;
 	acc->GZ += u;
-
-	FLOAT v;
 
 	u = -dE_dxD * invAHdis * (xD * AHunit.X - HDunit.X);
 	v = -dE_dxD * invHDdis * (AHunit.X - xD * HDunit.X);
@@ -1408,16 +1440,17 @@ static double get_pairwise_hbondeng(mol_atom * atoms_hydro, int hydro_id,
 	double dz = hydro->Z - acc->Z;
 
 	double d2 = dx * dx + dy * dy + dz * dz;
+	int hbe;
+	int ka1, ka2, ka3;
+	double en;
 
 	if (d2 > rc2)
 		return 0;
 
-	int hbe = get_hbe_type(atoms_hydro, hydro, acc);
+	hbe = get_hbe_type(atoms_hydro, hydro, acc);
 
 	if (hbe == hbe_NONE)
 		return 0;
-
-	int ka1, ka2;
 
 	if (hydro_id < acc_id) {
 		ka1 = hydro_id;
@@ -1427,12 +1460,12 @@ static double get_pairwise_hbondeng(mol_atom * atoms_hydro, int hydro_id,
 		ka2 = hydro_id;
 	}
 
-	int ka3 = exta(ka1, ka2, ags->excl_list, ags->pd1, ags->pd2, ags->ndm);
+	ka3 = exta(ka1, ka2, ags->excl_list, ags->pd1, ags->pd2, ags->ndm);
 
 	if (ka3 > 0)
 		return 0;
 
-	double en = 0;
+	en = 0;
 
 	if (hbond_energy_and_gradient_computation
 	    (hbe, atoms_hydro, hydro_id, atoms_acc, acc_id, &en, comp_grad)) {
@@ -1460,15 +1493,18 @@ double get_pairwise_hbondeng_nblist(mol_atom * atoms_hydro, int hydro_id,
 
 	double d2 = dx * dx + dy * dy + dz * dz;
 
+	int hbe;
+	double en;
+
 	if (d2 > rc2)
 		return 0;
 
-	int hbe = get_hbe_type(atoms_hydro, hydro, acc);
+	hbe = get_hbe_type(atoms_hydro, hydro, acc);
 
 	if (hbe == hbe_NONE)
 		return 0;
 
-	double en = 0;
+	en = 0;
 
 	if (hbond_energy_and_gradient_computation
 	    (hbe, atoms_hydro, hydro_id, atoms_acc, acc_id, &en, comp_grad)) {
@@ -1529,20 +1565,23 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 	*energy = 0;
 
 	if ((trans_mat != NULL) || (mnode->n - mnode->nfixed <= snode->n)) {
-		for (int i = mnode->nfixed; i < mnode->n; i++) {
+		int i;
+		for (i = mnode->nfixed; i < mnode->n; i++) {
 			int ai = mnode->indices[i];
 			mol_atom *atom_i = &(octree_moving->atoms[ai]);
+			double x, y, z;
+			double d2;
 
 			if (!(atom_i->hprop & DONATABLE_HYDROGEN)
 			    && !(atom_i->hprop & HBOND_ACCEPTOR))
 				continue;
 
-			double x = atom_i->X, y = atom_i->Y, z = atom_i->Z;
+			x = atom_i->X, y = atom_i->Y, z = atom_i->Z;
 
 			if (trans_mat != NULL)
 				transform_point(x, y, z, trans_mat, &x, &y, &z);	// defined in octree.h
 
-			double d2 =
+			d2 =
 			    min_pt2bx_dist2(snode->lx, snode->ly, snode->lz,
 					    snode->dim, x, y, z);
 
@@ -1550,13 +1589,15 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 				continue;
 
 			if (atom_i->hprop & DONATABLE_HYDROGEN) {
-				for (int j = 0; j < snode->n; j++) {
+				int j;
+				for (j = 0; j < snode->n; j++) {
 					int aj = snode->indices[j];
+					mol_atom *atom_j;
 
 					if ((j >= nf) && (aj <= ai))
 						continue;
 
-					mol_atom *atom_j =
+					atom_j =
 					    &(octree_static->atoms[aj]);
 
 					if (!(atom_j->hprop & HBOND_ACCEPTOR))
@@ -1568,13 +1609,15 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 					     ags, engcat, rc2, 1);
 				}
 			} else {
-				for (int j = 0; j < snode->n; j++) {
+				int j;
+				for (j = 0; j < snode->n; j++) {
 					int aj = snode->indices[j];
+					mol_atom *atom_j;
 
 					if ((j >= nf) && (aj <= ai))
 						continue;
 
-					mol_atom *atom_j =
+					atom_j =
 					    &(octree_static->atoms[aj]);
 
 					if (!(atom_j->hprop &
@@ -1589,17 +1632,20 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 			}
 		}
 	} else {
-		for (int i = 0; i < snode->n; i++) {
+		int i;
+		for (i = 0; i < snode->n; i++) {
 			int ai = snode->indices[i];
 			mol_atom *atom_i = &(octree_static->atoms[ai]);
+			double x, y, z;
+			double d2;
 
 			if (!(atom_i->hprop & DONATABLE_HYDROGEN)
 			    && !(atom_i->hprop & HBOND_ACCEPTOR))
 				continue;
 
-			double x = atom_i->X, y = atom_i->Y, z = atom_i->Z;
+			x = atom_i->X, y = atom_i->Y, z = atom_i->Z;
 
-			double d2 =
+			d2 =
 			    min_pt2bx_dist2(mnode->lx, mnode->ly, mnode->lz,
 					    mnode->dim, x, y, z);
 
@@ -1607,13 +1653,15 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 				continue;
 
 			if (atom_i->hprop & DONATABLE_HYDROGEN) {
-				for (int j = mnode->nfixed; j < mnode->n; j++) {
+				int j;
+				for (j = mnode->nfixed; j < mnode->n; j++) {
 					int aj = mnode->indices[j];
+					mol_atom *atom_j;
 
 					if ((i >= nf) && (aj >= ai))
 						continue;
 
-					mol_atom *atom_j =
+					atom_j =
 					    &(octree_moving->atoms[aj]);
 
 					if (!(atom_j->hprop & HBOND_ACCEPTOR))
@@ -1625,13 +1673,15 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 					     ags, engcat, rc2, 1);
 				}
 			} else {
-				for (int j = mnode->nfixed; j < mnode->n; j++) {
+				int j;
+				for (j = mnode->nfixed; j < mnode->n; j++) {
 					int aj = mnode->indices[j];
+					mol_atom *atom_j;
 
 					if ((i >= nf) && (aj >= ai))
 						continue;
 
-					mol_atom *atom_j =
+					atom_j =
 					    &(octree_moving->atoms[aj]);
 
 					if (!(atom_j->hprop &
@@ -1652,21 +1702,25 @@ void hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 {
 	double rc = nblst->nbcof;
 	double rc2 = rc * rc;
+	int i;
 
 	(*energy) = 0;
 
-	for (int i = 0; i < nblst->nfat; i++) {
+	for (i = 0; i < nblst->nfat; i++) {
 		int ai = nblst->ifat[i];
 		mol_atom *atom_i = &(ag->atoms[ai]);
+		int n2;
+		int *p;
+		int j;
 
 		if (!(atom_i->hprop & DONATABLE_HYDROGEN)
 		    && !(atom_i->hprop & HBOND_ACCEPTOR))
 			continue;
 
-		int n2 = nblst->nsat[i];
-		int *p = nblst->isat[i];
+		n2 = nblst->nsat[i];
+		p = nblst->isat[i];
 
-		for (int j = 0; j < n2; j++) {
+		for (j = 0; j < n2; j++) {
 			int aj = p[j];
 			mol_atom *atom_j = &(ag->atoms[aj]);
 
@@ -1695,19 +1749,22 @@ void hbondengcat(struct atomgrp *ag, double *energy, struct nblist *nblst)
 {
 	double rc = nblst->nbcof;
 	double rc2 = rc * rc;
-
-	for (int i = 0; i < nblst->nfat; i++) {
+	int i;
+	for (i = 0; i < nblst->nfat; i++) {
 		int ai = nblst->ifat[i];
 		mol_atom *atom_i = &(ag->atoms[ai]);
+		int n2;
+		int *p;
+		int j;
 
 		if (!(atom_i->hprop & DONATABLE_HYDROGEN)
 		    && !(atom_i->hprop & HBOND_ACCEPTOR))
 			continue;
 
-		int n2 = nblst->nsat[i];
-		int *p = nblst->isat[i];
+		n2 = nblst->nsat[i];
+		p = nblst->isat[i];
 
-		for (int j = 0; j < n2; j++) {
+		for (j = 0; j < n2; j++) {
 			int aj = p[j];
 			mol_atom *atom_j = &(ag->atoms[aj]);
 
@@ -1732,13 +1789,14 @@ void hbondengcat(struct atomgrp *ag, double *energy, struct nblist *nblst)
 
 static int hb_bonded(mol_atom * ai, mol_atom * aj)
 {
+	int i;
 	if (ai->nbonds > aj->nbonds) {
 		mol_atom *t = ai;
 		ai = aj;
 		aj = t;
 	}
 
-	for (int i = 0; i < ai->nbonds; i++) {
+	for (i = 0; i < ai->nbonds; i++) {
 		mol_bond *b = ai->bonds[i];
 
 		if ((b->a0 == aj) || (b->a1 == aj))
@@ -1752,26 +1810,30 @@ void hbondeng_all(struct atomgrp *ag, double *energy, struct nblist *nblst)
 {
 	double rc = nblst->nbcof;
 	double rc2 = rc * rc;
+	int i;
+	double en[hbw_SC + 1];
+
 
 	(*energy) = 0;
 
-	double en[hbw_SC + 1];
-
-	for (int i = 0; i < hbw_SC; i++)
+	for (i = 0; i < hbw_SC; i++)
 		en[i] = 0;
 
 	printf("ag->natoms = %d\n", ag->natoms);
 
-	for (int i = 0; i < ag->natoms; i++) {
+	for (i = 0; i < ag->natoms; i++) {
 		int ai = i;
 		mol_atom *atom_i = &(ag->atoms[ai]);
+		int j;
 
 		if (!(atom_i->hprop & DONATABLE_HYDROGEN))
 			continue;
 
-		for (int j = 0; j < ag->natoms; j++) {
+		for (j = 0; j < ag->natoms; j++) {
 			int aj = j;
 			mol_atom *atom_j = &(ag->atoms[aj]);
+			int hbe;
+			enum HB_Weight_Type hbw;
 
 			if ((atom_i->comb_res_seq ==
 			     atom_j->
@@ -1787,8 +1849,8 @@ void hbondeng_all(struct atomgrp *ag, double *energy, struct nblist *nblst)
 							 ag->atoms, aj, NULL,
 							 rc2, 1);
 
-			int hbe = get_hbe_type(ag->atoms, atom_i, atom_j);
-			enum HB_Weight_Type hbw = get_hbond_weight_type(hbe);
+			hbe = get_hbe_type(ag->atoms, atom_i, atom_j);
+			hbw = get_hbond_weight_type(hbe);
 
 			if (en[0] >= 0)
 				continue;
@@ -1815,27 +1877,31 @@ void hbondeng_bbexc(struct atomgrp *ag, double *energy, struct nblist *nblst)
 
 	double rc = nblst->nbcof;
 	double rc2 = rc * rc;
+	int i;
+	int ai;
+	double en[hbw_SC + 1];
+	int *blacklist;
 
 	(*energy) = 0;
 
-	double en[hbw_SC + 1];
-
-	for (int i = 0; i < hbw_SC; i++)
+	for (i = 0; i < hbw_SC; i++)
 		en[i] = 0;
 
 	printf("ag->natoms = %d\n", ag->natoms);
 
-	int blacklist[ag->natoms];
-	for (int i = 0; i < ag->natoms; i++)
+	blacklist = _mol_malloc(sizeof(int) * ag->natoms);
+	for (i = 0; i < ag->natoms; i++)
 		blacklist[i] = 0;
 
-	for (int ai = 0; ai < ag->natoms; ai++) {
+	for (ai = 0; ai < ag->natoms; ai++) {
+		int aj;
 		mol_atom *atom_i = &(ag->atoms[ai]);
 
 		if (!(atom_i->hprop & DONATABLE_HYDROGEN))
 			continue;
 
-		for (int aj = 0; aj < ag->natoms; aj++) {
+		for (aj = 0; aj < ag->natoms; aj++) {
+			int hbe;
 			mol_atom *atom_j = &(ag->atoms[aj]);
 
 			if ((atom_i->comb_res_seq == atom_j->comb_res_seq) 
@@ -1850,7 +1916,7 @@ void hbondeng_bbexc(struct atomgrp *ag, double *energy, struct nblist *nblst)
 							 ag->atoms, aj, NULL,
 							 rc2, 1);
 
-			int hbe = get_hbe_type(ag->atoms, atom_i, atom_j);
+			hbe = get_hbe_type(ag->atoms, atom_i, atom_j);
 
 			if ((en[0] < 0)
 			    && ((hbe == 1) || (hbe == 2) || (hbe == 3)
@@ -1861,20 +1927,26 @@ void hbondeng_bbexc(struct atomgrp *ag, double *energy, struct nblist *nblst)
 		}
 	}
 
-	for (int ai = 0; ai < ag->natoms; ai++) {
+	for (ai = 0; ai < ag->natoms; ai++) {
+		int aj;
+		mol_atom *atom_i;
 		if (blacklist[ai] == 1)
 			continue;
 
-		mol_atom *atom_i = &(ag->atoms[ai]);
+		atom_i = &(ag->atoms[ai]);
 
 		if (!(atom_i->hprop & DONATABLE_HYDROGEN))
 			continue;
 
-		for (int aj = 0; aj < ag->natoms; aj++) {
+		for (aj = 0; aj < ag->natoms; aj++) {
+			mol_atom *atom_j;
+			int hbe;
+			enum HB_Weight_Type hbw;
+
 			if (blacklist[aj] == 1)
 				continue;
 
-			mol_atom *atom_j = &(ag->atoms[aj]);
+			atom_j = &(ag->atoms[aj]);
 
 			if ((atom_i->comb_res_seq == atom_j-> comb_res_seq) 
 			    ||hb_bonded(atom_i, atom_j))
@@ -1888,8 +1960,8 @@ void hbondeng_bbexc(struct atomgrp *ag, double *energy, struct nblist *nblst)
 							 ag->atoms, aj, NULL,
 							 rc2, 1);
 
-			int hbe = get_hbe_type(ag->atoms, atom_i, atom_j);
-			enum HB_Weight_Type hbw = get_hbond_weight_type(hbe);
+			hbe = get_hbe_type(ag->atoms, atom_i, atom_j);
+			hbw = get_hbond_weight_type(hbe);
 
 			if (en[0] >= 0)
 				continue;
@@ -1921,20 +1993,23 @@ void hbondeng_bbexc(struct atomgrp *ag, double *energy, struct nblist *nblst)
 void water_mediated_hbondeng(struct atomgrp *ag, double *energy)
 {
 	struct prm *prm = (struct prm *)ag->prm;
+	int ak;
 
 	(*energy) = 0;
 
-	for (int ak = 0; ak < ag->natoms; ak++)	// Water Oxygen
+	for (ak = 0; ak < ag->natoms; ak++)	// Water Oxygen
 	{
 		mol_atom *atom_k = &(ag->atoms[ak]);
+		int nb;
+		int ai;
 
 		if ((ag->res_type[atom_k->res_num] != HOH)
 		    || (prm->atoms[atom_k->atom_typen].typemin[0] != 'O'))
 			continue;
 
-		int nb = 0;
+		nb = 0;
 
-		for (int ai = 0; ai < ag->natoms; ai++) {
+		for (ai = 0; ai < ag->natoms; ai++) {
 			mol_atom *atom_i = &(ag->atoms[ai]);
 
 			double dx = atom_k->X - atom_i->X;
@@ -1955,20 +2030,25 @@ void water_mediated_hbondeng(struct atomgrp *ag, double *energy)
 		if (nb < 10)
 			continue;
 
-		for (int ai = 0; ai < ag->natoms; ai++)	// Donated Hydrogen which is NOT H of a Water molecule
+		for (ai = 0; ai < ag->natoms; ai++)	// Donated Hydrogen which is NOT H of a Water molecule
 		{
 			mol_atom *atom_i = &(ag->atoms[ai]);
+			int aj;
 
 			if (!(atom_i->hprop & DONATABLE_HYDROGEN)
 			    || (ag->res_type[atom_i->res_num] == HOH))
 				continue;
 
-			for (int aj = 0; aj < ag->natoms; aj++)	// Acceptor that is not the same as Atom_i and has no hbond with Atom_i
+			for (aj = 0; aj < ag->natoms; aj++)	// Acceptor that is not the same as Atom_i and has no hbond with Atom_i
 			{
+				mol_atom *atom_j;
+				double en;
+				int al;
+				mol_atom *atom_l;
 				if (ak == aj)
 					continue;
 
-				mol_atom *atom_j = &(ag->atoms[aj]);
+				atom_j = &(ag->atoms[aj]);
 
 				if ((atom_i->comb_res_seq ==
 				     atom_j->comb_res_seq)
@@ -1978,7 +2058,7 @@ void water_mediated_hbondeng(struct atomgrp *ag, double *energy)
 				if (!(atom_j->hprop & HBOND_ACCEPTOR))
 					continue;
 
-				double en =
+				en =
 				    get_water_mediated_pairwise_hbondeng(ag->
 									 atoms,
 									 ai,
@@ -1994,8 +2074,8 @@ void water_mediated_hbondeng(struct atomgrp *ag, double *energy)
 
 				(*energy) += en;
 
-				int al = atom_i->base;
-				mol_atom *atom_l = &(ag->atoms[al]);	//   Base of the Hydrogen atom_i
+				al = atom_i->base;
+				atom_l = &(ag->atoms[al]);	//   Base of the Hydrogen atom_i
 
 				printf
 				    ("Water Oxygen: %s ( %d %d ), Acceptor: %s ( %d %d ), Donor: %s ( %d %d ), Hydrogen: %s ( %d %d ), Energy: %lf\n",
@@ -2176,32 +2256,34 @@ int reinit_flow_struct(FLOW_STRUCT * flow_struct, int max_n_fedge, int max_n)
 int dijkstra(int n, int *deg, int *adj, int *cap, int *fnet, FLOAT * cost,
 	     int *q, int *inq, int *par, FLOAT * pi, FLOAT * d, FLOAT inf)
 {
-	for (int i = 0; i < n; i++) {
+	int i;
+	int qs;
+	for (i = 0; i < n; i++) {
 		d[i] = inf;
 		par[i] = inq[i] = -1;
 	}
 
 	d[0] = 0;
-	int qs = 1;
+	qs = 1;
 
 	q[0] = inq[0] = 0;
 	par[0] = n;
 
 	while (qs) {
 		int u = q[0];
+		int j, k, v;
 		inq[u] = -1;
 
 		q[0] = q[--qs];
 		if (qs)
 			inq[q[0]] = 0;
 
-		for (int i = 0, j = 2 * i + 1; j < qs; i = j, j = 2 * i + 1) {
+		for (i = 0, j = 2 * i + 1; j < qs; i = j, j = 2 * i + 1) {
+			int t;
 			if ((j + 1 < qs) && (d[q[j + 1]] < d[q[j]]))
 				j++;
 			if (d[q[j]] >= d[q[i]])
 				break;
-
-			int t;
 
 			t = q[i];
 			q[i] = q[j];
@@ -2211,7 +2293,7 @@ int dijkstra(int n, int *deg, int *adj, int *cap, int *fnet, FLOAT * cost,
 			inq[q[j]] = t;
 		}
 
-		for (int k = 0, v = ARY(adj, n, u, k); k < deg[u];
+		for (k = 0, v = ARY(adj, n, u, k); k < deg[u];
 		     v = ARY(adj, n, u, ++k)) {
 			if (ARY(fnet, n, v, u)
 			    && (d[v] >
@@ -2235,7 +2317,7 @@ int dijkstra(int n, int *deg, int *adj, int *cap, int *fnet, FLOAT * cost,
 					inq[v] = qs++;
 				}
 
-				for (int i = inq[v], j = (i >> 1);
+				for (i = inq[v], j = (i >> 1);
 				     d[q[i]] < d[q[j]]; i = j, j = (i >> 1)) {
 					int t;
 
@@ -2250,7 +2332,7 @@ int dijkstra(int n, int *deg, int *adj, int *cap, int *fnet, FLOAT * cost,
 		}
 	}
 
-	for (int i = 0; i < n; i++)
+	for (i = 0; i < n; i++)
 		if (pi[i] < inf)
 			pi[i] += d[i];
 
@@ -2269,29 +2351,35 @@ int min_cost_max_flow(int n, FLOW_STRUCT * fs, FLOAT inf, FLOAT * fcost)
 	FLOAT *d = fs->d;
 	int *adj = fs->adj;
 	int *fnet = fs->fnet;
+	int i;
+	int flow;
 
-	for (int i = 0; i < n; i++) {
+	for (i = 0; i < n; i++) {
 		deg[i] = 0;
 		pi[i] = 0;
 	}
 
-	for (int i = 0; i < n * n; i++)
+	for (i = 0; i < n * n; i++)
 		fnet[i] = 0;
 
-	for (int i = 0; i < n; i++)
-		for (int j = 0; j < n; j++)
+	for (i = 0; i < n; i++) {
+		int j;
+		for (j = 0; j < n; j++) {
 			if (ARY(cap, n, i, j) || ARY(cap, n, j, i)) {
 				ARY(adj, n, i, deg[i]) = j;
 				deg[i]++;
 			}
+		}
+	}
 
-	int flow = 0;
+	flow = 0;
 	*fcost = 0;
 
 	while (dijkstra(n, deg, adj, cap, fnet, cost, q, inq, par, pi, d, inf)) {
 		int bot = INT_MAX;
+		int u, v;
 
-		for (int v = n - 1, u = par[v]; v != 0; u = par[v]) {
+		for (v = n - 1, u = par[v]; v != 0; u = par[v]) {
 			int f;
 
 			if (ARY(fnet, n, v, u))
@@ -2305,7 +2393,7 @@ int min_cost_max_flow(int n, FLOW_STRUCT * fs, FLOAT inf, FLOAT * fcost)
 			v = u;
 		}
 
-		for (int v = n - 1, u = par[v]; v != 0; u = par[v]) {
+		for (v = n - 1, u = par[v]; v != 0; u = par[v]) {
 			if (ARY(fnet, n, v, u)) {
 				ARY(fnet, n, v, u) -= bot;
 				(*fcost) -= bot * ARY(cost, n, v, u);
@@ -2320,7 +2408,7 @@ int min_cost_max_flow(int n, FLOW_STRUCT * fs, FLOAT inf, FLOAT * fcost)
 		flow += bot;
 	}
 
-	for (int i = 0; i < n * n; i++)
+	for (i = 0; i < n * n; i++)
 		cap[i] = fnet[i];
 
 	return flow;
@@ -2335,23 +2423,35 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 
 	double rc = nblst->nbcof;
 	double rc2 = rc * rc;
+	double min_en = 0;
+	int i, j, k;
+	int n_hydro;
+	int n_acc;
+	int n;
+	int l;
+	int *cap;
+	FLOAT *cost;
+	FLOAT inf;
+	FLOAT fcost;
+	int flow;
+	FLOW_MAP *flow_map;
 
 	*energy = 0;
 
-	double min_en = 0;
-
-	for (int i = 0; i < nblst->nfat; i++) {
+	for (i = 0; i < nblst->nfat; i++) {
 		int ai = nblst->ifat[i];
 		mol_atom *atom_i = &(ag->atoms[ai]);
+		int n2;
+		int *p;
 
 		if (!(atom_i->hprop & DONATABLE_HYDROGEN)
 		    && !(atom_i->hprop & HBOND_ACCEPTOR))
 			continue;
 
-		int n2 = nblst->nsat[i];
-		int *p = nblst->isat[i];
+		n2 = nblst->nsat[i];
+		p = nblst->isat[i];
 
-		for (int j = 0; j < n2; j++) {
+		for (j = 0; j < n2; j++) {
 			int aj = p[j];
 			mol_atom *atom_j = &(ag->atoms[aj]);
 
@@ -2402,9 +2502,9 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 	if (n_fedge == 0)
 		return;
 
-	for (int i = 1; i < n_fedge; i++) {
+	for (i = 1; i < n_fedge; i++) {
 		FLOW_EDGE e = flow_edge[i];
-		int j = i - 1;
+		j = i - 1;
 
 		while ((j >= 0) && (e.hydro_id < flow_edge[j].hydro_id)) {
 			flow_edge[j + 1] = flow_edge[j];
@@ -2414,9 +2514,9 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 		flow_edge[j + 1] = e;
 	}
 
-	int n_hydro = 1;
+	n_hydro = 1;
 
-	for (int i = 1; i < n_fedge; i++) {
+	for (i = 1; i < n_fedge; i++) {
 		if (flow_edge[i].hydro_id > flow_edge[i - 1].hydro_id)
 			n_hydro++;
 	}
@@ -2427,11 +2527,11 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 			return;
 	}
 
-	FLOW_MAP *flow_map = fs->flow_map;
+	flow_map = fs->flow_map;
 
-	int k = 0;
+	k = 0;
 
-	for (int i = 0; i < n_fedge; i++) {
+	for (i = 0; i < n_fedge; i++) {
 		if (!i || (flow_edge[i].hydro_id > flow_map[k].id)) {
 			flow_map[++k].cap = 1;
 			flow_map[k].id = flow_edge[i].hydro_id;
@@ -2440,9 +2540,9 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 		flow_edge[i].hydro_id = k;
 	}
 
-	for (int i = 1; i < n_fedge; i++) {
+	for (i = 1; i < n_fedge; i++) {
 		FLOW_EDGE e = flow_edge[i];
-		int j = i - 1;
+		j = i - 1;
 
 		while ((j >= 0) && (e.acc_id < flow_edge[j].acc_id)) {
 			flow_edge[j + 1] = flow_edge[j];
@@ -2452,9 +2552,9 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 		flow_edge[j + 1] = e;
 	}
 
-	int n_acc = 1;
+	n_acc = 1;
 
-	for (int i = 1; i < n_fedge; i++) {
+	for (i = 1; i < n_fedge; i++) {
 		if (flow_edge[i].acc_id > flow_edge[i - 1].acc_id)
 			n_acc++;
 	}
@@ -2466,7 +2566,7 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 		flow_map = fs->flow_map;
 	}
 
-	for (int i = 0; i < n_fedge; i++) {
+	for (i = 0; i < n_fedge; i++) {
 		if (!i || (flow_edge[i].acc_id > flow_map[k].id)) {
 			flow_map[++k].cap =
 			    residual_acceptor_valency(&
@@ -2479,21 +2579,23 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 		flow_edge[i].acc_id = k;
 	}
 
-	int n = n_hydro + n_acc + 2;
+	n = n_hydro + n_acc + 2;
 
 	printf("n_fedge = %d, n_hydro = %d, n_acc = %d, n = %d\n", n_fedge,
 	       n_hydro, n_acc, n);
 	fflush(stdout);
 
 	if ((n_fedge == n_hydro) && (n_fedge == n_acc)) {
-		for (int l = 0; l < n_fedge; l++) {
-			int i = flow_edge[l].hydro_id;
-			int j = flow_edge[l].acc_id;
+		for (l = 0; l < n_fedge; l++) {
+			int ai, aj;
+			double en;
+			i = flow_edge[l].hydro_id;
+			j = flow_edge[l].acc_id;
 
-			int ai = flow_map[i].id;
-			int aj = flow_map[j].id;
+			ai = flow_map[i].id;
+			aj = flow_map[j].id;
 
-			double en =
+			en =
 			    get_pairwise_hbondeng_nblist(ag->atoms, ai,
 							 ag->atoms, aj, NULL,
 							 rc2, 1);
@@ -2504,25 +2606,25 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 		return;
 	}
 
-	int *cap = fs->cap;
-	FLOAT *cost = fs->cost;
+	cap = fs->cap;
+	cost = fs->cost;
 
-	for (int i = 0; i < n * n; i++) {
+	for (i = 0; i < n * n; i++) {
 		cap[i] = 0;
 		cost[i] = 0;
 	}
 
-	for (int i = 1; i <= n_hydro; i++)
+	for (i = 1; i <= n_hydro; i++)
 		ARY(cap, n, 0, i) = 1;
 
-	for (int i = n_hydro + 1; i < n - 1; i++)
+	for (i = n_hydro + 1; i < n - 1; i++)
 		ARY(cap, n, i, n - 1) = flow_map[i].cap;
 
-	FLOAT inf = 1;
+	inf = 1;
 
-	for (int l = 0; l < n_fedge; l++) {
-		int i = flow_edge[l].hydro_id;
-		int j = flow_edge[l].acc_id;
+	for (l = 0; l < n_fedge; l++) {
+		i = flow_edge[l].hydro_id;
+		j = flow_edge[l].acc_id;
 
 		ARY(cap, n, i, j) = 1;
 		ARY(cost, n, i, j) = flow_edge[l].en - (min_en - 1);
@@ -2532,24 +2634,24 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 
 	inf *= 5.0;
 
-	FLOAT fcost;
-
-	int flow = min_cost_max_flow(n, fs, inf, &fcost);
+	flow = min_cost_max_flow(n, fs, inf, &fcost);
 
 	if (flow > 0) {
-		for (int l = 0; l < n_fedge; l++) {
-			int i = flow_edge[l].hydro_id;
-			int j = flow_edge[l].acc_id;
+		for (l = 0; l < n_fedge; l++) {
+			int ai, aj, f;
+			double en;
+			i = flow_edge[l].hydro_id;
+			j = flow_edge[l].acc_id;
 
-			int ai = flow_map[i].id;
-			int aj = flow_map[j].id;
+			ai = flow_map[i].id;
+			aj = flow_map[j].id;
 
-			int f = ARY(cap, n, i, j) - ARY(cap, n, j, i);
+			f = ARY(cap, n, i, j) - ARY(cap, n, j, i);
 
 			if (f < 1)
 				continue;
 
-			double en =
+			en =
 			    get_pairwise_hbondeng_nblist(ag->atoms, ai,
 							 ag->atoms, aj, NULL,
 							 rc2, 1);
@@ -2621,19 +2723,23 @@ void hbondengcat_smallmol(struct atomgrp *ag, double *energy,
 
 	double rc = nblst->nbcof;
 	double rc2 = rc * rc;
+	int i;
 
-	for (int i = 0; i < nblst->nfat; i++) {
+	for (i = 0; i < nblst->nfat; i++) {
 		int ai = nblst->ifat[i];
 		mol_atom *atom_i = &(ag->atoms[ai]);
+		int j;
+		int n2;
+		int *p;
 
 		if (!(atom_i->hprop & DONATABLE_HYDROGEN)
 		    && !(atom_i->hprop & HBOND_ACCEPTOR))
 			continue;
 
-		int n2 = nblst->nsat[i];
-		int *p = nblst->isat[i];
+		n2 = nblst->nsat[i];
+		p = nblst->isat[i];
 
-		for (int j = 0; j < n2; j++) {
+		for (j = 0; j < n2; j++) {
 			int aj = p[j];
 			mol_atom *atom_j = &(ag->atoms[aj]);
 
@@ -2684,11 +2790,13 @@ static double get_pairwise_hbondeng_nblist_smallmol(mol_atom * atoms_hydro,
 	double dz = hydro->Z - acc->Z;
 
 	double d2 = dx * dx + dy * dy + dz * dz;
+	int hbe;
+	double en = 0;
 
 	if (d2 > rc2)
 		return 0;
 
-	int hbe = get_hbe_type_smallmol(atoms_hydro, hydro, acc, prot);
+	hbe = get_hbe_type_smallmol(atoms_hydro, hydro, acc, prot);
 /*
     if(hbe >= 12)	// Only SM-involved
 	printf("acc-id: %d  don-id: %d     hbe-type: %d\n", acc->ingrp, hydro->ingrp,hbe);
@@ -2696,8 +2804,6 @@ static double get_pairwise_hbondeng_nblist_smallmol(mol_atom * atoms_hydro,
 
 	if (hbe == hbe_NONE)
 		return 0;
-
-	double en = 0;
 
 	if (hbond_energy_and_gradient_computation_smallmol
 	    (hbe, atoms_hydro, hydro_id, atoms_acc, acc_id, &en, comp_grad)) {
@@ -2718,13 +2824,17 @@ static double get_pairwise_hbondeng_nblist_smallmol(mol_atom * atoms_hydro,
 static int get_hbe_type_smallmol(mol_atom * atoms, mol_atom * hydro,
 				 mol_atom * acc, struct rig_forest *prot)
 {
+	mol_atom *don;
+	int don_type;
+	int acc_type;
+
 	if ((hydro->base < 0) && (!(acc->hprop & HBOND_ACCEPTOR)))
 		return hbe_NONE;
 
-	mol_atom *don = &(atoms[hydro->base]);
+	don = &(atoms[hydro->base]);
 
-	int don_type = get_donor_chem_type_smallmol(don, prot);
-	int acc_type = get_acceptor_chem_type_smallmol(acc, prot);
+	don_type = get_donor_chem_type_smallmol(don, prot);
+	acc_type = get_acceptor_chem_type_smallmol(acc, prot);
 
 	if ((don_type == hbdon_BB) && (acc_type == hbacc_BB)) { // acc BB  don BB
 		return classify_BB_by_separation(don, acc);
@@ -2790,11 +2900,13 @@ static int get_hbe_type_smallmol(mol_atom * atoms, mol_atom * hydro,
 
 static int get_donor_chem_type_smallmol(mol_atom * don, struct rig_forest *prot)
 {
+	int i;
+	int j;
 	if (don->backbone)
 		return hbdon_BB;
 
-	for (int i = 0; i < prot->numt; i++) { // number of trees (small molecules)
-		for (int j = 0; j < prot->tr[i]->total_atm_size; j++) // number of leaves (atoms) of each tree
+	for (i = 0; i < prot->numt; i++) { // number of trees (small molecules)
+		for (j = 0; j < prot->tr[i]->total_atm_size; j++) // number of leaves (atoms) of each tree
 			if (don->ingrp == prot->tr[i]->tree_atoms[j]) {
 				return hbdon_SM;
 			}
@@ -2809,8 +2921,9 @@ static int get_acceptor_chem_type_smallmol(mol_atom * acc,
 		return hbacc_BB;
 	else {
 		int smallmol_flag = 0;
-		for (int i = 0; i < prot->numt; i++) {	// number of trees (small molecules)
-			for (int j = 0; j < prot->tr[i]->total_atm_size; j++)	// number of leaves (atoms) of each tree
+		int i, j;
+		for (i = 0; i < prot->numt; i++) {	// number of trees (small molecules)
+			for (j = 0; j < prot->tr[i]->total_atm_size; j++)	// number of leaves (atoms) of each tree
 				if (acc->ingrp == prot->tr[i]->tree_atoms[j]) {
 					smallmol_flag = 1;
 					break;
@@ -2858,6 +2971,15 @@ int hbond_energy_and_gradient_computation_smallmol(int hbe, mol_atom * atoms_hyd
 	mol_atom *hydro = &(atoms_hydro[hydro_id]);
 	mol_atom *acc = &(atoms_acc[acc_id]);
 	mol_atom *don = &(atoms_hydro[hydro->base]);
+	FLOAT AHdis;
+	FLOAT dE_dr, dE_dxD, dE_dxH;
+	FLOAT en;
+	FLOAT xD, xH;
+	int en_comp;
+	mol_atom *base;
+	mol_atom *base2;
+	FLOAT u;
+	FLOAT v;
 
 	if (!create_donor_orientation_unit_vector
 	    (atoms_hydro, hydro, &HDunit, &invHDdis))
@@ -2877,11 +2999,11 @@ int hbond_energy_and_gradient_computation_smallmol(int hbe, mol_atom * atoms_hyd
 	AHunit.Z = hydro->Z - acc->Z;
 
 #ifdef USE_LONG_DOUBLE
-	FLOAT AHdis =
+	AHdis =
 	    sqrtl(AHunit.X * AHunit.X + AHunit.Y * AHunit.Y +
 		  AHunit.Z * AHunit.Z);
 #else
-	FLOAT AHdis =
+	AHdis =
 	    sqrt(AHunit.X * AHunit.X + AHunit.Y * AHunit.Y +
 		 AHunit.Z * AHunit.Z);
 #endif
@@ -2897,12 +3019,9 @@ int hbond_energy_and_gradient_computation_smallmol(int hbe, mol_atom * atoms_hyd
 	AHunit.Y *= invAHdis;
 	AHunit.Z *= invAHdis;
 
-	FLOAT xD = dot_product(&AHunit, &HDunit), xH =
-	    dot_product(&BAunit, &AHunit);
-	FLOAT dE_dr, dE_dxD, dE_dxH;
-	FLOAT en;
+	xD = dot_product(&AHunit, &HDunit), xH = dot_product(&BAunit, &AHunit);
 
-	int en_comp =
+	en_comp =
 	    hbond_energy_computation_smallmol(hbe, AHdis, xD, xH, &en, &dE_dr,
 					      &dE_dxD, &dE_dxH);
 
@@ -2919,8 +3038,8 @@ int hbond_energy_and_gradient_computation_smallmol(int hbe, mol_atom * atoms_hyd
 	if (!comp_grad)
 		return 1;
 
-	mol_atom *base = &(atoms_acc[acc->base]);
-	mol_atom *base2 = NULL;
+	base = &(atoms_acc[acc->base]);
+	base2 = NULL;
 
 	if ((hbe == hbe_RINGSC) || (hbe == hbe_RINGB) || (hbe == hbe_RINGSCSM)
 	    || (hbe == hbe_RINGSMSC) || (hbe == hbe_RINGSMB)
@@ -2934,8 +3053,6 @@ int hbond_energy_and_gradient_computation_smallmol(int hbe, mol_atom * atoms_hyd
 		base2 = &(atoms_acc[acc->base2]);
 	}
 
-	FLOAT u;
-
 	u = dE_dr * AHunit.X;
 	hydro->GX += -u;
 	acc->GX += u;
@@ -2948,7 +3065,6 @@ int hbond_energy_and_gradient_computation_smallmol(int hbe, mol_atom * atoms_hyd
 	hydro->GZ += -u;
 	acc->GZ += u;
 
-	FLOAT v;
 	u = -dE_dxD * invAHdis * (xD * AHunit.X - HDunit.X);
 	v = -dE_dxD * invHDdis * (AHunit.X - xD * HDunit.X);
 	hydro->GX += -(u + v);
@@ -3026,6 +3142,7 @@ int hbond_energy_and_gradient_computation_smallmol(int hbe, mol_atom * atoms_hyd
 int create_base_to_acceptor_unit_vector_smallmol(int hbe_type, mol_atom * atoms, mol_atom * acc, struct dvector *B, struct dvector *BAunit, FLOAT * invBAdis)	// DONE
 {
 	mol_atom *base, *base2;
+	FLOAT BAdis;
 
 	if (acc->base < 0)
 		return 0;
@@ -3078,7 +3195,7 @@ int create_base_to_acceptor_unit_vector_smallmol(int hbe_type, mol_atom * atoms,
 	BAunit->Y = acc->Y - B->Y;
 	BAunit->Z = acc->Z - B->Z;
 
-	FLOAT BAdis =
+	BAdis =
 	    BAunit->X * BAunit->X + BAunit->Y * BAunit->Y +
 	    BAunit->Z * BAunit->Z;
 
@@ -3108,6 +3225,14 @@ int hbond_energy_computation_smallmol(int hbe,	// DONE
 				      FLOAT * dE_dr,
 				      FLOAT * dE_dxD, FLOAT * dE_dxH)
 {
+	FLOAT dAHdis;
+	FLOAT dxD;
+	FLOAT dxH;
+
+	FLOAT FSr = 0.0, FLr = 0.0, FxD = 0.0, FxH = 0.0;	// fading intervals values
+	FLOAT dFSr = 0.0, dFLr = 0.0, dFxD = 0.0, dFxH = 0.0;	// fading intervals derivatives
+	FLOAT Pr = 0.0, PSxD = 0.0, PSxH = 0.0, PLxD = 0.0, PLxH = 0.0;	// polynomials values
+	FLOAT dPr = 0.0, dPSxD = 0.0, dPSxH = 0.0, dPLxD = 0.0, dPLxH = 0.0;	// polynomials derivatives
 	if (energy != NULL)
 		*energy = HB_ENG_MAX + 1.0f;
 	if (dE_dr != NULL)
@@ -3137,14 +3262,9 @@ int hbond_energy_computation_smallmol(int hbe,	// DONE
 	    || (xD < MIN_xD) || (xH > MAX_xH) || (xD > MAX_xD))
 		return 0;
 
-	FLOAT dAHdis = AHdis;
-	FLOAT dxD = xD;
-	FLOAT dxH = xH;
-
-	FLOAT FSr = 0.0, FLr = 0.0, FxD = 0.0, FxH = 0.0;	// fading intervals values
-	FLOAT dFSr = 0.0, dFLr = 0.0, dFxD = 0.0, dFxH = 0.0;	// fading intervals derivatives
-	FLOAT Pr = 0.0, PSxD = 0.0, PSxH = 0.0, PLxD = 0.0, PLxH = 0.0;	// polynomials values
-	FLOAT dPr = 0.0, dPSxD = 0.0, dPSxH = 0.0, dPLxD = 0.0, dPLxH = 0.0;	// polynomials derivatives
+	dAHdis = AHdis;
+	dxD = xD;
+	dxH = xH;
 
 // fade functions
 
@@ -3333,10 +3453,11 @@ void set_categorized_hbondeng_smallmol(double *engcat, double bb_bb_sr,
 
 void init_categorized_hbondeng_smallmol(double *engcat)
 {
+	int i;
 	if (engcat == NULL)
 		return;
 
-	for (int i = 0; i <= hbw_SM; i++)
+	for (i = 0; i <= hbw_SM; i++)
 		engcat[i] = 0.0;
 }
 

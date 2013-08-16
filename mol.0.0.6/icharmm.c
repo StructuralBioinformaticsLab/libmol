@@ -28,10 +28,20 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef _WIN32
+#include "mol_stdbool.h"
+#else
 #include <stdbool.h>
+#endif
 #include <string.h>
 #include <math.h>
+
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
+
 #define linesize 128
 
 void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
@@ -49,6 +59,9 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 	int nres, *ires;
 	char *res_name;
 	char **dres = _mol_malloc(ag->natoms * sizeof(char *));
+	int ltors;
+	struct atom *atm;
+	int atomsi;
 
 	read_psf(psffile, &nat, &atoms, &atom_names, &nb, &bonds, &nang, &angs,
 		 &ndih0, &dihs, &nimp, &imps, &cha, &nres, &ires, dres,
@@ -314,7 +327,7 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 	}
 //torsions
 	ag->tors = _mol_malloc(ndih * sizeof(struct atomtorsion));
-	int ltors = 0;
+	ltors = 0;
 	for (i = 0; i < ndih; i++) {
 		ti = tdih[i];
 		if (ti < 0) {
@@ -361,7 +374,6 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 		    _mol_malloc(i1 * sizeof(struct atomimproper *));
 		ag->atoms[i].nimps = 0;
 	}
-	struct atom *atm;
 //fill bonds
 	for (i = 0; i < ag->nbonds; i++) {
 		atm = ag->bonds[i].a0;
@@ -432,7 +444,6 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 	free(atom_names);
 
 	// copy vals from deprecated to new data structures
-	int atomsi;
 	for (atomsi = 0; atomsi < ag->natoms; atomsi++) {
 		_mol_atom_create_bond_indices(&ag->atoms[atomsi],
 					      ag->atoms[atomsi].nbonds);
@@ -691,67 +702,85 @@ void read_par(char *prmfile, int nat, char *atnam,
 	int i, ndih0 = *ndih;
 	char *buffer = _mol_malloc(sizeof(char) * linesize);
 	char *p;
+	double *kbond;
+	double *lbond;
+	double *kangle;
+	double *fangle;
+	double *kdih;
+	double *fdih;
+	int *pdih;
+	int *wdih;
+	int *tdih;
+	double *kimp;
+	double *fimp;
+	double *epa;
+	double *siga;
+	double *acevolumes;
 
-	double *kbond = _mol_malloc(sizeof(double) * nb);
+	FILE *fp;
+	double efac;
+	int read_mode;
+
+	kbond = _mol_malloc(sizeof(double) * nb);
 	for (i = 0; i < nb; i++)
 		kbond[i] = -1.0;
 
-	double *lbond = _mol_malloc(sizeof(double) * nb);
+	lbond = _mol_malloc(sizeof(double) * nb);
 	for (i = 0; i < nb; i++)
 		lbond[i] = -1.0;
 
-	double *kangle = _mol_malloc(sizeof(double) * nang);
+	kangle = _mol_malloc(sizeof(double) * nang);
 	for (i = 0; i < nang; i++)
 		kangle[i] = -1.0;
 
-	double *fangle = _mol_malloc(sizeof(double) * nang);
+	fangle = _mol_malloc(sizeof(double) * nang);
 	for (i = 0; i < nang; i++)
 		fangle[i] = -1.0;
 
-	double *kdih = _mol_malloc(sizeof(double) * 3 * ndih0);
+	kdih = _mol_malloc(sizeof(double) * 3 * ndih0);
 	for (i = 0; i < 3 * ndih0; i++)
 		kdih[i] = -1.0;
 
-	double *fdih = _mol_malloc(sizeof(double) * 3 * ndih0);
+	fdih = _mol_malloc(sizeof(double) * 3 * ndih0);
 	for (i = 0; i < 3 * ndih0; i++)
 		fdih[i] = -1.0;
 
-	int *pdih = _mol_malloc(sizeof(int) * 3 * ndih0);
+	pdih = _mol_malloc(sizeof(int) * 3 * ndih0);
 	for (i = 0; i < 3 * ndih0; i++)
 		pdih[i] = -1;
 
-	int *wdih = _mol_malloc(sizeof(int) * ndih0);
+	wdih = _mol_malloc(sizeof(int) * ndih0);
 	for (i = 0; i < ndih0; i++)
 		wdih[i] = -1;
 
-	int *tdih = _mol_malloc(sizeof(int) * 3 * ndih0);
+	tdih = _mol_malloc(sizeof(int) * 3 * ndih0);
 	for (i = 0; i < 3 * ndih0; i++)
 		tdih[i] = -1;
 
-	double *kimp = _mol_malloc(sizeof(double) * nimp);
+	kimp = _mol_malloc(sizeof(double) * nimp);
 	for (i = 0; i < nimp; i++)
 		kimp[i] = -1.0;
 
-	double *fimp = _mol_malloc(sizeof(double) * nimp);
+	fimp = _mol_malloc(sizeof(double) * nimp);
 	for (i = 0; i < nimp; i++)
 		fimp[i] = -1.0;
 
-	double *epa = _mol_malloc(2 * sizeof(double) * nat);
+	epa = _mol_malloc(2 * sizeof(double) * nat);
 	for (i = 0; i < 2 * nat; i++)
 		epa[i] = 1.0;
 
-	double *siga = _mol_malloc(2 * sizeof(double) * nat);
+	siga = _mol_malloc(2 * sizeof(double) * nat);
 	for (i = 0; i < 2 * nat; i++)
 		siga[i] = -1.0;
 
-	double *acevolumes = _mol_malloc(sizeof(double) * nat);
+	acevolumes = _mol_malloc(sizeof(double) * nat);
 	for (i = 0; i < nat; i++)
 		acevolumes[i] = -1.0;
 
-	FILE *fp = myfopen(prmfile, "r");
-	double efac = 0.0;
+	fp = myfopen(prmfile, "r");
+	efac = 0.0;
 
-	int read_mode = 0;
+	read_mode = 0;
 	while (fgets(buffer, linesize, fp) != NULL) {
 		if ((p = strstr(buffer, "e14fac"))
 		    || (p = strstr(buffer, "E14FAC")))
@@ -1199,6 +1228,7 @@ void fixed_update(struct atomgrp *ag, int nlist, int *list)
 
 	int i, m, n;
 	struct atom *a0, *a1, *a2, *a3;
+	int ci;
 	if (ag->nbact > 0) {
 		free(ag->bact);
 		ag->nbact = 0;
@@ -1225,7 +1255,6 @@ void fixed_update(struct atomgrp *ag, int nlist, int *list)
 		ag->atoms[i].fixed = 0;
 	for (i = 0; i < nlist; i++)
 		ag->atoms[list[i]].fixed = 1;
-	int ci;
 	ag->activelist = (int *)_mol_malloc((ag->natoms - nlist) * sizeof(int));
 	ci = 0;
 	for (i = 0; i < ag->natoms; i++) {
@@ -1327,6 +1356,7 @@ void fixed_update_nolist(struct atomgrp *ag)
 
 	int i, m, n;
 	struct atom *a0, *a1, *a2, *a3;
+	int ci;
 	if (ag->nbact > 0) {
 		free(ag->bact);
 		ag->nbact = 0;
@@ -1349,7 +1379,6 @@ void fixed_update_nolist(struct atomgrp *ag)
 		ag->nactives = 0;
 	}
 // atoms
-	int ci;
 	ag->activelist = (int *)_mol_malloc((ag->natoms) * sizeof(int));
 	ci = 0;
 	for (i = 0; i < ag->natoms; i++) {
@@ -1457,6 +1486,9 @@ void read_ff_charmm_light(const char *psffile, struct atomgrp *ag)
 	double *cha;
 	int nres, *ires;
 	char **dres = _mol_malloc(ag->natoms * sizeof(char *));
+	int ltors;
+	struct atom *atm;
+	int atomsi;
 //        printf("PSF INn\n");
 
 	read_psf(psffile, &nat, &atoms, &atom_names, &nb, &bonds, &nang, &angs,
@@ -1569,7 +1601,7 @@ void read_ff_charmm_light(const char *psffile, struct atomgrp *ag)
 	}
 //torsions
 	ag->tors = _mol_malloc(ndih0 * sizeof(struct atomtorsion));
-	int ltors = 0;
+	ltors = 0;
 	for (i = 0; i < ndih0; i++) {
 		int i1 = dihs[4 * i] - 1;
 		int i2 = dihs[4 * i + 1] - 1;
@@ -1607,7 +1639,6 @@ void read_ff_charmm_light(const char *psffile, struct atomgrp *ag)
 		    _mol_malloc(i1 * sizeof(struct atomimproper *));
 		ag->atoms[i].nimps = 0;
 	}
-	struct atom *atm;
 //fill bonds
 	for (i = 0; i < ag->nbonds; i++) {
 		atm = ag->bonds[i].a0;
@@ -1653,7 +1684,6 @@ void read_ff_charmm_light(const char *psffile, struct atomgrp *ag)
 	ag->is_psf_read = true;
 
 	// copy vals from deprecated to new data structures
-	int atomsi;
 	for (atomsi = 0; atomsi < ag->natoms; atomsi++) {
 		_mol_atom_create_bond_indices(&ag->atoms[atomsi],
 					      ag->atoms[atomsi].nbonds);

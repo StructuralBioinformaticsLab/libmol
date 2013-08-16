@@ -28,16 +28,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef _WIN32
+#include "../mol.0.0.6.h"
+#else
 #include _MOL_INCLUDE_
+#endif
 
 #ifndef _DEBUG_
 void*
 _mol_malloc (size_t size)
 {
+	void *v;
     if (size == 0) {
         return NULL;
     }
-	void* v = (void*) malloc (size);
+	v = (void*) malloc (size);
 	if (v == NULL)
 	{
 		fprintf (stderr, "insufficient memory request for %zd\n", size);
@@ -49,10 +54,11 @@ _mol_malloc (size_t size)
 void*
 _mol_calloc (size_t nmemb, size_t size)
 {
+	void *v;
     if (nmemb == 0 || size == 0) {
         return NULL;
     }
-	void* v = (void*) calloc (nmemb, size);
+	v = (void*) calloc (nmemb, size);
 	if (v == NULL)
 	{
 		perror ("calloc"), exit (EXIT_FAILURE);
@@ -63,13 +69,14 @@ _mol_calloc (size_t nmemb, size_t size)
 void*
 _mol_realloc (void* ptr, size_t size)
 {
+	void *v;
 	if (size < 1)
 	{
 		fprintf (stderr, "warning: _mol_realloc called with size 0, no realloc will occur\n");
 		return ptr;
 		
 	}
-	void* v = (void*) realloc (ptr, size);
+	v = (void*) realloc (ptr, size);
 	if (v == NULL && ptr != NULL)
 	{
 		perror ("realloc"), exit (EXIT_FAILURE);
