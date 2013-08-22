@@ -403,7 +403,7 @@ struct atomgrp* fullcopy_atomgrp (struct atomgrp* srcag)
 	return destag;
 }
 
-struct atomgrp* copy_atomgrp (struct atomgrp* srcag)
+struct atomgrp* copy_atomgrp (const struct atomgrp* srcag)
 {
         int atomn;
         struct atomgrp* destag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp));

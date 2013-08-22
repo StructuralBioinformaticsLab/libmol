@@ -186,7 +186,7 @@ void free_atomgrp (struct atomgrp* ag);
 /**
 	Creates a copy of srcag and returns it.
 */
-struct atomgrp* copy_atomgrp (struct atomgrp* srcag);
+struct atomgrp* copy_atomgrp (const struct atomgrp* srcag);
 
 /**
         Creates a copy of srcag and returns it.
