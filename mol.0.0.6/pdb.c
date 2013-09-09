@@ -306,7 +306,6 @@ struct atomgrp* read_pdb_nopar (const char* path)
         while (getline (&line, &len, fp) != -1)
         {
 		char *atom_name;
-		char *atom_name_2;
                 if (strncmp (line, "ATOM  ", 6) != 0 && strncmp (line, "HETATM", 6) != 0)
                         continue;
                 if (atomi+1 > ag->natoms)
@@ -341,11 +340,7 @@ struct atomgrp* read_pdb_nopar (const char* path)
 		atom_name = _mol_calloc(5, sizeof(char));
 		strncpy(atom_name, line+12, 4);
 		rstrip(atom_name);
-		atom_name_2 = atom_name;
-		while (isspace(*atom_name_2))
-			atom_name_2++;
-		if (atom_name != atom_name_2)
-			strcpy(atom_name, atom_name_2);
+		while(isspace(*atom_name)){memmove(atom_name,atom_name+1,4);}
 		ag->atoms[atomi].name = atom_name;
 
 		sscanf(&line[30], "%8lf%8lf%8lf",

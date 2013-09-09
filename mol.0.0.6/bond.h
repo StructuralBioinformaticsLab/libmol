@@ -51,6 +51,8 @@ struct atombond
 
 	float l0; /**< equilibrium length */
 	float k; /**< spring constant */
+
+	int sdf_type; /** sdf type of bond */
 };
 
 

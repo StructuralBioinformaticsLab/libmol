@@ -68,7 +68,7 @@ void read_ff_json(const char *json_file, struct atomgrp *ag)
 		}
 		json_t *ace_volume, *ftype_index, *ftype_name, *eps03;
 		json_t *name, *radius03, *eps;
-		json_t *charge, *radius;
+		json_t *charge, *radius, *element;
 
 		ace_volume = json_object_get(atom, "ace_volume");
 		if (!json_is_real(ace_volume)) {
@@ -90,6 +90,12 @@ void read_ff_json(const char *json_file, struct atomgrp *ag)
 			fprintf(stderr, "json ftype name is not string for atom %zd in json_file %s\n", i, json_file);
 		}
 		ag->atoms[i].ftype_name = strdup(json_string_value(ftype_name));
+
+		element = json_object_get(atom, "element");
+		if (!json_is_string(element)) {
+			fprintf(stderr, "json element name is not string for atom %zd in json_file %s\n", i, json_file);
+		}
+		ag->atoms[i].element = strdup(json_string_value(element));
 
 		eps = json_object_get(atom, "eps");
 		if (!json_is_real(eps)) {
@@ -146,7 +152,7 @@ void read_ff_json(const char *json_file, struct atomgrp *ag)
 		if (!json_is_object(bond)) {
 			fprintf(stderr, "Bond %zd not an object in json file %s\n", i, json_file);
 		}
-		json_t *length, *atom1, *atom2, *spring_constant;
+		json_t *length, *atom1, *atom2, *spring_constant, *sdf_type;
 
 		atom1 = json_object_get(bond, "atom1");
 		if (!json_is_integer(atom1)) {
@@ -175,6 +181,12 @@ void read_ff_json(const char *json_file, struct atomgrp *ag)
 			fprintf(stderr, "json spring_constant is not floating point for bond %zd in json_file %s\n", i, json_file);
 		}
 		ag->bonds[i].k = json_real_value(spring_constant);
+
+		sdf_type = json_object_get(bond, "sdf_type");
+		if (!json_is_integer(sdf_type)) {
+			fprintf(stderr, "json sdf_type is not integer for bond %zd in json_file %s\n", i, json_file);
+		}
+		ag->bonds[i].sdf_type = json_integer_value(sdf_type);
 	}
 
 	angles = json_object_get(base, "angles");

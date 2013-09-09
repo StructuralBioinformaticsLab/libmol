@@ -43,6 +43,7 @@ struct atom
         int octree_ptr; /**< index (ptr) to octree leaf node to which this atoms belongs */           
 	char *name;
 	char *ftype_name;
+	char *element;
 
 	int sa; /**< solvent accessible: 1 => solvent accessible, 0 => !1, -1 => undefined */
 	int fixed; /**< =1 if atom is immovable , 0 otherwise*/

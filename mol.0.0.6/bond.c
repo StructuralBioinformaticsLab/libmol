@@ -62,4 +62,5 @@ mol_bond_copy (mol_bond* bsrc, mol_bond* bdst)
 	bdst->l = bsrc->l;
 	bdst->l0 = bsrc->l0;
 	bdst->k = bsrc->k;
+	bdst->sdf_type = bsrc->sdf_type;
 }
