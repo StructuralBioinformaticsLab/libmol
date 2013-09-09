@@ -158,8 +158,7 @@ struct atomgrp* read_pdb (const char* path, struct prm* prm)
 
 		sscanf(&line[30], "%8lf%8lf%8lf",
 			   &ag->atoms[atomi].X, &ag->atoms[atomi].Y, &ag->atoms[atomi].Z);
-		sscanf(&line[60], "%6lf",
-			   &ag->atoms[atomi].B);
+		sscanf(&line[60], "%6lf", &ag->atoms[atomi].B);
 
 		ag->atoms[atomi].icode = line[26];
 		line[26] = 0;
@@ -258,8 +257,7 @@ struct atomgrp* read_pdb_with_compressed_typeinfo (const char* path, struct prm*
 
 		sscanf(&line[30], "%8lf%8lf%8lf",
 			   &ag->atoms[atomi].X, &ag->atoms[atomi].Y, &ag->atoms[atomi].Z);
-		sscanf(&line[60], "%6lf",
-			   &ag->atoms[atomi].B);
+		sscanf(&line[60], "%6lf", &ag->atoms[atomi].B);
 
 		ag->atoms[atomi].icode = line[26];
 		line[26] = 0;
@@ -345,8 +343,7 @@ struct atomgrp* read_pdb_nopar (const char* path)
 
 		sscanf(&line[30], "%8lf%8lf%8lf",
 			   &ag->atoms[atomi].X, &ag->atoms[atomi].Y, &ag->atoms[atomi].Z);
-		sscanf(&line[60], "%6lf",
-			   &ag->atoms[atomi].B);
+		sscanf(&line[60], "%6lf", &ag->atoms[atomi].B);
 
                 ag->atoms[atomi].icode = line[26];
                 line[26] = 0;
@@ -358,6 +355,7 @@ struct atomgrp* read_pdb_nopar (const char* path)
 				}
 
                 ag->atoms[atomi].base = ag->atoms[atomi].base2 = -1;
+                ag->atoms[atomi].element = NULL;
 
                 atomi++;
         }
@@ -458,8 +456,7 @@ struct atomgrp** read_pdb_models (const char* path, struct prm* prm, int* rmodel
 			   &(ag_models[modeli]->atoms[atomi].X),
 			   &(ag_models[modeli]->atoms[atomi].Y),
 			   &(ag_models[modeli]->atoms[atomi].Z));
-		sscanf(&line[60], "%6lf",
-			   &(ag_models[modeli]->atoms[atomi].B));
+		sscanf(&line[60], "%6lf", &(ag_models[modeli]->atoms[atomi].B));
 
                 ag_models[modeli]->atoms[atomi].icode = line[26];
                 line[26] = 0;
@@ -550,8 +547,7 @@ struct atomgrp **read_pdb_modelsnopar(const char *path, int *rmodels)
 				   &(ag_models[modeli]->atoms[atomi].X),
 				   &(ag_models[modeli]->atoms[atomi].Y),
 				   &(ag_models[modeli]->atoms[atomi].Z));
-			sscanf(&line[60], "%6lf",
-				   &(ag_models[modeli]->atoms[atomi].B));
+			sscanf(&line[60], "%6lf", &(ag_models[modeli]->atoms[atomi].B));
 
                         ag_models[modeli]->atoms[atomi].icode = line[26];
                         line[26] = 0;
