@@ -50,6 +50,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _mol_sq(x) ( (x) * (x) )
 
 
+#include "mol.0.0.6/enums.h"
 #include "mol.0.0.6/mem.h"
 #include "mol.0.0.6/myhelpers.h"
 #include "mol.0.0.6/prms.h"
@@ -82,4 +83,5 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "mol.0.0.6/gbsa.h"
 #include "mol.0.0.6/sdf.h"
 #include "mol.0.0.6/json.h"
+#include "mol.0.0.6/yeti.h"
 #endif

@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2009-2012, Structural Bioinformatics Laboratory, Boston University
+Copyright (c) 2013, Acpharis
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -25,46 +26,33 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef _MOL_IO_H_
-#define _MOL_IO_H_
+#ifndef _MOL_ENUMS_H_
+#define _MOL_ENUMS_H_
 
-/** \file io.h
-	This file contains structures and functions
-	that are used for reading from and
-	writing to files
-*/
+enum mol_yeti { MOL_YETI_NONE, MOL_YETI_CARBONYL, MOL_YETI_HYDROXYL,
+                MOL_YETI_SULFONAMIDE, MOL_YETI_N5_AROMATIC,
+                MOL_YETI_N6_AROMATIC };
 
-typedef enum
-{
-	FILE_PDB,
-	FILE_MS, // marksur pdb
-	FILE_JSON,
-	FILE_UNKNOWN
-} File_Type;
+enum HBondProp { UNKNOWN_HPROP = 0, HBOND_DONOR = 1, HBOND_ACCEPTOR = 2,
+                 DONATABLE_HYDROGEN = 4, ROTATABLE_HYDROGEN = 8,
+                 FIXED_HYDROGEN = 16 };
 
-/**
-  determines the file ext of path
-*/
-File_Type file_ext (const char* path);
+enum Hybridization_State { UNKNOWN_HYBRID = 0, SP1_HYBRID, SP2_HYBRID,
+                           SP3_HYBRID, RING_HYBRID };
+enum HB_Donor_Type { hbdon_NO = 0, hbdon_BB, hbdon_SC, hbdon_SM, hbdon_MAX };
+enum HB_Acceptor_Type { hbacc_NO = 0, hbacc_BB, hbacc_SP2,  hbacc_SP3,
+                        hbacc_RING, hbacc_SP2_SM,  hbacc_SP3_SM, hbacc_RING_SM,
+                        hbacc_MAX };
 
-/**
-  prints to stderr a list of known file types
-*/
-void fprintf_stderr_atomgrp_file_exts ();
-
-/**
-  reads an atomgrp file based on its ext
-*/
-struct atomgrp* read_file_atomgrp (const char* path, struct prm* prm, float msur_k);
-
-/**
-  prints an atomgrp file based on its ext
-*/
-void fprint_file_atomgrp (const char* path, struct atomgrp* ag, struct prm* prm);
-
-/**
-  reads modified vdw parameters from pdb file 
-*/
-void read_mod_vdw(char *mfile, int *nmod, int **mod, double **modeps, double **modrminh);
+enum HB_Type_Evaluation { hbe_NONE = 0, hbe_BB, hbe_BBTURN, hbe_BBHELIX,
+                          hbe_BBOTHER, hbe_SP2B, hbe_SP3B, hbe_RINGB,
+                          hbe_BSC, hbe_SP2SC, hbe_SP3SC, hbe_RINGSC,
+                          /* Small Molecule Section -> */
+                          hbe_BSM, hbe_SP2SCSM, hbe_SP3SCSM, hbe_RINGSCSM,
+                          hbe_SP2SMSC, hbe_SP3SMSC, hbe_RINGSMSC, hbe_SP2SMB,
+                          hbe_SP3SMB, hbe_RINGSMB,hbe_SP2SM, hbe_SP3SM,
+                          hbe_RINGSM, hbe_MAX };
+enum HB_Weight_Type { hbw_NONE = -1,  hbw_TOTAL, hbw_SR_BB, hbw_LR_BB,
+                       hbw_BB_SC, hbw_SC, hbw_BB_SM, hbw_SC_SM, hbw_SM, hbw_H2O};
 
 #endif

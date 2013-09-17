@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2012, Structural Bioinformatics Laboratory, Boston University
+Copyright (c) 2013, Acpharis
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -25,46 +25,9 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef _MOL_IO_H_
-#define _MOL_IO_H_
+#ifndef _MOL_YETI_H_
+#define _MOL_YETI_H_
 
-/** \file io.h
-	This file contains structures and functions
-	that are used for reading from and
-	writing to files
-*/
 
-typedef enum
-{
-	FILE_PDB,
-	FILE_MS, // marksur pdb
-	FILE_JSON,
-	FILE_UNKNOWN
-} File_Type;
-
-/**
-  determines the file ext of path
-*/
-File_Type file_ext (const char* path);
-
-/**
-  prints to stderr a list of known file types
-*/
-void fprintf_stderr_atomgrp_file_exts ();
-
-/**
-  reads an atomgrp file based on its ext
-*/
-struct atomgrp* read_file_atomgrp (const char* path, struct prm* prm, float msur_k);
-
-/**
-  prints an atomgrp file based on its ext
-*/
-void fprint_file_atomgrp (const char* path, struct atomgrp* ag, struct prm* prm);
-
-/**
-  reads modified vdw parameters from pdb file 
-*/
-void read_mod_vdw(char *mfile, int *nmod, int **mod, double **modeps, double **modrminh);
 
 #endif

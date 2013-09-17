@@ -29,6 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _MOL_JSON_H_
 
 #ifndef _NO_JANSSON_
+struct atomgrp* read_json_ag(const char *json_file);
 void read_ff_json(const char *json_file, struct atomgrp *ag);
 #endif /* _NO_JANSSON_ */
 

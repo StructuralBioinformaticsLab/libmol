@@ -35,6 +35,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //void msur (struct atomgrp* ag, struct prm* prm);
 // msur_k == -1 => don't msur
 void msur (struct atomgrp* ag, struct prm* prm, float msur_k);
+void msur2(struct atomgrp* ag, float msur_k);
 
 /* convert float atomic surface arrays into 0/1 representation (sa in the structure atom) */
 /* atoms with zero radii in prm structure are excluded from calculation */
@@ -49,6 +50,7 @@ void baccs(struct atomgrp* ag, struct prm* prm,
                 float r_solv, short cont_acc, short rpr, float sthresh);
 void baccs1(struct atomgrp* ag, int n_at, int* restat,
                 double r_solv, short cont_acc, float sthresh);
+void baccs2(struct atomgrp* ag, float r_solv );
 
 /* atoms with zero radii in prm structure are excluded from calculation */
 /* r_solv -solvent radius */
@@ -59,7 +61,9 @@ void baccs1(struct atomgrp* ag, int n_at, int* restat,
 /* as - atomic surface (output) */
 void accs (struct atomgrp* ag, struct prm* prm, float r_solv, short cont_acc, short rpr, float* as);
 void accs1 (struct atomgrp* ag, int n_at, int* restat, double r_solv, short cont_acc, double* as);
+void accs2(struct atomgrp* ag, float r_solv, short cont_acc, float* as);
 void mark_sasa (struct atomgrp* ag, int* sasas);
+void mark_all_sa(struct atomgrp *ag);
 
 int* read_sasa (const char* path);
 

@@ -28,17 +28,18 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _MOL_ATOM_H_
 #define _MOL_ATOM_H_
 
+#include "enums.h"
 #include "prms.h"
 
 typedef struct atom mol_atom;
 
-// enum HBondProp;  /* properties related to hydrogen bonding -> defined in hbond.c */
 
 // deprecate: rename atom to mol_atom
 struct atom
 {
 	int ingrp ; /**< atom index in the atomgroup */
 	int atom_typen; /**< atom type number */
+	int acp_type; /**< atom type number */
 	int atom_ftypen;/**< atom type number in the forcefield */
         int octree_ptr; /**< index (ptr) to octree leaf node to which this atoms belongs */           
 	char *name;
@@ -90,14 +91,11 @@ struct atom
 	int nangs;
 	int ntors;
 	int nimps;
-	int hprop; /**< properties related to hydrogen bonding */
-	           /**< this should have been "enum HBondProp hprop" (HbondProp is defined in hbond.h) */
-                   /**< but C/C++ standard does not seem to allow forward decelarations */
-	int hybridization; /**< hybridization state of the hydrogen bond acceptor atom */
-		           /**< this should have been "enum HybridizationState hybridization" (HybridizationState is defined in hbond.h) */
-                           /**< but C/C++ standard does not seem to allow forward decelarations */
+	enum HBondProp hprop; /**< properties related to hydrogen bonding */
+	enum Hybridization_State hybridization; /**< hybridization state of the hydrogen bond acceptor atom */
         int base, base2; /**< indices to the base atoms of the hbond acceptor and the donor atom (in base) for hydrogens */                   
         char icode;  /**< insertion code */
+	enum mol_yeti yeti_type; /* enum mol_yeti */
 };
 
 // warning: this function does not handle all of mol_atom

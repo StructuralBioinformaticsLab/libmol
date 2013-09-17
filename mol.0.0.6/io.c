@@ -50,6 +50,8 @@ File_Type file_ext (const char* path)
 		return FILE_PDB;
 	if (strncmp (ri, ".ms", 3) == 0)
 		return FILE_MS;
+	if (strncmp (ri, ".json", 5) == 0)
+		return FILE_JSON;
 
     return FILE_UNKNOWN;
 }
@@ -66,6 +68,13 @@ struct atomgrp* read_file_atomgrp (const char* path, struct prm* prm, float msur
 
 	if (file_ext (path) == FILE_MS)
 		return read_ms (path, prm);
+
+	if (file_ext (path) == FILE_JSON)
+	{
+		ag=read_json_ag(path);
+		msur2(ag, msur_k);
+		return ag;
+	}
 
 	// file type unknown
 	fprintf (stderr, "file ext of %s is not a recognized file ext\n", path);

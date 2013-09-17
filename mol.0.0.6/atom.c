@@ -98,6 +98,10 @@ mol_atom_copy (mol_atom* asrc, mol_atom* adst)
 	adst->Y = asrc->Y;
 	adst->Z = asrc->Z;
 
+	adst->acp_type = asrc->acp_type;
+	adst->rminh = asrc->rminh;
+	adst->chrg = asrc->chrg;
+
 	for (i = 0; i < adst->nbondis; i++)
 		adst->bondis[i] = asrc->bondis[i];
 
