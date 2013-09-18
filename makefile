@@ -136,6 +136,8 @@ LIB_HEADERS = mol.$(MOL_VERSION)/mem.h \
 			  mol.$(MOL_VERSION)/gbsa.h \
 			  mol.$(MOL_VERSION)/sdf.h \
 			  mol.$(MOL_VERSION)/json.h \
+			  mol.$(MOL_VERSION)/enums.h \
+			  mol.$(MOL_VERSION)/yeti.h \
 
 # compiler flags
 #CFLAGS = -O3 -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c99 -Winline
