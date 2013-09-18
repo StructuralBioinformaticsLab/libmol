@@ -58,9 +58,12 @@ void ace_fixedupdate(struct atomgrp* ag,struct agsetup* ags ,struct acesetup* ac
 void ace_updatenblst(struct agsetup* ags, struct acesetup* ac_s);
 //Calculate ace energy and gradients
 void aceeng(struct atomgrp* ag,double *en,struct acesetup* ac_s,struct agsetup* ags);
+void aceeng_nonpolar(struct atomgrp* ag,double* en,struct acesetup* ac_s,struct agsetup* ags);
+void aceeng_polar(struct atomgrp* ag,double* en,struct acesetup* ac_s,struct agsetup* ags);
 //Free ace data
 void destroy_acesetup(struct acesetup* ac_s);
 void free_acesetup(struct acesetup* ac_s);
 //Test ace gradients
 void test_acegrads(struct atomgrp *ag,struct agsetup* ags, struct acesetup* acs,double d);
+void test_acegrads_nonpolar(struct atomgrp *ag,struct agsetup* ags, struct acesetup* acs,double d);
 #endif
