@@ -301,3 +301,47 @@ float nummod_energy (struct atomgrp* agA, struct atomgrp* agB, struct prm* prm)
 
 	return E;
 }
+
+
+void test_energy_grads(struct atomgrp *ag, void *minprms, void (*egfun)(int , double* , void* , double* , double*), double delta)
+{
+	double en_before;
+	double numerical_grads[ag->natoms*3];
+
+	egfun(0, NULL, minprms, &en_before, NULL);
+
+	for (int i = 0; i < ag->natoms; i++) {
+		double en_after;
+		double temp = ag->atoms[i].X;
+		ag->atoms[i].X += delta;
+		egfun(0, NULL, minprms, &en_after, NULL);
+		numerical_grads[i*3] = (en_after - en_before)/delta;
+		ag->atoms[i].X = temp;
+
+		temp = ag->atoms[i].Y;
+		ag->atoms[i].Y += delta;
+		egfun(0, NULL, minprms, &en_after, NULL);
+		numerical_grads[i*3 + 1] = (en_after - en_before)/delta;
+		ag->atoms[i].Y = temp;
+
+		temp = ag->atoms[i].Z;
+		ag->atoms[i].Z += delta;
+		egfun(0, NULL, minprms, &en_after, NULL);
+		numerical_grads[i*3 + 2] = (en_after - en_before)/delta;
+		ag->atoms[i].Z = temp;
+	}
+
+	egfun(0, NULL, minprms, &en_before, NULL);
+
+	for (int i = 0; i < ag->natoms; i++) {
+		printf("Analytical gradient %d: %.12f %.12f %.12f\n", i,
+		        ag->atoms[i].GX, ag->atoms[i].GY, ag->atoms[i].GZ);
+		printf("Numerical  gradient %d: %.12f %.12f %.12f\n", i,
+		        numerical_grads[i*3], numerical_grads[i*3+1],
+		        numerical_grads[i*3+2]);
+		printf("Difference in gradient %d: %.12g %.12g %.12g\n", i,
+		        ag->atoms[i].GX + numerical_grads[i*3],
+		        ag->atoms[i].GY + numerical_grads[i*3 + 1],
+		        ag->atoms[i].GZ + numerical_grads[i*3 + 2]);
+	}
+}
