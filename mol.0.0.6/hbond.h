@@ -131,6 +131,9 @@ void mark_hbond_acceptors (
 void fix_acceptor_bases( struct atomgrp *ag, struct prm *prm );
 
 void hbondeng( struct atomgrp *ag, double *energy, struct nblist *nblst );
+void hbondeng_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst, double weight);
+
+void hbondeng_split(struct atomgrp *ag, double *energy, struct nblist *nblst, int atom_split, double weight);
 
 void hbondengcat( struct atomgrp *ag, double *energy, struct nblist *nblst );
 
@@ -156,88 +159,8 @@ void set_categorized_hbondeng( double *engcat, double bb_bb_sr, double bb_bb_lr,
 
 void check_fading_funcs( void );
 
-double get_pairwise_hbondeng_nblist( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id, double *engcat, double rc2, int comp_grad );
+double get_pairwise_hbondeng_nblist( mol_atom *atoms_hydro, int hydro_id, mol_atom *atoms_acc, int acc_id, double *engcat, double rc2, int comp_grad, double weight );
 
-
-/* --------------------------------------------------------------------------
-
-Hydrogen Bonding Energy Functions in presence of Small Molecules
-
-Receptor - Small Molecule Complex
-
-By: Mohammad Moghadasi          mohamad@bu.edu
-
-March 2013
-
--------------------------------------------------------------------------- */
-
-struct tnode{
-        int rig_labl;       // the label for this rigid cluster
-        int atm_size;      //number of atoms in this rigid cluster
-        int *atm_num;      // atoms which are in this rigid cluster
-};
-
-struct rig_tree {
-        int v;          // number of nodes in this tree, as it is a tree we know that it has v-1 edges
-        struct tnode* vertex;     // pointers to the nodes of the tree
-        int *deg;       // The degree for each node
-        int **Adj;      // The Adjecent list for the tree
-        int *par;       // for each node keep its parent
-        int *e;         // list of edges in the tree
-        int *atom_e;    // for each edge, index of the atom for the rotatable bond
-        int total_atm_size; // total number of atoms in this tree
-        int *atm_rig_label; // for each atom we keep it belongs to which rigid cluster
-        int *bfs_qu;       // It is the queue of BFS
-        double *theta;     // It keeps for each rotatable bond, what is the corresponding rotation
-        int *e_index;      // it keeps for each edge according to the bfs queue which edge is responsible from the list of edges and save the index of that edge
-        //double *orig;      // it keeps the original coordinate of the atoms
-        double *rot;      // 3 parameters for the exponential coordinate of the whole body
-        double *trans;    // 3 parameters for the translation of the whole body
-        double *cent_t;    // the center of rotation for whole body
-        double *der;
-        int *tree_atoms;   // keep the list of the atoms which are in this tree and the size of it is total_atm_size
-};
-
-struct rigid_body {
-        int rig_size;           // number of atoms in this rigid block
-        int *rigid_atoms;       // list of the atom numbers which are in this block
-        //double *rigid_orig;
-        // original coordinate of the atoms which are in this rigid block
-
-double *rigid_der;      // derivative of the energy function ( 6 parameters ) with respect to translation and rotation
-        double *trans;          // 3 parameters for the translation of this rigid body
-        double *rot;            // 3 parameters for the rotation of this rigid body
-        double *cent_t;         // the center of rotation for whole body, by default it is the center of mass for rigid bodies
-};
-
-struct rig_forest {
-        int numf;
-        int numt;
-        int numr;
-        int numtor;
-
-        int *free_atoms;
-        double *free_cor;
-        double *free_der;
-
-        double *orig;         // the original coordinate of the atoms
-
-        struct rig_tree** tr;
-        struct rigid_body** r_b;
-        struct rig_tree** tor;
-};
-
-// Functions
-
-void hbondengcat_smallmol( struct atomgrp *ag, double *energy, struct nblist *nblst , struct rig_forest* prot );
-
-void get_categorized_hbondeng_smallmol( double *engcat, double *bb_bb_sr, double *bb_bb_lr, double *bb_sc, double *sc_sc, double *bb_sm, double *sc_sm, double *sm_sm );
-
-void set_categorized_hbondeng_smallmol( double *engcat, double bb_bb_sr, double bb_bb_lr, double bb_sc, double sc_sc, double bb_sm, double sc_sm, double sm_sm );
-
-void init_categorized_hbondeng_smallmol( double *engcat );
-
-double *alloc_categorized_hbondeng_smallmol( void );
-
+void mol_set_hbond_bases(struct atomgrp *ag);
 
 #endif
