@@ -372,7 +372,8 @@ void eleng(struct atomgrp *ag, double eps, double* een, struct nblist *nblst)
 
         double pf=CCELEC/eps;
         double rc=nblst->nbcof;
-        double rc2=1.0/(rc*rc);
+        double rc_squared=rc*rc;
+        double rc2=1.0/(rc_squared);
 	for(i=0; i<nblst->nfat; i++)
 	{
 	   i1=nblst->ifat[i];
@@ -392,9 +393,9 @@ void eleng(struct atomgrp *ag, double eps, double* een, struct nblist *nblst)
               dy=y1-ag->atoms[i2].Y;
               dz=z1-ag->atoms[i2].Z;
               d2=dx*dx+dy*dy+dz*dz;
-              d1=sqrt(d2);
-              if(d1<rc)
+              if(d2<rc_squared)
               {
+                 d1=sqrt(d2);
                  esh=1.0-d1/rc;
                  esh*=esh/d1;
                  desh=(1.0/d2-rc2)/d1;
