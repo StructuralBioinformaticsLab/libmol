@@ -1,3 +1,31 @@
+/*
+Copyright (c) 2009-2012, Structural Bioinformatics Laboratory, Boston University
+Copyright (c) 2013, Acpharis Inc
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+- Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+- Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+- Neither the name of the author nor the names of its contributors may be used
+  to endorse or promote products derived from this software without specific
+  prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #ifdef _WIN32
@@ -21,31 +49,67 @@
 
 #define linesize 128
 
-void extract_filename( const char *str, char *fname )
+enum Hybridization_State mol_hydridization_from_sybyl(const char *sybyl_type)
 {
-   int l = 0;
-   int i;
-   int j;
-   int k;
-   
-   while ( str[ l ] ) l++;
-      
-   while ( ( l > 0 ) && isspace( str[ l - 1 ] ) ) l--;
-   
-   k = l - 1;
-   
-   while ( k >= 0 )
-     {
-       if ( str[ k ] == '/' ) break;
-       k--;
-     }
-     
-   i = 0;
-   
-   for ( j = k + 1; j < l; j++ )
-     fname[ i++ ] = str[ j ];
-     
-   fname[ i ] = 0;    
+	if (sybyl_type == NULL)
+		return UNKNOWN_HYBRID;
+
+	/* Carbons */
+	if (strcmp("C.3", sybyl_type) == 0) /* carbon sp3 */
+		return SP3_HYBRID;
+	if (strcmp("C.2", sybyl_type) == 0) /* carbon sp2 */
+		return SP2_HYBRID;
+	if (strcmp("C.cat", sybyl_type) == 0) /* carbocation (C+) used only in a guadinium group */
+		return SP2_HYBRID;
+	if (strcmp("C.1", sybyl_type) == 0) /* carbon sp */
+		return SP1_HYBRID;
+	if (strcmp("C.ar", sybyl_type) == 0) /* carbon aromatic */
+		return RING_HYBRID;
+
+	/* Nitrogens */
+	if (strcmp("N.3", sybyl_type) == 0) /* nitrogen sp3 */
+		return SP3_HYBRID;
+	if (strcmp("N.4", sybyl_type) == 0) /* nitrogen sp3 positively charged */
+		return SP3_HYBRID;
+	if (strcmp("N.2", sybyl_type) == 0) /* nitrogen sp2 */
+		return SP2_HYBRID;
+	if (strcmp("N.am", sybyl_type) == 0) /* nitrogen amide */
+		return SP2_HYBRID;
+	if (strcmp("N.pl3", sybyl_type) == 0) /* nitrogen trigonal planar */
+		return SP2_HYBRID;
+	if (strcmp("N.1", sybyl_type) == 0) /* nitrogen sp */
+		return SP1_HYBRID;
+	if (strcmp("N.ar", sybyl_type) == 0) /* nitrogen aromatic */
+		return RING_HYBRID;
+
+	/* Oxygens */
+	if (strcmp("O.3", sybyl_type) == 0) /* oxygen sp3 */
+		return SP3_HYBRID;
+	if (strcmp("O.spc", sybyl_type) == 0) /* oxygen in single point charge (SPC) water model */
+		return SP3_HYBRID;
+	if (strcmp("O.t3p", sybyl_type) == 0) /* oxygen in Transferable Intermolecular Potential (TIP3P) water model */
+		return SP3_HYBRID;
+	if (strcmp("O.2", sybyl_type) == 0) /* oxygen sp2 */
+		return SP2_HYBRID;
+	if (strcmp("O.co2", sybyl_type) == 0) /* oxygen in carboxylate and phosphate groups */
+		return SP2_HYBRID;
+
+	/* Sulfurs */
+	if (strcmp("S.3", sybyl_type) == 0) /* sulfur sp3 */
+		return SP3_HYBRID;
+	if (strcmp("S.O", sybyl_type) == 0) /* sulfoxide sulfur */
+		return SP3_HYBRID;
+	if (strcmp("S.O2", sybyl_type) == 0) /* sulfone sulfur */
+		return SP3_HYBRID;
+	if (strcmp("S.2", sybyl_type) == 0) /* sulfur sp2 */
+		return SP2_HYBRID;
+
+	/* Phosphorous */
+	if (strcmp("P.3", sybyl_type) == 0) /* phosphorous sp3 */
+		return SP3_HYBRID;
+
+	/* everything else */
+	return UNKNOWN_HYBRID;
 }
 
 
@@ -73,19 +137,6 @@ int read_hybridization_states_from_mol2( const char* mol2file, struct atomgrp* a
                return 0;
              }
            
-	   /* artem modifications
-           char fname1[ linesize + 1 ], fname2[ linesize + 1 ];
-           
-           extract_filename( pdbfile, fname1 );
-           extract_filename( buffer, fname2 );           
-           
-           if ( strcmp( fname1, fname2 ) )
-             {
-               print_error( "%s was generated from %s, not %s!", mol2file, fname2, fname1 );
-               return 0;
-             }
-	   */
-             
            if ( fgets( buffer, linesize, fp ) == NULL )
              {
                print_error( "Failed to read %s!", mol2file );
