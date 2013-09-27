@@ -25,6 +25,10 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#ifndef _XOPEN_SOURCE
+#define _XOPEN_SOURCE 700
+#endif
+#define _USE_MATH_DEFINES
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -49,7 +53,6 @@ void beng(struct atomgrp *ag, double* en)
                 bp=ag->bact[i];
                 a0=bp->a0;
                 a1=bp->a1;
-//                if(a0->fixed == 1 && a1->fixed == 1)continue;
                 dx=a0->X-a1->X;
 		dy=a0->Y-a1->Y;
 		dz=a0->Z-a1->Z;
@@ -72,7 +75,7 @@ void beng(struct atomgrp *ag, double* en)
 
 void aeng(struct atomgrp *ag, double* en)
 {
-        double DEGRA = acos(-1.0)/180.0;
+        double DEGRA = M_PI/180.0;
         int i;
         struct atom *a0, *a1, *a2;
 	double dx10, dx12, dy10, dy12, dz10, dz12;
@@ -173,9 +176,8 @@ void aeng(struct atomgrp *ag, double* en)
 
 void ieng(struct atomgrp *ag, double* en)
 {
-        double PI=acos(-1.0);
-        double PI2=2*PI;
-        double DEGRA = PI/180.0;
+        double PI2=2*M_PI;
+        double DEGRA = M_PI/180.0;
    
         int i;
         struct atom *a0, *a1, *a2, *a3;
@@ -237,8 +239,8 @@ void ieng(struct atomgrp *ag, double* en)
 		impan=atan2(ysi,xco);
 		imp0=DEGRA*(ip->psi0);
 		dimp=impan-imp0;
-		while(dimp>PI)dimp-=PI2;
-		while(dimp<-PI)dimp+=PI2;
+		while(dimp>M_PI)dimp-=PI2;
+		while(dimp<-M_PI)dimp+=PI2;
 		e1=(ip->k)*dimp;
 		(*en)+=e1*dimp;
 
@@ -290,8 +292,7 @@ void ieng(struct atomgrp *ag, double* en)
 
 void teng(struct atomgrp *ag, double* en)
 {
-        long double PI=acos(-1.0);
-        long double DEGRA=PI/180.0;
+        long double DEGRA=M_PI/180.0;
         int i, n;
         struct atom *a0, *a1, *a2, *a3;
         double dx01, dy01, dz01;
