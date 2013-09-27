@@ -31,6 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _USE_MATH_DEFINES
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #include <math.h>
 
@@ -44,7 +45,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define ACE_POLAR    2 // 10
 #define ACE_ALL   (ACE_NONPOLAR | ACE_POLAR) // 11
 
-typedef unsigned char ACE_ENERGY_TYPE;
+typedef uint_fast8_t ACE_ENERGY_TYPE;
 
 //Init ACE
 void ace_ini(struct atomgrp* ag,struct acesetup* ac_s)
@@ -52,11 +53,10 @@ void ace_ini(struct atomgrp* ag,struct acesetup* ac_s)
 	double minr=0.6;
 	int i,j,k;
 	double  sqrtpi=sqrt(M_PI);
-	double  sqrttwo=sqrt(2);
 	double   c1 = 4.0 / (3.0*M_PI);
-	double   c2 = 77.0 * M_PI *sqrttwo/ 512.0;
+	double   c2 = 77.0 * M_PI *M_SQRT2/ 512.0;
 	double   c3 = 2.0 * M_PI * sqrtpi;
-	double   pi2 = 1.0 / (M_PI*M_PI);
+	double   pi2 = M_1_PI * M_1_PI;
 	double width=1.2;
 	double ri,ri2,rk,vk,rk2,alpha,alpha2,alpha4,prod2,prod4,ratio,tik2,qik,qterm,temp,fik,omik,s2ik,s3ik,uik,omgik;
 	int nbsize;
@@ -673,12 +673,12 @@ static void aceeng_internal(struct atomgrp* ag,double* en,struct acesetup* ac_s,
 						fx   = fac5*dx;
 						fy   = fac5*dy;
 						fz   = fac5*dz;
-						ag->atoms[i1].GX+=fx;
-						ag->atoms[i1].GY+=fy;
-						ag->atoms[i1].GZ+=fz;
-						ag->atoms[i2].GX-=fx;
-						ag->atoms[i2].GY-=fy;
-						ag->atoms[i2].GZ-=fz;
+						ag->atoms[i1].GX-=fx;
+						ag->atoms[i1].GY-=fy;
+						ag->atoms[i1].GZ-=fz;
+						ag->atoms[i2].GX+=fx;
+						ag->atoms[i2].GY+=fy;
+						ag->atoms[i2].GZ+=fz;
 					}
 					ij++;
 				}
@@ -732,23 +732,23 @@ static void aceeng_internal(struct atomgrp* ag,double* en,struct acesetup* ac_s,
 				fx   = fac5*dx;
 				fy   = fac5*dy;
 				fz   = fac5*dz;
-				ag->atoms[i1].GX+=fx;
-				ag->atoms[i1].GY+=fy;
-				ag->atoms[i1].GZ+=fz;
-				ag->atoms[i2].GX-=fx;
-				ag->atoms[i2].GY-=fy;
-				ag->atoms[i2].GZ-=fz;
+				ag->atoms[i1].GX-=fx;
+				ag->atoms[i1].GY-=fy;
+				ag->atoms[i1].GZ-=fz;
+				ag->atoms[i2].GX+=fx;
+				ag->atoms[i2].GY+=fy;
+				ag->atoms[i2].GZ+=fz;
 			}
 			ij++;
 		}
 	}
-	*en=ecoul+etotal+ehydr;
+	*en+=ecoul+etotal+ehydr;
 
 	for (i=0;i<ag->natoms;i++) {
 		double fdiarr=-factor_E*diarr[i];
-		ag->atoms[i].GX+=fdiarr*xf[i];
-		ag->atoms[i].GY+=fdiarr*yf[i];
-		ag->atoms[i].GZ+=fdiarr*zf[i];
+		ag->atoms[i].GX-=fdiarr*xf[i];
+		ag->atoms[i].GY-=fdiarr*yf[i];
+		ag->atoms[i].GZ-=fdiarr*zf[i];
 	}
 	ij=0;
 	for(i=0; i<ags->nblst->nfat; i++) {
@@ -762,12 +762,12 @@ static void aceeng_internal(struct atomgrp* ag,double* en,struct acesetup* ac_s,
 				i2=p[j];
 				fdiarr1=-factor_E*diarr[i1];
 				fdiarr2=-factor_E*diarr[i2];
-				ag->atoms[i2].GX+=fdiarr1*xsf[ij];
-				ag->atoms[i2].GY+=fdiarr1*ysf[ij];
-				ag->atoms[i2].GZ+=fdiarr1*zsf[ij];
-				ag->atoms[i1].GX+=fdiarr2*xsf[ij+nbsize];
-				ag->atoms[i1].GY+=fdiarr2*ysf[ij+nbsize];
-				ag->atoms[i1].GZ+=fdiarr2*zsf[ij+nbsize];
+				ag->atoms[i2].GX-=fdiarr1*xsf[ij];
+				ag->atoms[i2].GY-=fdiarr1*ysf[ij];
+				ag->atoms[i2].GZ-=fdiarr1*zsf[ij];
+				ag->atoms[i1].GX-=fdiarr2*xsf[ij+nbsize];
+				ag->atoms[i1].GY-=fdiarr2*ysf[ij+nbsize];
+				ag->atoms[i1].GZ-=fdiarr2*zsf[ij+nbsize];
 			}
 			ij++;
 		}
@@ -779,22 +779,15 @@ static void aceeng_internal(struct atomgrp* ag,double* en,struct acesetup* ac_s,
 		if (darr[ij]>0){
 			double fdiarr1=-factor_E*diarr[i1];
 			double fdiarr2=-factor_E*diarr[i2];
-			ag->atoms[i2].GX+=fdiarr1*xsf[ij];
-			ag->atoms[i2].GY+=fdiarr1*ysf[ij];
-			ag->atoms[i2].GZ+=fdiarr1*zsf[ij];
-			ag->atoms[i1].GX+=fdiarr2*xsf[ij+nbsize];
-			ag->atoms[i1].GY+=fdiarr2*ysf[ij+nbsize];
-			ag->atoms[i1].GZ+=fdiarr2*zsf[ij+nbsize];
+			ag->atoms[i2].GX-=fdiarr1*xsf[ij];
+			ag->atoms[i2].GY-=fdiarr1*ysf[ij];
+			ag->atoms[i2].GZ-=fdiarr1*zsf[ij];
+			ag->atoms[i1].GX-=fdiarr2*xsf[ij+nbsize];
+			ag->atoms[i1].GY-=fdiarr2*ysf[ij+nbsize];
+			ag->atoms[i1].GZ-=fdiarr2*zsf[ij+nbsize];
 		}
 		ij++;
 	}
-	for (i=0;i<ag->natoms;i++) {
-		ag->atoms[i].GX*=-1;
-		ag->atoms[i].GY*=-1;
-		ag->atoms[i].GZ*=-1;
-	}
-
-
 }
 
 void aceeng(struct atomgrp* ag,double* en,struct acesetup* ac_s,struct agsetup* ags)
