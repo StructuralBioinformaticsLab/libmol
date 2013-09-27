@@ -27,6 +27,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #ifndef _MOL_ATOM_H_
 #define _MOL_ATOM_H_
+#include <stdbool.h>
 
 #include "enums.h"
 #include "prms.h"
@@ -71,7 +72,7 @@ struct atom
         int res_seq; /**< residue sequence number */
         int comb_res_seq; /**< single sequence of residue numbers combining all chains */
         
-        int backbone; /**< 1 if this atom is part of the backbone, 0 otherwise */
+        bool backbone; /**< 1 if this atom is part of the backbone, 0 otherwise */
 
 	// deprecated
 	struct atombond** bonds; /**< first level bonds of this atom */

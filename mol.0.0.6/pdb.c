@@ -152,9 +152,9 @@ struct atomgrp* read_pdb (const char* path, struct prm* prm)
 		}
 
 		if ( !strcmp( atypemin, "C" ) || !strcmp( atypemin, "CA" ) || !strcmp( atypemin, "N" ) || !strcmp( atypemin, "O" ) || !strcmp( atypemin, "H" ) )
-			ag->atoms[atomi].backbone = 1;
+			ag->atoms[atomi].backbone = true;
 		else
-			ag->atoms[atomi].backbone = 0;
+			ag->atoms[atomi].backbone = false;
 
 		sscanf(&line[30], "%8lf%8lf%8lf",
 			   &ag->atoms[atomi].X, &ag->atoms[atomi].Y, &ag->atoms[atomi].Z);
@@ -251,9 +251,9 @@ struct atomgrp* read_pdb_with_compressed_typeinfo (const char* path, struct prm*
 		ag->atoms[atomi].atom_typen = atomid (prm, atypemaj, atypemin);
 
 		if ( !strcmp( atypemin, "C" ) || !strcmp( atypemin, "CA" ) || !strcmp( atypemin, "N" ) || !strcmp( atypemin, "O" ) || !strcmp( atypemin, "H" ) )
-			ag->atoms[atomi].backbone = 1;
+			ag->atoms[atomi].backbone = true;
 		else
-			ag->atoms[atomi].backbone = 0;
+			ag->atoms[atomi].backbone = false;
 
 		sscanf(&line[30], "%8lf%8lf%8lf",
 			   &ag->atoms[atomi].X, &ag->atoms[atomi].Y, &ag->atoms[atomi].Z);
@@ -331,9 +331,9 @@ struct atomgrp* read_pdb_nopar (const char* path)
                 ag->atoms[atomi].atom_typen = 1;
 
 		if ( !strncmp( line + 13, "C ", 2 ) || !strncmp( line + 13, "CA ", 3 ) || !strncmp( line + 13, "N ", 2 ) || !strncmp( line + 13, "O ", 2 ) || !strncmp( line + 13, "H ", 2 ) )
-			ag->atoms[atomi].backbone = 1;
+			ag->atoms[atomi].backbone = true;
 		else
-			ag->atoms[atomi].backbone = 0;
+			ag->atoms[atomi].backbone = false;
 
 		atom_name = _mol_calloc(5, sizeof(char));
 		strncpy(atom_name, line+12, 4);
@@ -448,9 +448,9 @@ struct atomgrp** read_pdb_models (const char* path, struct prm* prm, int* rmodel
 		}
 
 		if ( !strcmp( atypemin, "C" ) || !strcmp( atypemin, "CA" ) || !strcmp( atypemin, "N" ) || !strcmp( atypemin, "O" ) || !strcmp( atypemin, "H" ) )
-			ag_models[modeli]->atoms[atomi].backbone = 1;
+			ag_models[modeli]->atoms[atomi].backbone = true;
 		else
-			ag_models[modeli]->atoms[atomi].backbone = 0;
+			ag_models[modeli]->atoms[atomi].backbone = false;
 
 		sscanf(&line[30], "%8lf%8lf%8lf",
 			   &(ag_models[modeli]->atoms[atomi].X),
@@ -538,10 +538,10 @@ struct atomgrp **read_pdb_modelsnopar(const char *path, int *rmodels)
 						 ag_models[modeli]->natoms);
 			}
 
-                	if ( !strncmp( line + 13, "C ", 2 ) || !strncmp( line + 13, "CA ", 3 ) || !strncmp( line + 13, "N ", 2 ) || !strncmp( line + 13, "O ", 2 ) || !strncmp( line + 13, "H ", 2 ) )
-                		ag_models[modeli]->atoms[atomi].backbone = 1;
-                	else
-                		ag_models[modeli]->atoms[atomi].backbone = 0;
+			if ( !strncmp( line + 13, "C ", 2 ) || !strncmp( line + 13, "CA ", 3 ) || !strncmp( line + 13, "N ", 2 ) || !strncmp( line + 13, "O ", 2 ) || !strncmp( line + 13, "H ", 2 ) )
+				ag_models[modeli]->atoms[atomi].backbone = true;
+			else
+				ag_models[modeli]->atoms[atomi].backbone = false;
 
 			sscanf(&line[30], "%8lf%8lf%8lf",
 				   &(ag_models[modeli]->atoms[atomi].X),
@@ -549,16 +549,16 @@ struct atomgrp **read_pdb_modelsnopar(const char *path, int *rmodels)
 				   &(ag_models[modeli]->atoms[atomi].Z));
 			sscanf(&line[60], "%6lf", &(ag_models[modeli]->atoms[atomi].B));
 
-                        ag_models[modeli]->atoms[atomi].icode = line[26];
-                        line[26] = 0;
+			ag_models[modeli]->atoms[atomi].icode = line[26];
+			line[26] = 0;
 			errno = 0;
-                        ag_models[modeli]->atoms[atomi].res_seq = atoi(&line[22]);
+			ag_models[modeli]->atoms[atomi].res_seq = atoi(&line[22]);
 				if (errno) {
 					perror("atoi");
 					exit(EXIT_FAILURE);
 				}
 
-                        ag_models[modeli]->atoms[atomi].base = ag_models[modeli]->atoms[atomi].base2 = -1;
+			ag_models[modeli]->atoms[atomi].base = ag_models[modeli]->atoms[atomi].base2 = -1;
 
 			atomi++;
 		}
