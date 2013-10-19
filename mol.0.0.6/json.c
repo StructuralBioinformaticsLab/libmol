@@ -61,6 +61,10 @@ struct atomgrp* read_json_ag(const char *json_file)
         ag->atoms = (struct atom*) _mol_calloc(ag->natoms, sizeof(struct atom));
 
 	ag->num_atom_types = 0;
+
+	char *prev_segment = "";
+	char *prev_residue = "";
+	int prev_residue_seq = -107;
 	for (size_t i=0; i < natoms; i++) {
 		json_t *atom = json_array_get(atoms, i);
 		if (!json_is_object(atom)) {
@@ -70,7 +74,42 @@ struct atomgrp* read_json_ag(const char *json_file)
 		json_t *name, *radius03, *eps, *acp_type;
 		json_t *charge, *radius, *element;
 		json_t *x, *y, *z;
-		json_t *yeti_type;
+		json_t *yeti_type, *sybyl_type;
+		json_t *backbone, *hb_acceptor, *hb_donor;
+		json_t *segment, *residue;
+
+		segment = json_object_get(atom, "segment");
+		residue = json_object_get(atom, "residue");
+		if ((segment != NULL) && (residue != NULL)) {
+			if (!json_is_string(segment)) {
+				fprintf(stderr, "json segment is not string for atom %zd in json_file %s\n", i, json_file);
+			}
+			if (!json_is_string(residue)) {
+				fprintf(stderr, "json residue is not string for atom %zd in json_file %s\n", i, json_file);
+			}
+
+			const char *cur_segment = json_string_value(segment);
+			const char *cur_residue = json_string_value(residue);
+
+			if (strcmp(cur_segment, prev_segment) != 0) {
+				prev_residue_seq += 100;
+				prev_segment = strdup(cur_segment);
+			}
+			if (strcmp(cur_residue, prev_residue) != 0) {
+				int cur_residue_int = atoi(cur_residue);
+				int prev_residue_int = atoi(prev_residue);
+				if ( (cur_residue_int-prev_residue_int) > 1) {
+					prev_residue_seq += (cur_residue_int-prev_residue_int);
+				} else {
+					prev_residue_seq += 1;
+				}
+				prev_residue = strdup(cur_residue);
+			}
+
+			ag->atoms[i].comb_res_seq = prev_residue_seq;
+		} else {
+			ag->atoms[i].comb_res_seq = prev_residue_seq;
+		}
 
 		ace_volume = json_object_get(atom, "ace_volume");
 		if (!json_is_real(ace_volume)) {
@@ -165,7 +204,7 @@ struct atomgrp* read_json_ag(const char *json_file)
 
 		yeti_type = json_object_get(atom, "yeti_type");
 		if (yeti_type != NULL) {
-			char* yeti_type_string;
+			const char *yeti_type_string;
 			if (!json_is_string(yeti_type)) {
 				fprintf(stderr, "json yeti_type is not string for atom %zd in json_file %s\n", i, json_file);
 			}
@@ -174,12 +213,60 @@ struct atomgrp* read_json_ag(const char *json_file)
 				ag->atoms[i].yeti_type = MOL_YETI_CARBONYL;
 			} else if (strcmp("hydroxyl", yeti_type_string) == 0) {
 				ag->atoms[i].yeti_type = MOL_YETI_HYDROXYL;
+			} else if (strcmp("sulfonamide", yeti_type_string) == 0) {
+				ag->atoms[i].yeti_type = MOL_YETI_SULFONAMIDE;
+			} else if (strcmp("N5_aromatic", yeti_type_string) == 0) {
+				ag->atoms[i].yeti_type = MOL_YETI_N5_AROMATIC;
+			} else if (strcmp("N6_aromatic", yeti_type_string) == 0) {
+				ag->atoms[i].yeti_type = MOL_YETI_N6_AROMATIC;
 			} else {
 				fprintf(stderr, "unknown json yeti_type %s for atom %zd in json_file %s\n", yeti_type_string, i, json_file);
 				ag->atoms[i].yeti_type = MOL_YETI_NONE;
 			}
 		} else {
 			ag->atoms[i].yeti_type = MOL_YETI_NONE;
+		}
+
+		sybyl_type = json_object_get(atom, "sybyl_type");
+		if (sybyl_type != NULL) {
+			const char *sybyl_type_string;
+			if (!json_is_string(sybyl_type)) {
+				fprintf(stderr, "json sybyl_type is not string for atom %zd in json_file %s\n", i, json_file);
+			}
+			sybyl_type_string = json_string_value(sybyl_type);
+			ag->atoms[i].hybridization = mol_hydridization_from_sybyl(sybyl_type_string);
+		} else {
+			ag->atoms[i].hybridization = UNKNOWN_HYBRID;
+		}
+
+		backbone = json_object_get(atom, "backbone");
+		if (backbone != NULL) {
+			if (!json_is_boolean(backbone)) {
+				fprintf(stderr, "json backbone is not boolean for atom %zd in json_file %s\n", i, json_file);
+			}
+			ag->atoms[i].backbone = json_is_true(backbone);
+		} else {
+			ag->atoms[i].backbone = false;
+		}
+
+		ag->atoms[i].hprop = 0;
+		hb_acceptor = json_object_get(atom, "hb_acceptor");
+		if (hb_acceptor != NULL) {
+			if (!json_is_boolean(hb_acceptor)) {
+				fprintf(stderr, "json hb_acceptor is not boolean for atom %zd in json_file %s\n", i, json_file);
+			}
+			if (json_is_true(hb_acceptor)) {
+				ag->atoms[i].hprop |= HBOND_ACCEPTOR;
+			}
+		}
+		hb_donor = json_object_get(atom, "hb_donor");
+		if (hb_donor != NULL) {
+			if (!json_is_boolean(hb_donor)) {
+				fprintf(stderr, "json hb_donor is not boolean for atom %zd in json_file %s\n", i, json_file);
+			}
+			if (json_is_true(hb_donor)) {
+				ag->atoms[i].hprop |= DONATABLE_HYDROGEN;
+			}
 		}
 
 		ag->atoms[i].nbonds = 0;
@@ -235,10 +322,14 @@ struct atomgrp* read_json_ag(const char *json_file)
 		ag->bonds[i].k = json_real_value(spring_constant);
 
 		sdf_type = json_object_get(bond, "sdf_type");
-		if (!json_is_integer(sdf_type)) {
-			fprintf(stderr, "json sdf_type is not integer for bond %zd in json_file %s\n", i, json_file);
+		if (sdf_type != NULL) {
+			if (!json_is_integer(sdf_type)) {
+				fprintf(stderr, "json sdf_type is not integer for bond %zd in json_file %s\n", i, json_file);
+			}
+			ag->bonds[i].sdf_type = json_integer_value(sdf_type);
+		} else {
+			ag->bonds[i].sdf_type = 0;
 		}
-		ag->bonds[i].sdf_type = json_integer_value(sdf_type);
 	}
 
 	angles = json_object_get(base, "angles");
