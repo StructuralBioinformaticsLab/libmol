@@ -69,12 +69,14 @@ struct atomgrp* read_file_atomgrp (const char* path, struct prm* prm, float msur
 	if (file_ext (path) == FILE_MS)
 		return read_ms (path, prm);
 
+#ifndef _NO_JANSSON_
 	if (file_ext (path) == FILE_JSON)
 	{
 		ag=read_json_ag(path);
 		msur2(ag, msur_k);
 		return ag;
 	}
+#endif /* _NO_JANSSON_ */
 
 	// file type unknown
 	fprintf (stderr, "file ext of %s is not a recognized file ext\n", path);
