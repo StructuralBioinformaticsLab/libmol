@@ -448,16 +448,13 @@ static int bonded_atom_index(mol_atom_group * ag, int atomi, int bondi)
 {
 	int bonded_atomi;
 	mol_atom *atom;
-	int bondsi;
 
 	atom = &ag->atoms[atomi];
-	assert(bondi < atom->nbondis);
-	bondsi = atom->bondis[bondi];
-	assert(bondsi < ag->nbonds);
+	assert(bondi < atom->nbonds);
 
-	bonded_atomi = ag->bonds[bondsi].ai;
+	bonded_atomi = atom->bonds[bondi]->ai;
 	if (bonded_atomi == atomi)
-		bonded_atomi = ag->bonds[bondsi].aj;
+		bonded_atomi = atom->bonds[bondi]->aj;
 
 	return bonded_atomi;
 }

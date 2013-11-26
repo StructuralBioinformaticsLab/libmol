@@ -834,6 +834,8 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 		ptrdiff_t a1_offset = ag->bonds[i].a1 - lig->atoms;
 		ag->bonds[i].a0 = newlig_atoms + a0_offset;
 		ag->bonds[i].a1 = newlig_atoms + a1_offset;
+		ag->bonds[i].ai += rec->natoms;
+		ag->bonds[i].aj += rec->natoms;
 	}
 	for (i = rec->nangs; i < ag->nangs; i++) {
 		ptrdiff_t a0_offset = ag->angs[i].a0 - lig->atoms;
