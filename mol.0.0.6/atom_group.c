@@ -70,8 +70,6 @@ mol_atom_group_create_from_template (
 	if (ag->nbonds > 0)
 	{
 		ag->bonds = _mol_malloc (ag->nbonds * sizeof (mol_bond));
-		for (i=0; i < ag->nbonds; i++)
-			mol_bond_create (&ag->bonds[i]);
 	}
 	else
 		ag->bonds = NULL;
@@ -103,8 +101,6 @@ mol_atom_group_destroy (mol_atom_group* ag)
 	// destroy bonds
 	if (ag->nbonds > 0)
 	{
-		for (i=0; i < ag->nbonds; i++)
-			mol_bond_destroy (&ag->bonds[i]);
 		free (ag->bonds);
 	}
 

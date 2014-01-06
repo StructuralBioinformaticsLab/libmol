@@ -57,12 +57,6 @@ struct atombond
 
 
 void
-mol_bond_create (mol_bond* b);
-
-void
-mol_bond_destroy (mol_bond* b);
-
-void
 mol_bond_copy (mol_bond* bsrc, mol_bond* bdst);
 
 

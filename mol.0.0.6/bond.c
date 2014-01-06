@@ -37,20 +37,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 void
-mol_bond_create (mol_bond* b)
-{
-	assert (b != NULL);
-	return;
-}
-
-void
-mol_bond_destroy (mol_bond* b)
-{
-	assert (b != NULL);
-	return;
-}
-
-void
 mol_bond_copy (mol_bond* bsrc, mol_bond* bdst)
 {
 	assert (bsrc != NULL);
