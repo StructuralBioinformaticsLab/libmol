@@ -9,29 +9,10 @@ CPPFLAGS := -D _GIT_VERSION_="\"$(shell git describe --always)\"" $(CPPFLAGS)
 # library archive file
 LIB_FILE = libmol.$(MOL_VERSION).a
 
-#ifeq ($(_processor), i686)
-ifneq ($(_processor), ppc64)
-
-
-	# library installation dir
-	LIB_INSTALL_DIR = $(HOME)/lib
-	# header files installation dir
-	HEADER_INSTALL_DIR = $(HOME)/include
-
-#ifeq ($(_processor), ppc64) # assume BG/L
-else # assume BG/L
-	CC = blrts_gcc
-	CPPFLAGS := -D _BGL_ $(CPPFLAGS)
-	CPPFLAGS := -D _MPI_ $(CPPFLAGS)
-	CPPFLAGS := -I/bgl/BlueLight/ppcfloor/bglsys/include -I$(HOME)/usr/include $(CPPFLAGS)
-	LIBS = -lm -lmpich.rts -lmsglayer.rts -lrts.rts -ldevices.rts
-	LDFLAGS := -L/bgl/BlueLight/ppcfloor/bglsys/lib -L$(HOME)/usr/lib
-
-	# library installation dir
-	LIB_INSTALL_DIR = $(HOME)/usr/lib
-	# header files installation dir
-	HEADER_INSTALL_DIR = $(HOME)/usr/include
-endif
+# library installation dir
+LIB_INSTALL_DIR = $(HOME)/lib
+# header files installation dir
+HEADER_INSTALL_DIR = $(HOME)/include
 
 ifeq ($(JSON), none)
 	CPPFLAGS := -D _NO_JANSSON_ $(CPPFLAGS)
@@ -140,7 +121,7 @@ LIB_HEADERS = mol.$(MOL_VERSION)/mem.h \
 			  mol.$(MOL_VERSION)/yeti.h \
 
 # compiler flags
-#CFLAGS = -O3 -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c99 -Winline
+#CFLAGS = -O3 -flto -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c99 -Winline
 CFLAGS := $(CFLAGS) -ffast-math -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c99 -Winline -pedantic
 ifneq ($(MAKECMDGOALS), mol.debug)
 	CFLAGS := $(CFLAGS) -O3 -DNDEBUG
