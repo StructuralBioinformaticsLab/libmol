@@ -75,7 +75,7 @@ struct atomgrp* read_json_ag(const char *json_file)
 		json_t *charge, *radius, *element;
 		json_t *x, *y, *z;
 		json_t *yeti_type, *sybyl_type;
-		json_t *backbone, *hb_acceptor, *hb_donor;
+		json_t *backbone, *hb_acceptor, *hb_donor, *hb_weight;
 		json_t *segment, *residue;
 
 		segment = json_object_get(atom, "segment");
@@ -267,6 +267,14 @@ struct atomgrp* read_json_ag(const char *json_file)
 			if (json_is_true(hb_donor)) {
 				ag->atoms[i].hprop |= DONATABLE_HYDROGEN;
 			}
+		}
+		ag->atoms[i].hbond_weight = 1.0;
+		hb_weight = json_object_get(atom, "hb_weight");
+		if (hb_weight != NULL) {
+			if (!json_is_real(hb_weight)) {
+				fprintf(stderr, "json hb_weight is not floating point for atom %zd in json_file %s\n", i, json_file);
+			}
+			ag->atoms[i].hbond_weight = json_real_value(hb_weight);
 		}
 
 		ag->atoms[i].nbonds = 0;

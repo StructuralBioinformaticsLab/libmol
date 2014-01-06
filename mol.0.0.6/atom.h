@@ -97,6 +97,7 @@ struct atom
         int base, base2; /**< indices to the base atoms of the hbond acceptor and the donor atom (in base) for hydrogens */                   
         char icode;  /**< insertion code */
 	enum mol_yeti yeti_type; /* enum mol_yeti */
+	double hbond_weight;
 };
 
 // warning: this function does not handle all of mol_atom
