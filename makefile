@@ -121,10 +121,12 @@ LIB_HEADERS = mol.$(MOL_VERSION)/mem.h \
 			  mol.$(MOL_VERSION)/yeti.h \
 
 # compiler flags
-#CFLAGS = -O3 -flto -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c99 -Winline
+#CFLAGS := $(CFLAGS) -ffast-math -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c11 -Winline -pedantic
 CFLAGS := $(CFLAGS) -ffast-math -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c99 -Winline -pedantic
 ifneq ($(MAKECMDGOALS), mol.debug)
+#	CFLAGS := $(CFLAGS) -O3 -DNDEBUG -flto
 	CFLAGS := $(CFLAGS) -O3 -DNDEBUG
+#	CFLAGS := $(CFLAGS) -O0 -flto -DNDEBUG
 endif
 
 # create library

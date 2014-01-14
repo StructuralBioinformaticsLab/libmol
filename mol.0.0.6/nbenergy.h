@@ -100,10 +100,10 @@ void test_nbgrads(struct atomgrp *ag, double d, struct nblist *nblst,
 
 void vdweng03(double f, struct atomgrp *ag, double* ven, int n03, int* list03);
 
-void vdwengs03(double f, double rc, struct atomgrp *ag, double* ven,
-               int n03, int* list03);
+void vdwengs03(const double f, const double rc, const struct atomgrp * const restrict ag, double* restrict ven,
+               const int n03, const int* const list03);
 
-void vdweng(struct atomgrp *ag, double* ven, struct nblist *nblst);
+void vdweng(const struct atomgrp * const restrict ag, double* restrict ven, const struct nblist * const restrict nblst);
 
 void eleng03(double f, struct atomgrp *ag, double eps, double* een,
              int n03, int* list03);

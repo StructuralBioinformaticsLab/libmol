@@ -50,14 +50,14 @@ typedef uint_fast8_t ACE_ENERGY_TYPE;
 //Init ACE
 void ace_ini(struct atomgrp* ag,struct acesetup* ac_s)
 {
-	double minr=0.6;
+	const double minr=0.6;
 	int i,j,k;
-	double  sqrtpi=sqrt(M_PI);
-	double   c1 = 4.0 / (3.0*M_PI);
-	double   c2 = 77.0 * M_PI *M_SQRT2/ 512.0;
-	double   c3 = 2.0 * M_PI * sqrtpi;
-	double   pi2 = M_1_PI * M_1_PI;
-	double width=1.2;
+	const double  sqrtpi=sqrt(M_PI);
+	const double   c1 = 4.0 / (3.0*M_PI);
+	const double   c2 = 77.0 * M_PI *M_SQRT2/ 512.0;
+	const double   c3 = 2.0 * M_PI * sqrtpi;
+	const double   pi2 = M_1_PI * M_1_PI;
+	const double width=1.2;
 	double ri,ri2,rk,vk,rk2,alpha,alpha2,alpha4,prod2,prod4,ratio,tik2,qik,qterm,temp,fik,omik,s2ik,s3ik,uik,omgik;
 	int nbsize;
 	ac_s->ntypes=ag->num_atom_types+1;
@@ -210,11 +210,10 @@ static int*  compute_0123_list(struct atomgrp* ag, int* n0123, int *list03,int n
 	return list0123;
 }
 
-static void ace_eselfupdate(int i1,int i2, int it, int kt,int ij,double dx, double dy, double dz, struct acesetup* ac_s, double *eself,double* swarr, double* dswarr,double* darr, double* xf, double* yf, double* zf, double* xsf, double* ysf, double* zsf, double rul3, double rul12, double nb2cot, double nb2cof,int nbsize)
+static void ace_eselfupdate(const int i1, const int i2, const int it, const int kt, const int ij, const double dx, const double dy, const double dz, const struct acesetup* const ac_s, double * const restrict eself,double* const restrict swarr, double* const restrict dswarr,double* const restrict darr, double* const restrict xf, double* const restrict yf, double* const restrict zf, double* const restrict xsf, double* const restrict ysf, double* const restrict zsf, const double rul3, const double rul12, const double nb2cot, const double nb2cof, const int nbsize)
 {
-	double sw,dsw, r,r2,r3,r4,expterm,temp,rmu,term,rl,ru,u4ace,ffk;
-	r2 = dx*dx + dy*dy + dz*dz;
-	darr[ij]=-1;
+	double sw,dsw, expterm,temp,rmu,term,rl,ru,u4ace,ffk;
+	const double r2 = dx*dx + dy*dy + dz*dz;
 
 	sw=1.0;
 	dsw=0;
@@ -227,10 +226,10 @@ static void ace_eselfupdate(int i1,int i2, int it, int kt,int ij,double dx, doub
 
 	swarr[ij]=sw;
 	dswarr[ij]=dsw;
-	r=sqrt(r2);
+	const double r=sqrt(r2);
 	darr[ij]=r;
-	r3 = r2 * r;
-	r4 = r2 * r2;
+	const double r3 = r2 * r;
+	const double r4 = r2 * r2;
 	if (ac_s->vsolv[kt]>0){
 		expterm = ac_s->wace[it*ac_s->ntypes+kt] * exp(-r2/ac_s->s2ace[it*ac_s->ntypes+kt]);
 		u4ace=pow(ac_s->uace[it*ac_s->ntypes+kt],4);
@@ -296,7 +295,7 @@ void ace_fixedupdate(struct atomgrp* ag, struct agsetup* ags, struct acesetup* a
 	free(na01);
 	free(list01);
 }
-void ace_updatenblst(struct agsetup* ags, struct acesetup* ac_s)
+void ace_updatenblst(const struct agsetup* const restrict ags, struct acesetup* const restrict ac_s)
 {
 	int nbsize=0;
 	int i;
@@ -514,16 +513,16 @@ void test_acegrads_nonpolar(struct atomgrp *ag,struct agsetup* ags, struct acese
 	free(fs);
 }
 
-static void aceeng_internal(struct atomgrp* ag,double* en,struct acesetup* ac_s,
-                            struct agsetup* ags, ACE_ENERGY_TYPE ace_energy_type)
+static void aceeng_internal(const struct atomgrp* const ag,double* const restrict en,const struct acesetup* const ac_s,
+                            const struct agsetup* const ags, const ACE_ENERGY_TYPE ace_energy_type)
 {
 	double x1,y1,z1,dx,dy,dz;
 	int i1,i2,it,j,i,n2,kt,ij=0;
 	int *p;
 	double b0=0;
-	double nb2cot=8.0*8.0;//Switching start
-	double nb2cof=ags->nblst->nbcof*ags->nblst->nbcof;
-	int nbsize=ac_s->nbsize;
+	const double nb2cot=8.0*8.0;//Switching start
+	const double nb2cof=ags->nblst->nbcof*ags->nblst->nbcof;
+	const int nbsize=ac_s->nbsize;
 	double etotal=0;
 	double ecoul=0;
 	int* list0123=ac_s->list0123;
@@ -542,14 +541,9 @@ static void aceeng_internal(struct atomgrp* ag,double* en,struct acesetup* ac_s,
 	double* yf=ac_s->yf;
 	double* zf=ac_s->zf;
 	double* diarr=ac_s->diarr;
-	double rul3=1.0/pow((nb2cof-nb2cot),3.0);
-	double rul12=12.0*rul3;
-	double kelec;
-	double factor_E;
-	double tau;
+	const double rul3=1.0/pow((nb2cof-nb2cot),3.0);
+	const double rul12=12.0*rul3;
 	double ehydr = 0;
-	double fac1;
-	double facc1;
 	//NBLST RBORN
 	for (i=0;i<ag->natoms;i++){
 		double ri;
@@ -598,10 +592,10 @@ static void aceeng_internal(struct atomgrp* ag,double* en,struct acesetup* ac_s,
 		ace_eselfupdate(i1,i2, it, kt,ij++,dx, dy, dz, ac_s, eself,swarr, dswarr,darr, xf, yf, zf,xsf,ysf,zsf,rul3,rul12,nb2cot,nb2cof,nbsize);
 	}
 	//Electrostatic constant need to carry over to constants
-	kelec=332.0716;
-	factor_E=-kelec/2.0;
+	const double kelec=332.0716;
+	const double factor_E=-kelec/2.0;
 	//change to epsilons;
-	tau=((1/4.0)-(1/78.0));
+	const double tau=((1/4.0)-(1/78.0));
 
 	for (i=0;i<ag->natoms;i++) {
 		double c2;
@@ -629,8 +623,8 @@ static void aceeng_internal(struct atomgrp* ag,double* en,struct acesetup* ac_s,
 	if (ace_energy_type & ACE_POLAR) {
 		//Second loop calculating energy nb
 		ij=0;
-		fac1=-kelec*tau;
-		facc1=kelec/(4.0);
+		const double fac1=-kelec*tau;
+		const double facc1=kelec/(4.0);
 		for(i=0; i<ags->nblst->nfat; i++) {
 			i1=ags->nblst->ifat[i];
 			n2=ags->nblst->nsat[i];

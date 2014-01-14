@@ -55,7 +55,7 @@ void ace_ini(struct atomgrp* ag,struct acesetup* ac_s);
 //Update ace lists once fixedlist was updated
 void ace_fixedupdate(struct atomgrp* ag,struct agsetup* ags ,struct acesetup* ac_s);
 //Update nblst once nblist is updated
-void ace_updatenblst(struct agsetup* ags, struct acesetup* ac_s);
+void ace_updatenblst(const struct agsetup* const restrict ags, struct acesetup* const restrict ac_s);
 //Calculate ace energy and gradients
 void aceeng(struct atomgrp* ag,double *en,struct acesetup* ac_s,struct agsetup* ags);
 void aceeng_nonpolar(struct atomgrp* ag,double* en,struct acesetup* ac_s,struct agsetup* ags);

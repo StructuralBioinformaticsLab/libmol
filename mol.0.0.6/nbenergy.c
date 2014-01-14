@@ -156,15 +156,15 @@ void vdweng03(double f, struct atomgrp *ag, double* ven, int n03, int* list03)
         }
 }
 
-void vdwengs03(double f, double rc, struct atomgrp *ag, double* ven,
-               int n03, int* list03)
+void vdwengs03(const double f, const double rc, const struct atomgrp * const restrict ag, double* restrict ven,
+               const int n03, const int* const list03)
 {
         int i, i1, i2;
         double ei, ri, ej, rj, dx, dy, dz, eij;
         double d2, Rd12, Rd6, Rr12, Rr6, dr6;
         double rij, dven, g;
         struct atom *a1, *a2;
-        double rc2=rc*rc;
+        const double rc2=rc*rc;
 
         for(i=0; i<n03; i++)
         {
@@ -211,15 +211,15 @@ void vdwengs03(double f, double rc, struct atomgrp *ag, double* ven,
 	}
 }
 
-void vdweng(struct atomgrp *ag, double* ven, struct nblist *nblst)
+void vdweng(const struct atomgrp * const restrict ag, double* restrict ven, const struct nblist * const restrict nblst)
 {
         int i, i1, n2, *p, j, i2;
         double ei, ri, ej, rj, x1, y1, z1, dx, dy, dz, eij;
         double d2, Rd12, Rd6, Rr12, Rr6, dr6;
         double rij, dven, g;
         struct atom *a1, *a2;
-        double rc=nblst->nbcof;
-        double rc2=rc*rc;
+        const double rc=nblst->nbcof;
+        const double rc2=rc*rc;
 
         for(i=0; i<nblst->nfat; i++)
         {

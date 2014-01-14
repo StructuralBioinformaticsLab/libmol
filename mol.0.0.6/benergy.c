@@ -75,7 +75,7 @@ void beng(struct atomgrp *ag, double* en)
 
 void aeng(struct atomgrp *ag, double* en)
 {
-        double DEGRA = M_PI/180.0;
+        const double DEGRA = M_PI/180.0;
         int i;
         struct atom *a0, *a1, *a2;
 	double dx10, dx12, dy10, dy12, dz10, dz12;
@@ -176,8 +176,8 @@ void aeng(struct atomgrp *ag, double* en)
 
 void ieng(struct atomgrp *ag, double* en)
 {
-        double PI2=2*M_PI;
-        double DEGRA = M_PI/180.0;
+        const double PI2=2*M_PI;
+        const double DEGRA = M_PI/180.0;
    
         int i;
         struct atom *a0, *a1, *a2, *a3;
@@ -292,7 +292,7 @@ void ieng(struct atomgrp *ag, double* en)
 
 void teng(struct atomgrp *ag, double* en)
 {
-        long double DEGRA=M_PI/180.0;
+        const long double DEGRA=M_PI/180.0;
         int i, n;
         struct atom *a0, *a1, *a2, *a3;
         double dx01, dy01, dz01;
