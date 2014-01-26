@@ -33,6 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 #ifndef _mol_error
 #ifdef _WIN32
+#define restrict __restrict
 #define _mol_error(format,...) fprintf (stderr, "%s@%d: " format "\n", __FILE__, __LINE__, __VA_ARGS__)
 #define _mol_errorf(string) fprintf (stderr, "%s@%d: " string "\n", __FILE__, __LINE__)
 #else

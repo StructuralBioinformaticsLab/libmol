@@ -306,7 +306,7 @@ float nummod_energy (struct atomgrp* agA, struct atomgrp* agB, struct prm* prm)
 void test_energy_grads(struct atomgrp *ag, void *minprms, void (*egfun)(int , double* , void* , double* , double*), double delta)
 {
 	double en_before;
-	double numerical_grads[ag->natoms*3];
+	double *numerical_grads = _mol_calloc(ag->natoms*3, sizeof(double));
 
 	egfun(0, NULL, minprms, &en_before, NULL);
 

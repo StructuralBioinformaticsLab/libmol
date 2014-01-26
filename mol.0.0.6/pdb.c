@@ -31,11 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
-#ifdef _WIN32
-#include "mol_stdbool.h"
-#else
 #include <stdbool.h>
-#endif
 #include <string.h>
 #include <ctype.h>
 

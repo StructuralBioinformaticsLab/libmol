@@ -32,11 +32,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assert.h>
 #include <stdint.h>
 #include <ctype.h>
-#ifdef _WIN32
-#include "mol_stdbool.h"
-#else
 #include <stdbool.h>
-#endif
 
 #ifdef _WIN32
 #include "../mol.0.0.6.h"

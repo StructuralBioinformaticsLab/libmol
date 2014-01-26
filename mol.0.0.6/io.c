@@ -69,7 +69,7 @@ struct atomgrp* read_file_atomgrp (const char* path, struct prm* prm, float msur
 	if (file_ext (path) == FILE_MS)
 		return read_ms (path, prm);
 
-#ifndef _NO_JANSSON_
+#ifdef _NO_JANSSON_
 	if (file_ext (path) == FILE_JSON)
 	{
 		ag=read_json_ag(path);
