@@ -30,11 +30,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <errno.h>
 
-#ifdef _WIN32
-#include "../mol.0.0.6.h"
-#else
 #include _MOL_INCLUDE_
-#endif
 
 struct matrix2df* potential_matrix2df_ncontacts_bin (struct atomgrp* agA, struct atomgrp* agB, struct prm* prm, float r1, float r2, int only_sab)
 {

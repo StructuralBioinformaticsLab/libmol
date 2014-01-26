@@ -33,11 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <errno.h>
 
-#ifdef _WIN32
-#include "../mol.0.0.6.h"
-#else
 #include _MOL_INCLUDE_
-#endif
 
 
 File_Type file_ext (const char* path)
@@ -69,7 +65,7 @@ struct atomgrp* read_file_atomgrp (const char* path, struct prm* prm, float msur
 	if (file_ext (path) == FILE_MS)
 		return read_ms (path, prm);
 
-#ifdef _NO_JANSSON_
+#ifndef _NO_JANSSON_
 	if (file_ext (path) == FILE_JSON)
 	{
 		ag=read_json_ag(path);

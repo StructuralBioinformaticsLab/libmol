@@ -31,12 +31,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <float.h>
 
-#ifdef _WIN32
-#include "../mol.0.0.6.h"
-#else
+#ifndef _WIN32
 #include <unistd.h>
-#include _MOL_INCLUDE_
 #endif
+#include _MOL_INCLUDE_
 
 /*Recursive algorithm for detecting symmetry based on bonds and atom types of the molecule.
  Input molecule should have atom numbers arranged the way that atom number k has at least one connection with previous atoms.

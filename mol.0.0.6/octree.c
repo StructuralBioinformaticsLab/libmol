@@ -33,11 +33,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 
 #ifdef _WIN32
-#include "../mol.0.0.6.h"
 #define inline static
-#else
-#include _MOL_INCLUDE_
 #endif
+#include _MOL_INCLUDE_
 
 //#define ALIGNMENT_BLOCK_SIZE 8
 

@@ -34,11 +34,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <errno.h>
 
-#ifdef _WIN32
-#include "../mol.0.0.6.h"
-#else
 #include _MOL_INCLUDE_
-#endif
 
 #define small 0.0000001
 

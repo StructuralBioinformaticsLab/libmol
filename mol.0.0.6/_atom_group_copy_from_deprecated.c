@@ -28,11 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assert.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
-#include "../mol.0.0.6.h"
-#else
 #include _MOL_INCLUDE_
-#endif
 
 void
 _mol_atom_create_bond_indices (mol_atom* a, int nbondis)

@@ -34,11 +34,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctype.h>
 #include <stdbool.h>
 
-#ifdef _WIN32
-#include "../mol.0.0.6.h"
-#else
 #include _MOL_INCLUDE_
-#endif
 
 // POLY_OUT is the polynomial value outside of clip interval [xmin xmax]
 #define POLY_OUT 0.0

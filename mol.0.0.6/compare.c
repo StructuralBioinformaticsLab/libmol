@@ -28,11 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <math.h>
 
-#ifdef _WIN32
-#include "../mol.0.0.6.h"
-#else
 #include _MOL_INCLUDE_
-#endif
 
 // approximately equal (for good epsilon try 5e-7)
 int appxeq (double d1, double d2, double epsilon)

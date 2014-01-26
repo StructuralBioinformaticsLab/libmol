@@ -36,11 +36,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 typedef SSIZE_T ssize_t;
 #endif
 
-#ifdef _WIN32
-#include "../mol.0.0.6.h"
-#else
 #include _MOL_INCLUDE_
-#endif
 
 /* Documentation for the sdf file format can be found at
  * http://accelrys.com/products/informatics/cheminformatics/ctfile-formats/no-fee.php

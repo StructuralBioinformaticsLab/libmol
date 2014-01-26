@@ -28,7 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#ifndef _NO_JANSSON_
+#ifdef _NO_JANSSON_
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
