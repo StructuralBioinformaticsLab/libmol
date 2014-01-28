@@ -210,66 +210,69 @@ static void ace_eselfupdate(const int i1, const int i2, const int it, const int 
 {
 	double sw,dsw, expterm,temp,rmu,term,rl,ru,u4ace,ffk;
 	const double r2 = dx*dx + dy*dy + dz*dz;
+	darr[ij]=-1;
 
-	sw=1.0;
-	dsw=0;
-	if (r2>nb2cot) {
-		rl  = (nb2cot) - r2;
-		ru  = (nb2cof) - r2;
-		sw  = ru*ru*(ru-3*rl)*rul3;
-		dsw = rl*ru*rul12;
-	}
+	if (r2 < nb2cof) {
+		sw=1.0;
+		dsw=0;
+		if (r2>nb2cot) {
+			rl  = (nb2cot) - r2;
+			ru  = (nb2cof) - r2;
+			sw  = ru*ru*(ru-3*rl)*rul3;
+			dsw = rl*ru*rul12;
+		}
 
-	swarr[ij]=sw;
-	dswarr[ij]=dsw;
-	const double r=sqrt(r2);
-	darr[ij]=r;
-	const double r3 = r2 * r;
-	const double r4 = r2 * r2;
-	if (ac_s->vsolv[kt]>0){
-		expterm = ac_s->wace[it*ac_s->ntypes+kt] * exp(-r2/ac_s->s2ace[it*ac_s->ntypes+kt]);
-		u4ace=pow(ac_s->uace[it*ac_s->ntypes+kt],4);
-		rmu = r4 + u4ace;
-		term = (ac_s->vsolv[kt]/(8.0*M_PI)) * pow((r3/rmu),4);
+		swarr[ij]=sw;
+		dswarr[ij]=dsw;
+		const double r=sqrt(r2);
+		darr[ij]=r;
+		const double r3 = r2 * r;
+		const double r4 = r2 * r2;
+		if (ac_s->vsolv[kt]>0){
+			expterm = ac_s->wace[it*ac_s->ntypes+kt] * exp(-r2/ac_s->s2ace[it*ac_s->ntypes+kt]);
+			u4ace=pow(ac_s->uace[it*ac_s->ntypes+kt],4);
+			rmu = r4 + u4ace;
+			term = (ac_s->vsolv[kt]/(8.0*M_PI)) * pow((r3/rmu),4);
 
-		temp = 2.0*(expterm+term);
-		eself[i1] -= temp*sw;
-		ffk = ((-8*term*(3*u4ace-r4)/(r2*rmu)) + (4*expterm/ac_s->s2ace[it*ac_s->ntypes+kt]))*sw - temp*dsw;
+			temp = 2.0*(expterm+term);
+			eself[i1] -= temp*sw;
+			ffk = ((-8*term*(3*u4ace-r4)/(r2*rmu)) + (4*expterm/ac_s->s2ace[it*ac_s->ntypes+kt]))*sw - temp*dsw;
 
-		xsf[ij]=ffk*dx;
-		ysf[ij]=ffk*dy;
-		zsf[ij]=ffk*dz;
+			xsf[ij]=ffk*dx;
+			ysf[ij]=ffk*dy;
+			zsf[ij]=ffk*dz;
 
-		xf[i1]-=xsf[ij];
-		yf[i1]-=ysf[ij];
-		zf[i1]-=zsf[ij];
-	} else {
-		xsf[ij]=0;
-		ysf[ij]=0;
-		zsf[ij]=0;
-	}
-	if (ac_s->vsolv[it]>0){
-		int ind;
-		expterm = ac_s->wace[kt*ac_s->ntypes+it] * exp(-r2/ac_s->s2ace[kt*ac_s->ntypes+it]);
-		u4ace=pow(ac_s->uace[kt*ac_s->ntypes+it],4);
-		rmu = r4 + u4ace;
-		term = (ac_s->vsolv[it]/(8.0*M_PI)) * pow((r3/rmu),4);
-		temp = 2.0*(expterm+term);
-		eself[i2] -= temp*sw;
-		ffk = ((-8*term*(3*u4ace-r4)/(r2*rmu)) + (4*expterm/ac_s->s2ace[kt*ac_s->ntypes+it]))*sw - temp*dsw;
+			xf[i1]-=xsf[ij];
+			yf[i1]-=ysf[ij];
+			zf[i1]-=zsf[ij];
+		} else {
+			xsf[ij]=0;
+			ysf[ij]=0;
+			zsf[ij]=0;
+		}
+		if (ac_s->vsolv[it]>0){
+			int ind;
+			expterm = ac_s->wace[kt*ac_s->ntypes+it] * exp(-r2/ac_s->s2ace[kt*ac_s->ntypes+it]);
+			u4ace=pow(ac_s->uace[kt*ac_s->ntypes+it],4);
+			rmu = r4 + u4ace;
+			term = (ac_s->vsolv[it]/(8.0*M_PI)) * pow((r3/rmu),4);
+			temp = 2.0*(expterm+term);
+			eself[i2] -= temp*sw;
+			ffk = ((-8*term*(3*u4ace-r4)/(r2*rmu)) + (4*expterm/ac_s->s2ace[kt*ac_s->ntypes+it]))*sw - temp*dsw;
 
-		ind=ij+nbsize;
-		xsf[ind]=-ffk*dx;
-		ysf[ind]=-ffk*dy;
-		zsf[ind]=-ffk*dz;
+			ind=ij+nbsize;
+			xsf[ind]=-ffk*dx;
+			ysf[ind]=-ffk*dy;
+			zsf[ind]=-ffk*dz;
 
-		xf[i2]-=xsf[ind];
-		yf[i2]-=ysf[ind];
-		zf[i2]-=zsf[ind];
-	} else {
-		xsf[ij+nbsize]=0;
-		ysf[ij+nbsize]=0;
-		zsf[ij+nbsize]=0;
+			xf[i2]-=xsf[ind];
+			yf[i2]-=ysf[ind];
+			zf[i2]-=zsf[ind];
+		} else {
+			xsf[ij+nbsize]=0;
+			ysf[ij+nbsize]=0;
+			zsf[ij+nbsize]=0;
+		}
 	}
 }
 

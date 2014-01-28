@@ -135,6 +135,8 @@ void hbondeng_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst,
 
 void hbondeng_split(struct atomgrp *ag, double *energy, struct nblist *nblst, int atom_split, double weight);
 
+void hbondeng_split_atom_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst, int atom_split, double weight);
+
 void hbondengcat( struct atomgrp *ag, double *energy, struct nblist *nblst );
 
 void hbondeng_all( struct atomgrp *ag, double *energy, struct nblist *nblst );
