@@ -35,8 +35,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include _MOL_INCLUDE_
 
+enum File_Type
+{
+	FILE_PDB,
+	FILE_MS, // marksur pdb
+	FILE_JSON,
+	FILE_UNKNOWN
+};
 
-File_Type file_ext (const char* path)
+static enum File_Type file_ext (const char* path)
 {
 	char* ri = strrchr(path, '.');
 

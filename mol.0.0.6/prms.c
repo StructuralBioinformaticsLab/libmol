@@ -45,6 +45,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define MAXLEN 100 // max string length
 
+/**
+	Current line type being read.
+*/
+enum ereadstate
+{
+	VERSION,
+	ATOM,
+	HYDROGEN,
+	RADIUS,
+	POTENTIAL,
+	BOND,
+};
+
 // atype comparison function
 static int comp_prmatom (const void* a1, const void *a2)
 {

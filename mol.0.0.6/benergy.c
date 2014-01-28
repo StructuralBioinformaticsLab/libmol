@@ -36,7 +36,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include _MOL_INCLUDE_
 
-#define small 0.0000001
 
 void beng(struct atomgrp *ag, double* en)
 {
@@ -72,6 +71,7 @@ void beng(struct atomgrp *ag, double* en)
 void aeng(struct atomgrp *ag, double* en)
 {
         const double DEGRA = M_PI/180.0;
+	const double small = 0.0000001;
         int i;
         struct atom *a0, *a1, *a2;
 	double dx10, dx12, dy10, dy12, dz10, dz12;

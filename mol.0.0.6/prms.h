@@ -84,18 +84,6 @@ struct prmbond
 	float l0; // equilibrium length
 };
 
-/**
-	Current line type being read.
-*/
-enum ereadstate
-{
-	VERSION,
-	ATOM,
-	HYDROGEN,
-	RADIUS,
-	POTENTIAL,
-	BOND,
-};
 
 enum ereaderr
 {

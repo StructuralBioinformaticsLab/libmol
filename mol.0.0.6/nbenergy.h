@@ -33,7 +33,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         for calculating nonbonded energies and forces
 	and mantaining nonbonded lists
 */
-#define small 0.0000001
 
 struct cluster
 {

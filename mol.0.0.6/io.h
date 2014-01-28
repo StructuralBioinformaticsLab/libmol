@@ -34,23 +34,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	writing to files
 */
 
-typedef enum
-{
-	FILE_PDB,
-	FILE_MS, // marksur pdb
-	FILE_JSON,
-	FILE_UNKNOWN
-} File_Type;
-
-/**
-  determines the file ext of path
-*/
-File_Type file_ext (const char* path);
-
-/**
-  prints to stderr a list of known file types
-*/
-void fprintf_stderr_atomgrp_file_exts ();
 
 /**
   reads an atomgrp file based on its ext
