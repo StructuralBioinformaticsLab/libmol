@@ -28,7 +28,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#ifdef _NO_JANSSON_
+#ifndef _NO_JANSSON_
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -62,8 +62,8 @@ struct atomgrp* read_json_ag(const char *json_file)
 
 	ag->num_atom_types = 0;
 
-	char *prev_segment = "";
-	char *prev_residue = "";
+	char *prev_segment = _mol_calloc(1, sizeof(char));
+	char *prev_residue = _mol_calloc(1, sizeof(char));
 	int prev_residue_seq = -107;
 	for (size_t i=0; i < natoms; i++) {
 		json_t *atom = json_array_get(atoms, i);
@@ -93,6 +93,7 @@ struct atomgrp* read_json_ag(const char *json_file)
 
 			if (strcmp(cur_segment, prev_segment) != 0) {
 				prev_residue_seq += 100;
+				free(prev_segment);
 				prev_segment = strdup(cur_segment);
 			}
 			if (strcmp(cur_residue, prev_residue) != 0) {
@@ -103,6 +104,7 @@ struct atomgrp* read_json_ag(const char *json_file)
 				} else {
 					prev_residue_seq += 1;
 				}
+				free(prev_residue);
 				prev_residue = strdup(cur_residue);
 			}
 
@@ -286,6 +288,8 @@ struct atomgrp* read_json_ag(const char *json_file)
 		ag->atoms[i].base = -1;
 		ag->atoms[i].base2 = -1;
 	}
+	free(prev_segment);
+	free(prev_residue);
 
 	bonds = json_object_get(base, "bonds");
 	if (!json_is_array(bonds)) {
