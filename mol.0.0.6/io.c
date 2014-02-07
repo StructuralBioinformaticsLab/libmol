@@ -118,7 +118,7 @@ void read_mod_vdw(char *mfile, int *nmod, int **mod, double **modeps, double **m
    *mod=mymalloc(*nmod*sizeof(int));
    *modeps=mymalloc(*nmod*sizeof(double));
    *modrminh=mymalloc(*nmod*sizeof(double));
-   fp = fopen (mfile, "r");
+   fp = myfopen (mfile, "r");
    na=0;
    while(fgets(buffer, linesz-1, fp)!=NULL)
    {
