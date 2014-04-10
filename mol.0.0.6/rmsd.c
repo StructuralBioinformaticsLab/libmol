@@ -50,10 +50,10 @@ void detectsymmetry_submit2(struct list *molecule,
 	int value = -1;
 	templist.list = (int *)_mol_malloc(sizeof(int) * ag->natoms);
 	for (i = 0; i < ag->natoms; i++) {
-			templist.list[i] = 0;
+		templist.list[i] = 0;
 	}
 	for (i = 0; i < molecule->n; i++) {
-			templist.list[molecule->list[i]] = 2;
+		templist.list[molecule->list[i]] = 2;
 	}
 	count = 0;
 	for (i = 0; i < ag->atoms[molecule->n].nbonds; i++) {
