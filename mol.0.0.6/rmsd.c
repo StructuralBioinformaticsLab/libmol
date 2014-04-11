@@ -45,9 +45,8 @@ void detectsymmetry_submit2(struct list *molecule,
 							int nftypes,
 							struct atomgrp *ag,
 							struct pointlist *symmetry) {
-	int i, j, count;
+	int i, j;
 	struct list templist;
-	int value = -1;
 	struct list bondstemp;
 	struct list chklist;
 	templist.list = (int *)_mol_malloc(sizeof(int) * ag->natoms);
@@ -61,7 +60,6 @@ void detectsymmetry_submit2(struct list *molecule,
 	for (i = 0; i < molecule->n; i++) {
 		templist.list[molecule->list[i]] = 2;
 	}
-	count = 0;
 	//Describe all bonds at level n (molecule->n) for original order molecule in bondstem
 	//Check for all atoms not used yet, as feasible for level n
 	for (i = 0; i < ag->natoms; i++){
@@ -73,7 +71,6 @@ void detectsymmetry_submit2(struct list *molecule,
 		{
 			//printf("At level %d ; Atom %d looks promising\n",molecule->n,ag->atoms[i].ingrp);
 			struct atom* ac=&(ag->atoms[i]);
-			int c=0;
 			int k;
 			int flag=0;
 			for (j=0;j<nftypes;j++){
