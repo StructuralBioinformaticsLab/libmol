@@ -33,7 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 
 #ifdef _WIN32
-#define inline static
+#define inline
 #endif
 #include _MOL_INCLUDE_
 
@@ -145,7 +145,7 @@ void free_node( OCTREE *octree, int node_id )
    Compute the smallest axis-aligned cube that contains all atom centers
    indexed by indices[ start_id ... end_id ]. 
 */
-inline void compute_root_bounding_box( int node_id, OCTREE *octree, double slack_factor,
+static inline void compute_root_bounding_box( int node_id, OCTREE *octree, double slack_factor,
                                        int *indices, int start_id, int end_id )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
@@ -192,7 +192,7 @@ inline void compute_root_bounding_box( int node_id, OCTREE *octree, double slack
    Given an octree node indexed by 'node_id' and one of its children indexed by 'child_id', 
    find the smallest x, y, z coordinates and the dimension of its octant corresponding to 'child_id'. 
 */
-inline void compute_non_root_bounding_box( int node_id, OCTREE *octree, int child_id )
+static inline void compute_non_root_bounding_box( int node_id, OCTREE *octree, int child_id )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
    OCTREE_NODE *pnode;
@@ -239,7 +239,7 @@ inline void compute_non_root_bounding_box( int node_id, OCTREE *octree, int chil
    stored in the children of the octree node indexed by 'node_id', and stores
    them in that node.
 */
-inline void compute_non_leaf_attributes( int node_id, OCTREE *octree )
+static inline void compute_non_leaf_attributes( int node_id, OCTREE *octree )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
 
@@ -271,7 +271,7 @@ inline void compute_non_leaf_attributes( int node_id, OCTREE *octree )
    stored in the atoms contained inside the octree node indexed by 'node_id', 
    and stores them in that node.
 */
-inline void compute_leaf_attributes( int node_id, OCTREE *octree,
+static inline void compute_leaf_attributes( int node_id, OCTREE *octree,
                                      int *indices, int start_id, int end_id )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );        
@@ -302,7 +302,7 @@ inline void compute_leaf_attributes( int node_id, OCTREE *octree,
    Assuming that *atom belongs to *node, returns the index
    of the child of *node which contains *atom.
 */
-inline int get_child_id( OCTREE_NODE *node, mol_atom *atom )
+static inline int get_child_id( OCTREE_NODE *node, mol_atom *atom )
 {
    double dim = 0.5 * node->dim;
    double cx = node->lx + dim, cy = node->ly + dim, cz = node->lz + dim;
@@ -708,7 +708,7 @@ int get_octree_size( OCTREE *octree )
    assuming that octree->nodes[ node_id ] is a leaf and octree->atoms[ atom_id ]
    belongs to that leaf.
 */
-inline int remove_atom_from_leaf( int node_id, OCTREE *octree, int atom_id )
+static inline int remove_atom_from_leaf( int node_id, OCTREE *octree, int atom_id )
 {
    mol_atom *atom = &( octree->atoms[ atom_id ] );
 
@@ -773,7 +773,7 @@ inline int remove_atom_from_leaf( int node_id, OCTREE *octree, int atom_id )
    fewer than ( octree->max_leaf_size / 2 ) atoms, contract the
    subtree rooted at that node to a leaf.
 */
-inline int remove_atom_from_non_leaf( int node_id, OCTREE *octree, int atom_id )
+static inline int remove_atom_from_non_leaf( int node_id, OCTREE *octree, int atom_id )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
    mol_atom *atom = &( octree->atoms[ atom_id ] );
@@ -799,7 +799,7 @@ inline int remove_atom_from_non_leaf( int node_id, OCTREE *octree, int atom_id )
    Add octree->atoms[ atom_id ] to octree->nodes[ node_id ]
    assuming that octree->nodes[ node_id ] is an internal node.
 */
-inline void add_atom_to_non_leaf( int node_id, OCTREE *octree, int atom_id )
+static inline void add_atom_to_non_leaf( int node_id, OCTREE *octree, int atom_id )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
    mol_atom *atom = &( octree->atoms[ atom_id ] );
@@ -822,7 +822,7 @@ inline void add_atom_to_non_leaf( int node_id, OCTREE *octree, int atom_id )
    Add octree->atoms[ atom_id ] to octree->nodes[ node_id ]
    assuming that octree->nodes[ node_id ] is an internal node.
 */
-inline int add_upward_migrating_atom_to_non_leaf( int node_id, OCTREE *octree, int atom_id )
+static inline int add_upward_migrating_atom_to_non_leaf( int node_id, OCTREE *octree, int atom_id )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
 
@@ -866,7 +866,7 @@ inline int add_upward_migrating_atom_to_non_leaf( int node_id, OCTREE *octree, i
    Remove the atom corresponding to the identifier stored at location 'index' of the pool
    of upward migrating atoms stored in the internal node octree->nodes[ node_id ].
 */
-inline int remove_upward_migrating_atom_from_non_leaf( int node_id, OCTREE *octree, int index )
+static inline int remove_upward_migrating_atom_from_non_leaf( int node_id, OCTREE *octree, int index )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
 
@@ -909,7 +909,7 @@ inline int remove_upward_migrating_atom_from_non_leaf( int node_id, OCTREE *octr
    Add octree->atoms[ atom_id ] to the pool of downward migrating atoms stored in
    internal node octree->nodes[ node_id ].
 */
-inline int add_downward_migrating_atom_to_non_leaf( int node_id, OCTREE *octree, int atom_id )
+static inline int add_downward_migrating_atom_to_non_leaf( int node_id, OCTREE *octree, int atom_id )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
    mol_atom *atom = &( octree->atoms[ atom_id ] );
@@ -964,7 +964,7 @@ inline int add_downward_migrating_atom_to_non_leaf( int node_id, OCTREE *octree,
    Remove the atom corresponding to the identifier stored at location 'index' of the pool
    of downward migrating atoms stored in the internal node octree->nodes[ node_id ].
 */
-inline int remove_downward_migrating_atom_from_non_leaf( int node_id, OCTREE *octree, int index )
+static inline int remove_downward_migrating_atom_from_non_leaf( int node_id, OCTREE *octree, int index )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
 
@@ -994,7 +994,7 @@ inline int remove_downward_migrating_atom_from_non_leaf( int node_id, OCTREE *oc
 /**
    Add octree->atoms[ atom_id ] to leaf node octree->nodes[ node_id ].
 */
-inline int add_atom_to_leaf( int node_id, OCTREE *octree, int atom_id )
+static inline int add_atom_to_leaf( int node_id, OCTREE *octree, int atom_id )
 {
    OCTREE_NODE *node = &( octree->nodes[ node_id ] );
    mol_atom *atom = &( octree->atoms[ atom_id ] );
