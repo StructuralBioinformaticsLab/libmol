@@ -40,6 +40,7 @@ typedef enum
     MOL_LBFGS,
     MOL_CONJUGATE_GRADIENTS,
     MOL_POWELL,
+    MOL_RIGID,
 } mol_min_method;
 
 

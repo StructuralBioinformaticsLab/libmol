@@ -81,6 +81,7 @@ LIB_OBJS = mol.$(MOL_VERSION)/mem.o \
 		   mol.$(MOL_VERSION)/gbsa.o \
 		   mol.$(MOL_VERSION)/sdf.o \
 		   mol.$(MOL_VERSION)/json.o \
+		   mol.$(MOL_VERSION)/rigid_body.o \
 
 # library header files
 LIB_MAIN_HEADER = mol.$(MOL_VERSION).h
@@ -119,6 +120,7 @@ LIB_HEADERS = mol.$(MOL_VERSION)/mem.h \
 			  mol.$(MOL_VERSION)/json.h \
 			  mol.$(MOL_VERSION)/enums.h \
 			  mol.$(MOL_VERSION)/yeti.h \
+			  mol.$(MOL_VERSION)/rigid_body.h \
 
 # compiler flags
 #CFLAGS := $(CFLAGS) -ffast-math -Wall -W -Wshadow -Wpointer-arith -Wcast-qual -std=c11 -Winline -pedantic

@@ -836,7 +836,7 @@ void limin(double* orig, double* dir, unsigned int maxIt, double tol,
 
 
 
-int lbfgs_new_debug_mode = 0;  
+int lbfgs_new_debug_mode = 0;
 /*
 	the value of the lbfgs_new_debug_mode:
 		0 : print nothing
@@ -883,44 +883,68 @@ int progress(void *instance,const lbfgsfloatval_t *x,const lbfgsfloatval_t *g,co
 /* Minimizes atomgroup with specified parameter set
  minimization types; 0 = LBFGS, 1- Conjugate gradients, 2 -Powell 3 -New implementation of LBFGS
 */
-void minimize_ag(mol_min_method min_type, unsigned int maxIt, double tol,struct atomgrp* ag, void* minprms, void (*egfun)(int , double* , void* , double* , double*)){
-     int ndim = ag->nactives*3;
-     double* xyz =_mol_malloc(ndim*sizeof(double) ); 
-     double* minv =_mol_malloc(ndim*sizeof(double) );
+void minimize_ag(const mol_min_method min_type, unsigned int maxIt, double tol,struct atomgrp* ag, void* minprms, void (*egfun)(int , double* , void* , double* , double*)){
+	int ndim = ag->nactives * 3;
+	if (min_type == MOL_RIGID) {
+		ndim = 6;
+	}
+
+
+	double* xyz =_mol_calloc(ndim,sizeof(double) ); 
+	double* minv =_mol_calloc(ndim,sizeof(double) );
 	double fmim;
-        int i;
-        double* directions;
-       	ag2array(xyz, ag);
-        /*my_en_grad(ndim, xyz, minprms, &fmim, NULL); 
-	 printf("Start E-value=%f\n" , fmim );
-	*/
+
+	struct rigidbody rigidbody;
+	double *origin;
+
+	if (min_type == MOL_RIGID) {
+		origin = _mol_calloc(3 * ag->nactives, sizeof(double));
+		rigidbody.origin = origin;
+		ag2rigidbody(&rigidbody, ag);
+	} else {
+		ag2array(xyz, ag);
+	}
+
+
 	if (min_type == MOL_CONJUGATE_GRADIENTS) dirMin(xyz,maxIt,tol,ndim,minprms, egfun,minv,&fmim);
 	if (min_type == MOL_POWELL) {
-        directions =_mol_malloc(ndim*ndim*sizeof(double) );
-        for(i=0; i<ndim*ndim;i++) directions[i]=0;
-        for(i=0; i<ndim; i++) directions[i*ndim+i]=1;
-        powell(xyz,directions,maxIt,tol,ndim,minprms, egfun,minv,&fmim);
-	free(directions);
+		double *directions =_mol_calloc(ndim*ndim, sizeof(double) );
+
+		//set diagonal to 1
+		for(int i=0; i<ndim; i++) {
+			directions[i*ndim+i] = 1.0;
+		}
+		powell(xyz,directions,maxIt,tol,ndim,minprms, egfun,minv,&fmim);
+		free(directions);
 	}
 
 	if (min_type == MOL_LBFGS ){
-                lbfgs_parameter_t param={
-                6, tol, 0, 1e-5,
-                maxIt, LBFGS_LINESEARCH_MORETHUENTE, 40,
-                1e-20, 1e20, 1e-4, 0.9, 0.9, 1.0e-16,
-                0.0, 0, -1,
+		lbfgs_parameter_t param={
+			6, tol, 0, 1e-5, maxIt, LBFGS_LINESEARCH_MORETHUENTE, 40,
+			1e-20, 1e20, 1e-4, 0.9, 0.9, 1.0e-16, 0.0, 0, -1,
                 };
 
 		ag2array(minv,ag);
-
-
-                lbfgs_new(ndim,minv,&fmim,egfun,progress,minprms,&param);
+		lbfgs_new(ndim,minv,&fmim,egfun,progress,minprms,&param);
 	}
-	/*
-        my_en_grad(ndim, minv, minprms, &fmim, NULL); 
-        printf("fmin=%f\n" , fmim );
-        */
-	array2ag(minv, ag);
+
+	if (min_type == MOL_RIGID) {
+		lbfgs_parameter_t param={
+			5, tol, 0, 1e-5, maxIt, LBFGS_LINESEARCH_MORETHUENTE, 40,
+			1e-20, 1e20, 1e-4, 0.9, 0.9, 1.0e-16, 0.0, 0, -1,
+                };
+
+		lbfgs_new(ndim,minv,&fmim,egfun,progress,minprms,&param);
+	}
+
+
+
+	if (min_type == MOL_RIGID) {
+		rigidbody2ag(minv, ag, &rigidbody);
+		free(origin);
+	} else {
+		array2ag(minv, ag);
+	}
 	free(minv);
-	free(xyz); 
+	free(xyz);
 }
