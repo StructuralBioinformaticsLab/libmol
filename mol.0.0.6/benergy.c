@@ -80,6 +80,7 @@ void aeng(struct atomgrp *ag, double* en)
 	double dth, sth, e1, e2, e3;
 	double yzp, yzm, xzp, xzm, xyp, xym;
         struct atomangle* ap;
+
         for(i=0; i<ag->nangact; i++)
         {
                 ap=ag->angact[i];
@@ -114,7 +115,7 @@ void aeng(struct atomgrp *ag, double* en)
 
 		if(sth < small)
 		{
-			fprintf (stderr, 
+			fprintf (stderr,
 			"angle %d (%d, %d, %d) is close to linear\n", i, a0->ingrp, a1->ingrp, a2->ingrp);
                         fprintf (stderr,
                         "accuracy of forces will be compromised\n");
@@ -127,7 +128,7 @@ void aeng(struct atomgrp *ag, double* en)
 		e1*=2.0/sth/l02;
 // 10 bond
 		e2=e1/ls10;
-		
+
 		yzp=dsy10+dsz10;
 		yzm=-dy10*dz10;
 		xzp=dsx10+dsz10;
@@ -174,7 +175,7 @@ void ieng(struct atomgrp *ag, double* en)
 {
         const double PI2=2*M_PI;
         const double DEGRA = M_PI/180.0;
-   
+
         int i;
         struct atom *a0, *a1, *a2, *a3;
 	double dx01, dy01, dz01;
@@ -189,7 +190,7 @@ void ieng(struct atomgrp *ag, double* en)
 	double xco, ysi, impan, imp0, dimp, e1, e2;
 	double x1, y1, z1, x2, y2, z2, dx, dy, dz;
         struct atomimproper* ip;
-	
+
         for(i=0; i<ag->nimpact; i++)
         {
                 ip=ag->impact[i];
@@ -251,6 +252,7 @@ void ieng(struct atomgrp *ag, double* en)
 		x2=e2*(vy13*dz12-dy12*vz13);
                 y2=e2*(vz13*dx12-dz12*vx13);
                 z2=e2*(vx13*dy12-dx12*vy13);
+
 
 		dx=dz12*y1-dy12*z1;
 		dy=dx12*z1-dz12*x1;
@@ -346,6 +348,7 @@ void teng(struct atomgrp *ag, double* en)
 
                 xco=vx02*vx13+vy02*vy13+vz02*vz13;
                 ysi=(dx12*vx03+dy12*vy03+dz12*vz03)/d12;
+
                 toran=atan2(ysi,xco);
                 tor0=DEGRA*(tp->d);
 		n=tp->n;
@@ -407,7 +410,7 @@ void zero_grads(struct atomgrp *ag)
 		ag->atoms[i].GX=0.0;
 		ag->atoms[i].GY=0.0;
 		ag->atoms[i].GZ=0.0;
-	}	
+	}
 }
 
 void check_b_grads(struct atomgrp *ag, double d, void (*efun)(struct atomgrp *, double*))
@@ -458,12 +461,12 @@ void check_b_grads(struct atomgrp *ag, double d, void (*efun)(struct atomgrp *, 
 
 void check_speng_grads(int nstart, int nend,
                 struct atomgrp *ag, double d, double stens,
-                double* hx0, double* hy0, double* hz0, 
+                double* hx0, double* hy0, double* hz0,
                 int nx, int ny, int nz,
                 double dcx, double dcy, double dcz,
                 double cx, double cy, double cz, double w,
-                void (*efun)(double, double, struct atomgrp *, double*, 
-                double*, double*, double*, 
+                void (*efun)(double, double, struct atomgrp *, double*,
+                double*, double*, double*,
                 int,int,int,
                 double,double,double,
                 double,double,double,double))

@@ -28,6 +28,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _MOL_BENERGY_H_
 #define _MOL_BENERGY_H_
 
+#include "atom_group.h"
+
 /** \file benergy.h
         This file contains  functions
         for calculating bonded energies and forces
@@ -60,12 +62,12 @@ void check_b_grads(struct atomgrp *ag, double d,
                 void (*efun)(struct atomgrp *, double*));
 void check_speng_grads(int nstart, int nend,
                 struct atomgrp *ag, double d, double stens,
-                double* hx0, double* hy0, double* hz0, 
+                double* hx0, double* hy0, double* hz0,
                 int nx, int ny, int nz,
                 double dcx, double dcy, double dcz,
                 double cx, double cy, double cz, double w,
                 void (*efun)(double, double, struct atomgrp *, double*,
-                double*, double*, double*, 
+                double*, double*, double*,
                 int,int,int,
                 double,double,double,
                 double,double,double,double));

@@ -11,6 +11,10 @@ add_executable(test_mol_pdb test_mol_pdb.c)
 target_link_libraries(test_mol_pdb
   ${CHECK_LIBRARIES}
   mol.${libmol_version})
+add_executable(test_benergy test_benergy.c)
+target_link_libraries(test_benergy
+  ${CHECK_LIBRARIES}
+  mol.${libmol_version} m)
 
 # Configure data files
 file(GLOB test_files "${CMAKE_CURRENT_SOURCE_DIR}/data/*")
@@ -22,3 +26,4 @@ endforeach()
 # Register tests
 add_test(test_mol_atom ${CMAKE_CURRENT_BINARY_DIR}/test_mol_atom)
 add_test(test_mol_pdb ${CMAKE_CURRENT_BINARY_DIR}/test_mol_pdb)
+add_test(test_benergy ${CMAKE_CURRENT_BINARY_DIR}/test_benergy)
