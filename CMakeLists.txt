@@ -112,3 +112,9 @@ if(CHECK_FOUND)
 else()
   message(Could not find Check for testing)
 endif()
+
+install(TARGETS mol.${libmol_version}
+  LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+  ARCHIVE DESTINATION ${LIB_INSTALL_DIR})
+file(GLOB header_files "mol.${libmol_version}/*.h")
+install(FILES ${header_files} DESTINATION ${HEADER_INSTALL_DIR}/mol.${libmol_version})
