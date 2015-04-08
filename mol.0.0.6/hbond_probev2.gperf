@@ -1,0 +1,681 @@
+/* *INDENT-OFF* */
+%{
+#define _POSIX_C_SOURCE 200809L
+%}
+%includes
+%language=ANSI-C
+%struct-type
+struct mol_hbond_strength {const char *residues; const double strength;};
+%define slot-name residues
+%7bit
+%readonly-tables
+%global-table
+%%
+acetamide_H5_ALA_bb_O,  8.45
+acetamide_H5_ASH_OD1, 15.44
+acetamide_H5_ASH_OD2,  4.30
+acetamide_H5_ASN_OD1, 14.56
+acetamide_H5_ASP_OD1, 27.59
+acetamide_H5_ASP_OD2, 27.59
+acetamide_H5_GLH_OE1, 15.10
+acetamide_H5_GLH_OE2,  6.10
+acetamide_H5_GLN_OE1, 14.62
+acetamide_H5_GLU_OE1, 26.26
+acetamide_H5_GLU_OE2, 26.26
+acetamide_H5_HIE_ND1,  7.34
+acetamide_H5_HIS_NE2,  8.34
+acetamide_H5_SER_OG,  6.39
+acetamide_H5_THR_OG, 10.36
+acetamide_H5_TYR_OH,  5.03
+acetamide_H6_ALA_bb_O,  7.45
+acetamide_H6_ASH_OD1,  5.03
+acetamide_H6_ASH_OD2,  3.89
+acetamide_H6_ASN_OD1,  8.42
+acetamide_H6_ASP_OD1, 26.67
+acetamide_H6_ASP_OD2, 26.67
+acetamide_H6_GLH_OE1,  4.90
+acetamide_H6_GLH_OE2,  4.90
+acetamide_H6_GLN_OE1,  8.51
+acetamide_H6_GLU_OE1, 26.31
+acetamide_H6_GLU_OE2, 26.31
+acetamide_H6_HIE_ND1,  8.99
+acetamide_H6_HIS_NE2,  5.28
+acetamide_H6_SER_OG,  6.46
+acetamide_H6_THR_OG,  6.66
+acetamide_H6_TYR_OH,  5.11
+acetamide_O4_ALA_bb_H,  7.79
+acetamide_O4_ARG_HH22, 26.07
+acetamide_O4_ARG_HH21, 26.07
+acetamide_O4_ARG_HH12, 26.11
+acetamide_O4_ARG_HH11, 26.11
+acetamide_O4_ARN_HH21,  7.25
+acetamide_O4_ARN_HH12,  7.39
+acetamide_O4_ARN_HH11,  7.39
+acetamide_O4_ASH_HD2, 10.91
+acetamide_O4_ASN_HD21,  8.75
+acetamide_O4_ASN_HD22,  8.75
+acetamide_O4_GLH_HE2, 10.65
+acetamide_O4_GLN_HE21,  8.82
+acetamide_O4_GLN_HE22,  8.82
+acetamide_O4_HIE_HE2,  8.75
+acetamide_O4_HIP_HD1, 25.12
+acetamide_O4_HIP_HE2, 24.71
+acetamide_O4_HIS_HD1,  8.42
+acetamide_O4_LYN_HZ1,  4.47
+acetamide_O4_LYN_HZ2,  4.47
+acetamide_O4_LYS_HZ1, 28.96
+acetamide_O4_LYS_HZ2, 28.96
+acetamide_O4_LYS_HZ3, 28.96
+acetamide_O4_SER_HG,  7.28
+acetamide_O4_THR_HG1,  7.50
+acetamide_O4_TRP_HE1,  9.39
+acetamide_O4_TYR_HH,  9.60
+acetate_O4_ALA_bb_H, 25.59
+acetate_O4_ARG_HH22, 121.24
+acetate_O4_ARG_HH21, 121.24
+acetate_O4_ARG_HH12, 126.31
+acetate_O4_ARG_HH11, 126.31
+acetate_O4_ARN_HH21, 19.87
+acetate_O4_ARN_HH12, 20.37
+acetate_O4_ARN_HH11, 20.37
+acetate_O4_ASH_HD2, 28.74
+acetate_O4_ASN_HD21, 17.72
+acetate_O4_ASN_HD22, 17.72
+acetate_O4_GLH_HE2, 28.50
+acetate_O4_GLN_HE21, 17.90
+acetate_O4_GLN_HE22, 17.90
+acetate_O4_HIE_HE2, 29.78
+acetate_O4_HIP_HD1, 135.86
+acetate_O4_HIP_HE2, 135.02
+acetate_O4_HIS_HD1, 31.19
+acetate_O4_LYN_HZ1, 11.19
+acetate_O4_LYN_HZ2, 11.19
+acetate_O4_LYS_HZ1, 143.19
+acetate_O4_LYS_HZ2, 143.19
+acetate_O4_LYS_HZ3, 143.19
+acetate_O4_SER_HG, 15.79
+acetate_O4_THR_HG1, 17.36
+acetate_O4_TRP_HE1, 27.81
+acetate_O4_TYR_HH, 26.19
+cyclobutanol_H6_ALA_bb_O,  7.27
+cyclobutanol_H6_ASH_OD1, 10.57
+cyclobutanol_H6_ASH_OD2,  4.28
+cyclobutanol_H6_ASN_OD1, 10.03
+cyclobutanol_H6_ASP_OD1, 22.60
+cyclobutanol_H6_ASP_OD2, 22.60
+cyclobutanol_H6_GLH_OE1, 10.65
+cyclobutanol_H6_GLH_OE2,  5.47
+cyclobutanol_H6_GLN_OE1, 10.15
+cyclobutanol_H6_GLU_OE1, 22.25
+cyclobutanol_H6_GLU_OE2, 22.25
+cyclobutanol_H6_HIE_ND1,  8.07
+cyclobutanol_H6_HIS_NE2,  7.98
+cyclobutanol_H6_SER_OG,  5.84
+cyclobutanol_H6_THR_OG,  6.26
+cyclobutanol_H6_TYR_OH,  5.00
+cyclobutanol_O5_ALA_bb_H,  6.48
+cyclobutanol_O5_ARG_HH22, 19.60
+cyclobutanol_O5_ARG_HH21, 19.60
+cyclobutanol_O5_ARG_HH12, 19.66
+cyclobutanol_O5_ARG_HH11, 19.66
+cyclobutanol_O5_ARN_HH21,  5.80
+cyclobutanol_O5_ARN_HH12,  6.75
+cyclobutanol_O5_ARN_HH11,  6.75
+cyclobutanol_O5_ASH_HD2, 10.56
+cyclobutanol_O5_ASN_HD21,  6.37
+cyclobutanol_O5_ASN_HD22,  6.37
+cyclobutanol_O5_GLH_HE2, 10.45
+cyclobutanol_O5_GLN_HE21,  6.49
+cyclobutanol_O5_GLN_HE22,  6.49
+cyclobutanol_O5_HIE_HE2,  7.11
+cyclobutanol_O5_HIP_HD1, 19.73
+cyclobutanol_O5_HIP_HE2, 18.82
+cyclobutanol_O5_HIS_HD1,  7.42
+cyclobutanol_O5_LYN_HZ1,  3.70
+cyclobutanol_O5_LYN_HZ2,  3.70
+cyclobutanol_O5_LYS_HZ1, 21.66
+cyclobutanol_O5_LYS_HZ2, 21.66
+cyclobutanol_O5_LYS_HZ3, 21.66
+cyclobutanol_O5_SER_HG,  6.05
+cyclobutanol_O5_THR_HG1,  6.01
+cyclobutanol_O5_TRP_HE1,  7.42
+cyclobutanol_O5_TYR_HH,  7.98
+dimethylcyanamide_N3_ALA_bb_H,  7.21
+dimethylcyanamide_N3_ARG_HH22, 25.87
+dimethylcyanamide_N3_ARG_HH21, 25.87
+dimethylcyanamide_N3_ARG_HH12, 25.73
+dimethylcyanamide_N3_ARG_HH11, 25.73
+dimethylcyanamide_N3_ARN_HH21,  6.05
+dimethylcyanamide_N3_ARN_HH12,  5.89
+dimethylcyanamide_N3_ARN_HH11,  5.89
+dimethylcyanamide_N3_ASH_HD2,  9.70
+dimethylcyanamide_N3_ASN_HD21,  8.72
+dimethylcyanamide_N3_ASN_HD22,  8.72
+dimethylcyanamide_N3_GLH_HE2,  9.52
+dimethylcyanamide_N3_GLN_HE21,  8.68
+dimethylcyanamide_N3_GLN_HE22,  8.68
+dimethylcyanamide_N3_HIE_HE2,  8.24
+dimethylcyanamide_N3_HIP_HD1, 26.03
+dimethylcyanamide_N3_HIP_HE2, 25.51
+dimethylcyanamide_N3_HIS_HD1,  4.36
+dimethylcyanamide_N3_LYN_HZ1,  2.74
+dimethylcyanamide_N3_LYN_HZ2,  2.74
+dimethylcyanamide_N3_LYS_HZ1, 29.88
+dimethylcyanamide_N3_LYS_HZ2, 29.88
+dimethylcyanamide_N3_LYS_HZ3, 29.88
+dimethylcyanamide_N3_SER_HG,  6.19
+dimethylcyanamide_N3_THR_HG1,  6.12
+dimethylcyanamide_N3_TRP_HE1,  7.54
+dimethylcyanamide_N3_TYR_HH,  8.15
+ethanammonium_H4_ALA_bb_O, 30.45
+ethanammonium_H4_ASH_OD1, 22.47
+ethanammonium_H4_ASH_OD2, 12.33
+ethanammonium_H4_ASN_OD1, 28.98
+ethanammonium_H4_ASP_OD1, 147.47
+ethanammonium_H4_ASP_OD2, 147.47
+ethanammonium_H4_GLH_OE1, 22.95
+ethanammonium_H4_GLH_OE2, 12.47
+ethanammonium_H4_GLN_OE1, 29.50
+ethanammonium_H4_GLU_OE1, 149.74
+ethanammonium_H4_GLU_OE2, 149.74
+ethanammonium_H4_HIE_ND1, 33.37
+ethanammonium_H4_HIS_NE2, 34.80
+ethanammonium_H4_SER_OG, 21.66
+ethanammonium_H4_THR_OG, 22.71
+ethanammonium_H4_TYR_OH, 17.51
+ethanol_H4_ALA_bb_O,  7.02
+ethanol_H4_ASH_OD1, 10.74
+ethanol_H4_ASH_OD2,  4.41
+ethanol_H4_ASN_OD1,  9.87
+ethanol_H4_ASP_OD1, 17.50
+ethanol_H4_ASP_OD2, 17.50
+ethanol_H4_GLH_OE1, 10.70
+ethanol_H4_GLH_OE2,  4.32
+ethanol_H4_GLN_OE1, 10.00
+ethanol_H4_GLU_OE1, 17.19
+ethanol_H4_GLU_OE2, 17.19
+ethanol_H4_HIE_ND1,  7.87
+ethanol_H4_HIS_NE2,  7.47
+ethanol_H4_SER_OG,  5.35
+ethanol_H4_THR_OG,  6.09
+ethanol_H4_TYR_OH,  4.94
+ethanol_O3_ALA_bb_H,  6.10
+ethanol_O3_ARG_HH22, 19.08
+ethanol_O3_ARG_HH21, 19.08
+ethanol_O3_ARG_HH12, 19.12
+ethanol_O3_ARG_HH11, 19.12
+ethanol_O3_ARN_HH21,  6.23
+ethanol_O3_ARN_HH12,  6.28
+ethanol_O3_ARN_HH11,  6.28
+ethanol_O3_ASH_HD2, 10.77
+ethanol_O3_ASN_HD21,  9.85
+ethanol_O3_ASN_HD22,  9.85
+ethanol_O3_GLH_HE2, 10.71
+ethanol_O3_GLN_HE21, 10.05
+ethanol_O3_GLN_HE22, 10.05
+ethanol_O3_HIE_HE2,  6.96
+ethanol_O3_HIP_HD1, 19.19
+ethanol_O3_HIP_HE2, 18.45
+ethanol_O3_HIS_HD1,  7.57
+ethanol_O3_LYN_HZ1,  7.68
+ethanol_O3_LYN_HZ2,  7.68
+ethanol_O3_LYS_HZ1, 21.09
+ethanol_O3_LYS_HZ2, 21.09
+ethanol_O3_LYS_HZ3, 21.09
+ethanol_O3_SER_HG,  5.72
+ethanol_O3_THR_HG1,  6.11
+ethanol_O3_TRP_HE1,  6.56
+ethanol_O3_TYR_HH,  7.59
+imidazole_H6_ALA_bb_O,  9.82
+imidazole_H6_ASH_OD1,  6.93
+imidazole_H6_ASH_OD2,  4.88
+imidazole_H6_ASN_OD1,  9.59
+imidazole_H6_ASP_OD1, 31.60
+imidazole_H6_ASP_OD2, 31.60
+imidazole_H6_GLH_OE1,  7.22
+imidazole_H6_GLH_OE2,  5.63
+imidazole_H6_GLN_OE1,  9.70
+imidazole_H6_GLU_OE1, 31.08
+imidazole_H6_GLU_OE2, 31.08
+imidazole_H6_HIE_ND1, 10.90
+imidazole_H6_HIS_NE2, 10.33
+imidazole_H6_SER_OG,  7.10
+imidazole_H6_THR_OG,  7.53
+imidazole_H6_TYR_OH,  5.52
+imidazole_N3_ALA_bb_H,  8.24
+imidazole_N3_ARG_HH22, 25.94
+imidazole_N3_ARG_HH21, 25.94
+imidazole_N3_ARG_HH12, 25.85
+imidazole_N3_ARG_HH11, 25.85
+imidazole_N3_ARN_HH21,  7.80
+imidazole_N3_ARN_HH12,  7.11
+imidazole_N3_ARN_HH11,  7.11
+imidazole_N3_ASH_HD2, 11.40
+imidazole_N3_ASN_HD21,  9.51
+imidazole_N3_ASN_HD22,  9.51
+imidazole_N3_GLH_HE2, 11.17
+imidazole_N3_GLN_HE21,  9.62
+imidazole_N3_GLN_HE22,  9.62
+imidazole_N3_HIE_HE2,  9.67
+imidazole_N3_HIP_HD1, 27.81
+imidazole_N3_HIP_HE2, 27.42
+imidazole_N3_HIS_HD1, 10.22
+imidazole_N3_LYN_HZ1,  4.85
+imidazole_N3_LYN_HZ2,  4.85
+imidazole_N3_LYS_HZ1, 31.59
+imidazole_N3_LYS_HZ2, 31.59
+imidazole_N3_LYS_HZ3, 31.59
+imidazole_N3_SER_HG,  7.51
+imidazole_N3_THR_HG1,  7.49
+imidazole_N3_TRP_HE1,  8.95
+imidazole_N3_TYR_HH, 10.24
+imidazole_pos_H6_ALA_bb_O, 26.89
+imidazole_pos_H6_ASH_OD1, 19.60
+imidazole_pos_H6_ASH_OD2,  9.81
+imidazole_pos_H6_ASN_OD1, 25.00
+imidazole_pos_H6_ASP_OD1, 145.33
+imidazole_pos_H6_ASP_OD2, 145.33
+imidazole_pos_H6_GLH_OE1, 19.92
+imidazole_pos_H6_GLH_OE2, 10.48
+imidazole_pos_H6_GLN_OE1, 25.61
+imidazole_pos_H6_GLU_OE1, 144.57
+imidazole_pos_H6_GLU_OE2, 144.57
+imidazole_pos_H6_HIE_ND1, 28.79
+imidazole_pos_H6_HIS_NE2, 29.67
+imidazole_pos_H6_SER_OG, 19.76
+imidazole_pos_H6_THR_OG, 20.43
+imidazole_pos_H6_TYR_OH, 15.39
+methylimidazole_N3_ALA_bb_H,  8.55
+methylimidazole_N3_ARG_HH22, 27.71
+methylimidazole_N3_ARG_HH21, 27.71
+methylimidazole_N3_ARG_HH12, 27.66
+methylimidazole_N3_ARG_HH11, 27.66
+methylimidazole_N3_ARN_HH21,  7.36
+methylimidazole_N3_ARN_HH12,  7.45
+methylimidazole_N3_ARN_HH11,  7.45
+methylimidazole_N3_ASH_HD2, 12.87
+methylimidazole_N3_ASN_HD21,  9.50
+methylimidazole_N3_ASN_HD22,  9.50
+methylimidazole_N3_GLH_HE2, 12.52
+methylimidazole_N3_GLN_HE21,  9.57
+methylimidazole_N3_GLN_HE22,  9.57
+methylimidazole_N3_HIE_HE2, 10.04
+methylimidazole_N3_HIP_HD1, 30.02
+methylimidazole_N3_HIP_HE2, 29.63
+methylimidazole_N3_HIS_HD1, 10.67
+methylimidazole_N3_LYN_HZ1,  3.60
+methylimidazole_N3_LYN_HZ2,  3.60
+methylimidazole_N3_LYS_HZ1, 33.69
+methylimidazole_N3_LYS_HZ2, 33.69
+methylimidazole_N3_LYS_HZ3, 33.69
+methylimidazole_N3_SER_HG,  7.84
+methylimidazole_N3_THR_HG1,  7.86
+methylimidazole_N3_TRP_HE1,  9.34
+methylimidazole_N3_TYR_HH, 10.68
+methylimidazole_pos_H7_ALA_bb_O, 26.42
+methylimidazole_pos_H7_ASH_OD1, 20.37
+methylimidazole_pos_H7_ASH_OD2,  9.70
+methylimidazole_pos_H7_ASN_OD1, 24.71
+methylimidazole_pos_H7_ASP_OD1, 141.51
+methylimidazole_pos_H7_ASP_OD2, 141.51
+methylimidazole_pos_H7_GLH_OE1, 20.72
+methylimidazole_pos_H7_GLH_OE2, 10.27
+methylimidazole_pos_H7_GLN_OE1, 25.33
+methylimidazole_pos_H7_GLU_OE1, 140.74
+methylimidazole_pos_H7_GLU_OE2, 140.74
+methylimidazole_pos_H7_HIE_ND1, 30.14
+methylimidazole_pos_H7_HIS_NE2, 31.01
+methylimidazole_pos_H7_SER_OG, 20.47
+methylimidazole_pos_H7_THR_OG, 21.21
+methylimidazole_pos_H7_TYR_OH, 15.95
+methylpyrazole_N4_ALA_bb_H,  8.25
+methylpyrazole_N4_ARG_HH22, 22.41
+methylpyrazole_N4_ARG_HH21, 22.41
+methylpyrazole_N4_ARG_HH12, 22.28
+methylpyrazole_N4_ARG_HH11, 22.28
+methylpyrazole_N4_ARN_HH21,  7.27
+methylpyrazole_N4_ARN_HH12,  7.13
+methylpyrazole_N4_ARN_HH11,  7.13
+methylpyrazole_N4_ASH_HD2, 11.49
+methylpyrazole_N4_ASN_HD21,  8.88
+methylpyrazole_N4_ASN_HD22,  8.88
+methylpyrazole_N4_GLH_HE2, 11.19
+methylpyrazole_N4_GLN_HE21,  8.95
+methylpyrazole_N4_GLN_HE22,  8.95
+methylpyrazole_N4_HIE_HE2,  9.67
+methylpyrazole_N4_HIP_HD1, 23.71
+methylpyrazole_N4_HIP_HE2, 23.31
+methylpyrazole_N4_HIS_HD1, 10.02
+methylpyrazole_N4_LYN_HZ1,  5.09
+methylpyrazole_N4_LYN_HZ2,  5.09
+methylpyrazole_N4_LYS_HZ1, 26.73
+methylpyrazole_N4_LYS_HZ2, 26.73
+methylpyrazole_N4_LYS_HZ3, 26.73
+methylpyrazole_N4_SER_HG,  8.03
+methylpyrazole_N4_THR_HG1,  7.82
+methylpyrazole_N4_TRP_HE1, 10.01
+methylpyrazole_N4_TYR_HH,  9.87
+oxetane_O1_ALA_bb_H,  6.64
+oxetane_O1_ARG_HH22, 21.50
+oxetane_O1_ARG_HH21, 21.50
+oxetane_O1_ARG_HH12, 21.47
+oxetane_O1_ARG_HH11, 21.47
+oxetane_O1_ARN_HH21,  6.92
+oxetane_O1_ARN_HH12,  6.90
+oxetane_O1_ARN_HH11,  6.90
+oxetane_O1_ASH_HD2, 11.62
+oxetane_O1_ASN_HD21,  9.35
+oxetane_O1_ASN_HD22,  9.35
+oxetane_O1_GLH_HE2, 11.56
+oxetane_O1_GLN_HE21,  9.38
+oxetane_O1_GLN_HE22,  9.38
+oxetane_O1_HIE_HE2,  7.58
+oxetane_O1_HIP_HD1, 20.88
+oxetane_O1_HIP_HE2, 20.79
+oxetane_O1_HIS_HD1,  8.41
+oxetane_O1_LYN_HZ1,  3.67
+oxetane_O1_LYN_HZ2,  3.67
+oxetane_O1_LYS_HZ1, 23.72
+oxetane_O1_LYS_HZ2, 23.72
+oxetane_O1_LYS_HZ3, 23.72
+oxetane_O1_SER_HG,  6.34
+oxetane_O1_THR_HG1,  7.09
+oxetane_O1_TRP_HE1,  8.26
+oxetane_O1_TYR_HH,  8.65
+piperidone_H8_ALA_bb_O,  8.54
+piperidone_H8_ASH_OD1, 13.82
+piperidone_H8_ASH_OD2,  4.14
+piperidone_H8_ASN_OD1, 14.89
+piperidone_H8_ASP_OD1, 21.38
+piperidone_H8_ASP_OD2, 21.38
+piperidone_H8_GLH_OE1, 16.06
+piperidone_H8_GLH_OE2,  6.15
+piperidone_H8_GLN_OE1, 14.96
+piperidone_H8_GLU_OE1, 21.13
+piperidone_H8_GLU_OE2, 21.13
+piperidone_H8_HIE_ND1,  7.38
+piperidone_H8_HIS_NE2,  7.99
+piperidone_H8_SER_OG, 10.47
+piperidone_H8_THR_OG, 10.46
+piperidone_H8_TYR_OH,  4.96
+piperidone_O7_ALA_bb_H,  8.53
+piperidone_O7_ARG_HH22, 29.02
+piperidone_O7_ARG_HH21, 29.02
+piperidone_O7_ARG_HH12, 28.97
+piperidone_O7_ARG_HH11, 28.97
+piperidone_O7_ARN_HH21,  7.67
+piperidone_O7_ARN_HH12,  8.91
+piperidone_O7_ARN_HH11,  8.91
+piperidone_O7_ASH_HD2, 11.32
+piperidone_O7_ASN_HD21,  9.13
+piperidone_O7_ASN_HD22,  9.13
+piperidone_O7_GLH_HE2, 11.18
+piperidone_O7_GLN_HE21,  9.09
+piperidone_O7_GLN_HE22,  9.09
+piperidone_O7_HIE_HE2,  9.73
+piperidone_O7_HIP_HD1, 28.14
+piperidone_O7_HIP_HE2, 27.51
+piperidone_O7_HIS_HD1,  9.73
+piperidone_O7_LYN_HZ1,  4.86
+piperidone_O7_LYN_HZ2,  4.86
+piperidone_O7_LYS_HZ1, 32.24
+piperidone_O7_LYS_HZ2, 32.24
+piperidone_O7_LYS_HZ3, 32.24
+piperidone_O7_SER_HG,  7.90
+piperidone_O7_THR_HG1,  8.04
+piperidone_O7_TRP_HE1, 10.09
+piperidone_O7_TYR_HH, 10.50
+pyrazole_H6_ALA_bb_O, 10.73
+pyrazole_H6_ASH_OD1, 15.87
+pyrazole_H6_ASH_OD2,  5.43
+pyrazole_H6_ASN_OD1, 15.00
+pyrazole_H6_ASP_OD1, 28.47
+pyrazole_H6_ASP_OD2, 28.47
+pyrazole_H6_GLH_OE1, 15.54
+pyrazole_H6_GLH_OE2,  6.99
+pyrazole_H6_GLN_OE1, 15.12
+pyrazole_H6_GLU_OE1, 28.12
+pyrazole_H6_GLU_OE2, 28.12
+pyrazole_H6_HIE_ND1, 10.41
+pyrazole_H6_HIS_NE2, 11.11
+pyrazole_H6_SER_OG,  8.88
+pyrazole_H6_THR_OG,  7.73
+pyrazole_H6_TYR_OH,  6.35
+pyrazole_N4_ALA_bb_H,  7.87
+pyrazole_N4_ARG_HH22, 20.55
+pyrazole_N4_ARG_HH21, 20.55
+pyrazole_N4_ARG_HH12, 20.47
+pyrazole_N4_ARG_HH11, 20.47
+pyrazole_N4_ARN_HH21, 10.21
+pyrazole_N4_ARN_HH12, 10.66
+pyrazole_N4_ARN_HH11, 10.66
+pyrazole_N4_ASH_HD2, 15.90
+pyrazole_N4_ASN_HD21, 14.99
+pyrazole_N4_ASN_HD22, 14.99
+pyrazole_N4_GLH_HE2, 15.55
+pyrazole_N4_GLN_HE21, 15.15
+pyrazole_N4_GLN_HE22, 15.15
+pyrazole_N4_HIE_HE2,  8.03
+pyrazole_N4_HIP_HD1, 21.59
+pyrazole_N4_HIP_HE2, 21.17
+pyrazole_N4_HIS_HD1,  8.29
+pyrazole_N4_LYN_HZ1,  9.14
+pyrazole_N4_LYN_HZ2,  9.14
+pyrazole_N4_LYS_HZ1, 24.56
+pyrazole_N4_LYS_HZ2, 24.56
+pyrazole_N4_LYS_HZ3, 24.56
+pyrazole_N4_SER_HG,  8.84
+pyrazole_N4_THR_HG1,  8.85
+pyrazole_N4_TRP_HE1,  8.85
+pyrazole_N4_TYR_HH,  9.34
+pyridine_N6_ALA_bb_H,  7.82
+pyridine_N6_ARG_HH22, 24.13
+pyridine_N6_ARG_HH21, 24.13
+pyridine_N6_ARG_HH12, 23.96
+pyridine_N6_ARG_HH11, 23.96
+pyridine_N6_ARN_HH21,  7.05
+pyridine_N6_ARN_HH12,  6.76
+pyridine_N6_ARN_HH11,  6.76
+pyridine_N6_ASH_HD2, 12.35
+pyridine_N6_ASN_HD21,  9.15
+pyridine_N6_ASN_HD22,  9.15
+pyridine_N6_GLH_HE2, 12.32
+pyridine_N6_GLN_HE21,  9.08
+pyridine_N6_GLN_HE22,  9.08
+pyridine_N6_HIE_HE2,  9.17
+pyridine_N6_HIP_HD1, 26.62
+pyridine_N6_HIP_HE2, 26.33
+pyridine_N6_HIS_HD1,  9.63
+pyridine_N6_LYN_HZ1,  4.30
+pyridine_N6_LYN_HZ2,  4.30
+pyridine_N6_LYS_HZ1, 29.91
+pyridine_N6_LYS_HZ2, 29.91
+pyridine_N6_LYS_HZ3, 29.91
+pyridine_N6_SER_HG,  7.30
+pyridine_N6_THR_HG1,  7.40
+pyridine_N6_TRP_HE1,  8.60
+pyridine_N6_TYR_HH, 10.04
+pyrrolidone_H7_ALA_bb_O,  8.94
+pyrrolidone_H7_ASH_OD1, 13.44
+pyrrolidone_H7_ASH_OD2,  4.44
+pyrrolidone_H7_ASN_OD1, 14.95
+pyrrolidone_H7_ASP_OD1, 22.64
+pyrrolidone_H7_ASP_OD2, 22.64
+pyrrolidone_H7_GLH_OE1, 15.87
+pyrrolidone_H7_GLH_OE2,  6.45
+pyrrolidone_H7_GLN_OE1, 15.03
+pyrrolidone_H7_GLU_OE1, 22.34
+pyrrolidone_H7_GLU_OE2, 22.34
+pyrrolidone_H7_HIE_ND1,  7.77
+pyrrolidone_H7_HIS_NE2,  8.90
+pyrrolidone_H7_SER_OG, 10.69
+pyrrolidone_H7_THR_OG,  6.10
+pyrrolidone_H7_TYR_OH,  5.17
+pyrrolidone_O6_ALA_bb_H,  8.53
+pyrrolidone_O6_ARG_HH22, 27.97
+pyrrolidone_O6_ARG_HH21, 27.97
+pyrrolidone_O6_ARG_HH12, 27.88
+pyrrolidone_O6_ARG_HH11, 27.88
+pyrrolidone_O6_ARN_HH21,  9.14
+pyrrolidone_O6_ARN_HH12,  9.09
+pyrrolidone_O6_ARN_HH11,  9.09
+pyrrolidone_O6_ASH_HD2, 11.31
+pyrrolidone_O6_ASN_HD21,  9.06
+pyrrolidone_O6_ASN_HD22,  9.06
+pyrrolidone_O6_GLH_HE2, 11.19
+pyrrolidone_O6_GLN_HE21,  9.22
+pyrrolidone_O6_GLN_HE22,  9.22
+pyrrolidone_O6_HIE_HE2,  9.51
+pyrrolidone_O6_HIP_HD1, 26.81
+pyrrolidone_O6_HIP_HE2, 26.49
+pyrrolidone_O6_HIS_HD1,  9.51
+pyrrolidone_O6_LYN_HZ1,  4.84
+pyrrolidone_O6_LYN_HZ2,  4.84
+pyrrolidone_O6_LYS_HZ1, 30.91
+pyrrolidone_O6_LYS_HZ2, 30.91
+pyrrolidone_O6_LYS_HZ3, 30.91
+pyrrolidone_O6_SER_HG,  7.90
+pyrrolidone_O6_THR_HG1,  7.87
+pyrrolidone_O6_TRP_HE1, 10.00
+pyrrolidone_O6_TYR_HH, 10.15
+urea_H5_ALA_bb_O,  9.75
+urea_H5_ASH_OD1, 16.28
+urea_H5_ASH_OD2,  7.68
+urea_H5_ASN_OD1, 15.36
+urea_H5_ASP_OD1, 34.53
+urea_H5_ASP_OD2, 34.53
+urea_H5_GLH_OE1, 16.37
+urea_H5_GLH_OE2,  7.52
+urea_H5_GLN_OE1, 15.42
+urea_H5_GLU_OE1, 34.11
+urea_H5_GLU_OE2, 34.11
+urea_H5_HIE_ND1,  8.72
+urea_H5_HIS_NE2, 10.71
+urea_H5_SER_OG, 11.58
+urea_H5_THR_OG, 11.40
+urea_H5_TYR_OH,  5.21
+urea_H6_ALA_bb_O, 11.31
+urea_H6_ASH_OD1,  7.35
+urea_H6_ASH_OD2, 13.04
+urea_H6_ASN_OD1, 12.84
+urea_H6_ASP_OD1, 34.52
+urea_H6_ASP_OD2, 34.52
+urea_H6_GLH_OE1, 12.64
+urea_H6_GLH_OE2,  6.96
+urea_H6_GLN_OE1, 12.82
+urea_H6_GLU_OE1, 34.15
+urea_H6_GLU_OE2, 34.15
+urea_H6_HIE_ND1, 11.33
+urea_H6_HIS_NE2, 11.51
+urea_H6_SER_OG,  9.12
+urea_H6_THR_OG,  8.96
+urea_H6_TYR_OH,  7.83
+urea_O4_ALA_bb_H, 10.35
+urea_O4_ARG_HH22, 27.56
+urea_O4_ARG_HH21, 27.56
+urea_O4_ARG_HH12, 27.58
+urea_O4_ARG_HH11, 27.58
+urea_O4_ARN_HH21, 11.78
+urea_O4_ARN_HH12, 11.61
+urea_O4_ARN_HH11, 11.61
+urea_O4_ASH_HD2, 16.74
+urea_O4_ASN_HD21, 15.33
+urea_O4_ASN_HD22, 15.33
+urea_O4_GLH_HE2, 16.40
+urea_O4_GLN_HE21, 15.44
+urea_O4_GLN_HE22, 15.44
+urea_O4_HIE_HE2, 11.21
+urea_O4_HIP_HD1, 26.23
+urea_O4_HIP_HE2, 25.74
+urea_O4_HIS_HD1,   7.16
+urea_O4_LYN_HZ1,  9.91
+urea_O4_LYN_HZ2,  9.91
+urea_O4_LYS_HZ1, 30.30
+urea_O4_LYS_HZ2, 30.30
+urea_O4_LYS_HZ3, 30.30
+urea_O4_SER_HG, 11.46
+urea_O4_THR_HG1, 11.46
+urea_O4_TRP_HE1, 11.35
+urea_O4_TYR_HH, 12.47
+%%
+/* *INDENT-ON* */
+#include <stdbool.h>
+#include <stdio.h>
+#include <assert.h>
+
+#include _MOL_INCLUDE_
+
+
+static double get_weight(mol_atom *atom1, mol_atom* atom2)
+{
+	char key[MAX_WORD_LENGTH+1];
+
+	snprintf(key, MAX_WORD_LENGTH+1, "%s_%s_%s_%s", atom2->residue_name, atom2->name,
+							atom1->residue_name, atom1->name);
+	
+	const struct mol_hbond_strength *strength =
+	    in_word_set(key, strlen(key));
+
+	if (strength != NULL) {
+		return strength->strength;
+	}
+
+	snprintf(key, MAX_WORD_LENGTH+1, "%s_%s_%s_%s", atom1->residue_name, atom1->name,
+							atom2->residue_name, atom2->name);
+	strength =
+	    in_word_set(key, strlen(key));
+
+	if (strength != NULL) {
+		return strength->strength;
+	}
+
+	return 1.0;
+}
+
+void hbondeng_probe_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst)
+{
+	double rc = nblst->nbcof;
+	double rc2 = rc * rc;
+	int i;
+
+	for (i = 0; i < nblst->nfat; i++) {
+		int ai = nblst->ifat[i];
+		mol_atom *atom_i = &(ag->atoms[ai]);
+		int n2;
+		int *p;
+		int j;
+
+		if (!(atom_i->hprop & DONATABLE_HYDROGEN)
+		    && !(atom_i->hprop & HBOND_ACCEPTOR))
+			continue;
+
+		n2 = nblst->nsat[i];
+		p = nblst->isat[i];
+
+		for (j = 0; j < n2; j++) {
+			int aj = p[j];
+			mol_atom *atom_j = &(ag->atoms[aj]);
+
+			if (atom_i->hprop & DONATABLE_HYDROGEN) {
+				if (!(atom_j->hprop & HBOND_ACCEPTOR))
+					continue;
+
+				double weight = get_weight(atom_i, atom_j);
+				(*energy) +=
+				    get_pairwise_hbondeng_nblist(ag->atoms, ai,
+								 ag->atoms, aj,
+								 NULL, rc2, 1, weight);
+			} else {
+				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
+					continue;
+
+				double weight = get_weight(atom_i, atom_j);
+				(*energy) +=
+				    get_pairwise_hbondeng_nblist(ag->atoms, aj,
+								 ag->atoms, ai,
+								 NULL, rc2, 1, weight);
+			}
+		}
+	}
+}
+
