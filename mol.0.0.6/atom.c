@@ -25,6 +25,12 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#ifndef _XOPEN_SOURCE
+#define _XOPEN_SOURCE 700
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -136,6 +142,8 @@ void fullcopy_atom (struct atom* src, struct atom* dest)
 	dest->fixed = src->fixed;
 	dest->attl = src->attl;
 	dest->mask = src->mask;
+        dest->name = strdup(src->name);
+        dest->residue_name = strdup(src->residue_name);
 
 	dest->X = src->X;
 	dest->Y = src->Y;
@@ -187,6 +195,16 @@ void copy_atom (struct atom* src, struct atom* dest)
         dest->X = src->X;
         dest->Y = src->Y;
         dest->Z = src->Z;
+	if (src->name !=NULL)
+	        dest->name = strdup(src->name);
+	else
+		printf("name is null");
+	if (src->residue_name !=NULL) {
+		printf("name: %s %d\n", src->residue_name, src->ingrp);
+        	dest->residue_name = strdup(src->residue_name);
+	}
+	else
+		printf("residue_name is null");
 
         /*
         dest->bonds[0] = src->bonds[0];

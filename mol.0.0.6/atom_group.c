@@ -374,6 +374,7 @@ struct atomgrp* fullcopy_atomgrp (struct atomgrp* srcag)
 	for (i = 0; i < destag->natoms; i++) {
 //		struct atom local_atom = destag->atoms[i];
 		destag->atoms[i].name = strdup(srcag->atoms[i].name);
+		destag->atoms[i].residue_name = strdup(srcag->atoms[i].residue_name);
 		destag->atoms[i].ftype_name = strdup(srcag->atoms[i].ftype_name);
 
 		if (srcag->nbonds > 0) {
@@ -427,6 +428,8 @@ struct atomgrp* copy_atomgrp (const struct atomgrp* srcag)
         destag->atoms = (struct atom*) _mol_calloc (destag->natoms, sizeof (struct atom));
         for (atomn = 0; atomn < destag->natoms; atomn++)
         {
+		printf("atom %d\n", atomn);
+		printf("residue %s\n", srcag->atoms[atomn].residue_name);
                 copy_atom (&srcag->atoms[atomn], &destag->atoms[atomn]);
         }
         return destag;
@@ -783,6 +786,7 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 	//point to atoms to correct bonds, angs, tors, imps
 	for (i = 0; i < rec->natoms; i++) {
 		ag->atoms[i].name = strdup(rec->atoms[i].name);
+		ag->atoms[i].residue_name = strdup(rec->atoms[i].residue_name);
 		ag->atoms[i].ftype_name = strdup(rec->atoms[i].ftype_name);
 
 		ag->atoms[i].bonds = _mol_malloc( rec->atoms[i].nbonds*sizeof(struct atombond*));
@@ -867,6 +871,7 @@ struct atomgrp* join_rec_lig_ff(struct atomgrp* rec, struct atomgrp* lig)
 //		struct atom local_atom = ag->atoms[i];
 		ag->atoms[i].atom_ftypen += rec->num_atom_types;
 		ag->atoms[i].name = strdup(lig->atoms[i-(rec->natoms)].name);
+		ag->atoms[i].residue_name = strdup(lig->atoms[i-(rec->natoms)].residue_name);
 		ag->atoms[i].ftype_name = strdup(lig->atoms[i-(rec->natoms)].ftype_name);
 
 		ag->atoms[i].bonds = _mol_malloc( lig->atoms[i-(rec->natoms)].nbonds*sizeof(struct atombond*));

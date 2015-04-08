@@ -104,13 +104,14 @@ LIB_HEADERS = mol.$(MOL_VERSION)/mem.h \
 			  mol.$(MOL_VERSION)/sasa.h \
 			  mol.$(MOL_VERSION)/potential.h \
 			  mol.$(MOL_VERSION)/energy.h \
-                          mol.$(MOL_VERSION)/benergy.h \
-                          mol.$(MOL_VERSION)/hbond.h \
-                          mol.$(MOL_VERSION)/nbenergy.h \
+			mol.$(MOL_VERSION)/benergy.h \
+			mol.$(MOL_VERSION)/hbond.h \
+			mol.$(MOL_VERSION)/hbond_probev2.h \
+			mol.$(MOL_VERSION)/nbenergy.h \
 			  mol.$(MOL_VERSION)/minimize.h \
 			  mol.$(MOL_VERSION)/compare.h \
 			  mol.$(MOL_VERSION)/subag.h \
-		    mol.$(MOL_VERSION)/lbfgs.h \
+			mol.$(MOL_VERSION)/lbfgs.h \
 			  mol.$(MOL_VERSION)/version.h \
 			  mol.$(MOL_VERSION)/mol2.h \
 			  mol.$(MOL_VERSION)/vector.h \

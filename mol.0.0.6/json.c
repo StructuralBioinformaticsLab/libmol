@@ -181,8 +181,10 @@ struct atomgrp* read_json_ag(const char *json_file)
 			if (!json_is_string(residue_name)) {
 				fprintf(stderr, "json residue_name is not string for atom %zd in json_file %s\n", i, json_file);
 			}
+			ag->atoms[i].residue_name = strdup(json_string_value(residue_name));
+		} else {
+			ag->atoms[i].residue_name = NULL;
 		}
-		ag->atoms[i].residue_name = strdup(json_string_value(residue_name));
 
 		x = json_object_get(atom, "x");
 		if (!json_is_real(x)) {

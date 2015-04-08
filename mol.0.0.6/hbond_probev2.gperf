@@ -679,3 +679,54 @@ void hbondeng_probe_weighted(struct atomgrp *ag, double *energy, struct nblist *
 	}
 }
 
+void hbondeng_split_probe_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst, int atom_split)
+{
+	double rc = nblst->nbcof;
+	double rc2 = rc * rc;
+	int i;
+
+	for (i = 0; i < nblst->nfat; i++) {
+		int ai = nblst->ifat[i];
+		mol_atom *atom_i = &(ag->atoms[ai]);
+		int n2;
+		int *p;
+		int j;
+
+		if (!(atom_i->hprop & DONATABLE_HYDROGEN)
+		    && !(atom_i->hprop & HBOND_ACCEPTOR))
+			continue;
+
+		n2 = nblst->nsat[i];
+		p = nblst->isat[i];
+
+		for (j = 0; j < n2; j++) {
+			int aj = p[j];
+
+			if ( ((ai <  atom_split) && (aj <  atom_split)) ||
+			     ((ai >= atom_split) && (aj >= atom_split)))
+				continue;
+
+			mol_atom *atom_j = &(ag->atoms[aj]);
+
+			if (atom_i->hprop & DONATABLE_HYDROGEN) {
+				if (!(atom_j->hprop & HBOND_ACCEPTOR))
+					continue;
+
+				double weight = get_weight(atom_i, atom_j);
+				(*energy) +=
+				    get_pairwise_hbondeng_nblist(ag->atoms, ai,
+								 ag->atoms, aj,
+								 NULL, rc2, 1, weight);
+			} else {
+				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
+					continue;
+
+				double weight = get_weight(atom_i, atom_j);
+				(*energy) +=
+				    get_pairwise_hbondeng_nblist(ag->atoms, aj,
+								 ag->atoms, ai,
+								 NULL, rc2, 1, weight);
+			}
+		}
+	}
+}
