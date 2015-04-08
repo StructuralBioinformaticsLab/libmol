@@ -111,6 +111,7 @@ mol_atom_copy (mol_atom* asrc, mol_atom* adst)
 void free_atom(struct atom* atm)
 {
    free(atm->name);
+   free(atm->residue_name);
    free(atm->ftype_name);
    //free(atm->element);
    free(atm->bonds);

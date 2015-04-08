@@ -44,6 +44,7 @@ struct atom
 	int atom_ftypen;/**< atom type number in the forcefield */
         int octree_ptr; /**< index (ptr) to octree leaf node to which this atoms belongs */           
 	char *name;
+	char *residue_name;
 	char *ftype_name;
 	char *element;
 

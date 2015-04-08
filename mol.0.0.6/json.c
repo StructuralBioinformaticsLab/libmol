@@ -71,7 +71,7 @@ struct atomgrp* read_json_ag(const char *json_file)
 			fprintf(stderr, "Atom %zd not an object in json file %s\n", i, json_file);
 		}
 		json_t *ace_volume, *ftype_index, *ftype_name, *eps03;
-		json_t *name, *radius03, *eps, *acp_type;
+		json_t *name, *radius03, *eps, *acp_type, *residue_name;
 		json_t *charge, *radius, *element;
 		json_t *x, *y, *z;
 		json_t *yeti_type, *sybyl_type;
@@ -175,6 +175,14 @@ struct atomgrp* read_json_ag(const char *json_file)
 			fprintf(stderr, "json name is not string for atom %zd in json_file %s\n", i, json_file);
 		}
 		ag->atoms[i].name = strdup(json_string_value(name));
+
+		residue_name = json_object_get(atom, "residue_name");
+		if (residue_name != NULL) {
+			if (!json_is_string(residue_name)) {
+				fprintf(stderr, "json residue_name is not string for atom %zd in json_file %s\n", i, json_file);
+			}
+		}
+		ag->atoms[i].residue_name = strdup(json_string_value(residue_name));
 
 		x = json_object_get(atom, "x");
 		if (!json_is_real(x)) {
