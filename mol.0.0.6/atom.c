@@ -200,7 +200,6 @@ void copy_atom (struct atom* src, struct atom* dest)
 	else
 		printf("name is null");
 	if (src->residue_name !=NULL) {
-		printf("name: %s %d\n", src->residue_name, src->ingrp);
         	dest->residue_name = strdup(src->residue_name);
 	}
 	else

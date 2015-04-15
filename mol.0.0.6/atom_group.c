@@ -428,8 +428,6 @@ struct atomgrp* copy_atomgrp (const struct atomgrp* srcag)
         destag->atoms = (struct atom*) _mol_calloc (destag->natoms, sizeof (struct atom));
         for (atomn = 0; atomn < destag->natoms; atomn++)
         {
-		printf("atom %d\n", atomn);
-		printf("residue %s\n", srcag->atoms[atomn].residue_name);
                 copy_atom (&srcag->atoms[atomn], &destag->atoms[atomn]);
         }
         return destag;
