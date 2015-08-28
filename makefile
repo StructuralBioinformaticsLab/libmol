@@ -76,6 +76,7 @@ LIB_OBJS = mol.$(MOL_VERSION)/mem.o \
 		   mol.$(MOL_VERSION)/lbfgs.o \
 		   mol.$(MOL_VERSION)/version.o \
                    mol.$(MOL_VERSION)/mol2.o \
+                   mol.$(MOL_VERSION)/phys.o \
 		   mol.$(MOL_VERSION)/rotamer.o \
 		   mol.$(MOL_VERSION)/rmsd.o \
 		   mol.$(MOL_VERSION)/gbsa.o \
@@ -112,6 +113,7 @@ LIB_HEADERS = mol.$(MOL_VERSION)/mem.h \
 		    mol.$(MOL_VERSION)/lbfgs.h \
 			  mol.$(MOL_VERSION)/version.h \
 			  mol.$(MOL_VERSION)/mol2.h \
+			  mol.$(MOL_VERSION)/phys.h \
 			  mol.$(MOL_VERSION)/vector.h \
 			  mol.$(MOL_VERSION)/rotamer.h \
 			  mol.$(MOL_VERSION)/rmsd.h \

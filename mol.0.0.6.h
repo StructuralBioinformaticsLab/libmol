@@ -79,6 +79,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "mol.0.0.6/hbond.h"
 #include "mol.0.0.6/version.h"
 #include "mol.0.0.6/mol2.h"
+#include "mol.0.0.6/phys.h"
 #include "mol.0.0.6/rotamer.h"
 #include "mol.0.0.6/rmsd.h"
 #include "mol.0.0.6/gbsa.h"
