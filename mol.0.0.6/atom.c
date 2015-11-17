@@ -195,15 +195,12 @@ void copy_atom (struct atom* src, struct atom* dest)
         dest->X = src->X;
         dest->Y = src->Y;
         dest->Z = src->Z;
-	if (src->name !=NULL)
-	        dest->name = strdup(src->name);
-	else
-		printf("name is null");
+	if (src->name !=NULL) {
+		dest->name = strdup(src->name);
+	}
 	if (src->residue_name !=NULL) {
         	dest->residue_name = strdup(src->residue_name);
 	}
-	else
-		printf("residue_name is null");
 
         /*
         dest->bonds[0] = src->bonds[0];
