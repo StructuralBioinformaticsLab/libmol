@@ -31,9 +31,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include _MOL_INCLUDE_
 
-float* moment_of_inertia (struct atomgrp* ag)
+float *moment_of_inertia(struct atomgrp *ag)
 {
-	struct mol_vector3f *com = center_of_mass (ag);
+	struct mol_vector3f *com = center_of_mass(ag);
 
 	float sq_x_com = _mol_sq(com->X);
 	float sq_y_com = _mol_sq(com->Y);
@@ -47,11 +47,10 @@ float* moment_of_inertia (struct atomgrp* ag)
 	float sum_mult_xz = 0;
 	float sum_mult_yz = 0;
 
-	float *moi_matrix = (float*) _mol_malloc (sizeof (float) * 9);
+	float *moi_matrix = (float *)_mol_malloc(sizeof(float) * 9);
 
 	int i;
-	for (i = 0; i < ag->natoms; i++)
-	{
+	for (i = 0; i < ag->natoms; i++) {
 		sum_sq_x += _mol_sq(ag->atoms[i].X);
 		sum_sq_y += _mol_sq(ag->atoms[i].Y);
 		sum_sq_z += _mol_sq(ag->atoms[i].Z);
@@ -61,26 +60,29 @@ float* moment_of_inertia (struct atomgrp* ag)
 		sum_mult_yz += ag->atoms[i].Y * ag->atoms[i].Z;
 	}
 
-	moi_matrix[0] = sum_sq_y + sum_sq_z - (sq_y_com + sq_z_com) * ag->natoms;
+	moi_matrix[0] =
+	    sum_sq_y + sum_sq_z - (sq_y_com + sq_z_com) * ag->natoms;
 	moi_matrix[1] = -sum_mult_xy + com->X * com->Y * ag->natoms;
 	moi_matrix[2] = -sum_mult_xz + com->X * com->Z * ag->natoms;
 
 	moi_matrix[3] = -sum_mult_xy + com->X * com->Y * ag->natoms;
-	moi_matrix[4] = sum_sq_x + sum_sq_z - (sq_x_com + sq_z_com) * ag->natoms;
+	moi_matrix[4] =
+	    sum_sq_x + sum_sq_z - (sq_x_com + sq_z_com) * ag->natoms;
 	moi_matrix[5] = -sum_mult_yz + com->Y * com->Z * ag->natoms;
 
 	moi_matrix[6] = -sum_mult_xz + com->X * com->Z * ag->natoms;
 	moi_matrix[7] = -sum_mult_yz + com->Y * com->Z * ag->natoms;
-	moi_matrix[8] = sum_sq_x + sum_sq_y - (sq_x_com + sq_y_com) * ag->natoms;
+	moi_matrix[8] =
+	    sum_sq_x + sum_sq_y - (sq_x_com + sq_y_com) * ag->natoms;
 
-	free (com);
+	free(com);
 
 	return moi_matrix;
 }
 
-void print_moment_of_inertia_matrix (float* moimat)
+void print_moment_of_inertia_matrix(float *moimat)
 {
-	printf ("%.3f\t%.3f\t%.3f\n", moimat[0], moimat[1], moimat[2]);
-	printf ("%.3f\t%.3f\t%.3f\n", moimat[3], moimat[4], moimat[5]);
-	printf ("%.3f\t%.3f\t%.3f\n", moimat[6], moimat[7], moimat[8]);
+	printf("%.3f\t%.3f\t%.3f\n", moimat[0], moimat[1], moimat[2]);
+	printf("%.3f\t%.3f\t%.3f\n", moimat[3], moimat[4], moimat[5]);
+	printf("%.3f\t%.3f\t%.3f\n", moimat[6], moimat[7], moimat[8]);
 }

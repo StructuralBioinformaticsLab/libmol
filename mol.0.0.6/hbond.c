@@ -60,68 +60,68 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 poly8generator(AH_BBHelix, 1.78218633, 2.6757, 12.93768086, -221.0155722,
 	       1604.391304, -6409.335773, 15200.86425, -21375.00216,
 	       16475.98811, -5361.55644)
-poly8generator(AH_BBOther, 1.6971523, 2.679339, 13.58980244, -224.0452428,
+    poly8generator(AH_BBOther, 1.6971523, 2.679339, 13.58980244, -224.0452428,
 	       1568.933094, -6044.257847, 13820.1498, -18730.96076, 13912.92238,
 	       -4361.995425)
-poly5generator(AH_SP2, 1.6941, 2.5, 10.98727738, -100.2401419, 340.9733405,
+    poly5generator(AH_SP2, 1.6941, 2.5, 10.98727738, -100.2401419, 340.9733405,
 	       -511.6111233, 285.0061262)
-poly5generator(AH_SP3, 1.755, 2.521385, 7.011735538, -68.99968829, 251.820931,
+    poly5generator(AH_SP3, 1.755, 2.521385, 7.011735538, -68.99968829, 251.820931,
 	       -403.3593133, 238.7378958)
-poly8generator(xD_BBHelix, 0.3746, 1.04, 223.5268153, -757.7254095, 1019.593508,
+    poly8generator(xD_BBHelix, 0.3746, 1.04, 223.5268153, -757.7254095, 1019.593508,
 	       -689.2232431, 240.1436064, -37.84119583, 0.85868904, 0.278181985)
-poly8generator(xD_BBOther, 0.76, 1.09, 111.9877946, -380.3066184, 514.7650204,
+    poly8generator(xD_BBOther, 0.76, 1.09, 111.9877946, -380.3066184, 514.7650204,
 	       -352.4092342, 124.6219703, -19.94401946, 0.149314979,
 	       0.635771774)
-poly3generator(xD_SP2short, 0.7071, 1.01, -0.562582503, -0.746682668,
+    poly3generator(xD_SP2short, 0.7071, 1.01, -0.562582503, -0.746682668,
 	       0.809265171)
-poly3generator(xD_SP2long, 0.0, 1.01, 0.094962885, -0.254313172, 0.0)
-poly3generator(xD_SP3short, 0.61566, 1.01, -0.100140144, -1.139139041,
+    poly3generator(xD_SP2long, 0.0, 1.01, 0.094962885, -0.254313172, 0.0)
+    poly3generator(xD_SP3short, 0.61566, 1.01, -0.100140144, -1.139139041,
 	       0.739279186)
-poly3generator(xD_SP3long, 0.0, 1.01, 0.089380221, -0.207503776, 0.0)
-poly8generator(xH_BBHelix, 0.156, 1.03, 54.80664331, -196.8196655, 295.9418886,
+    poly3generator(xD_SP3long, 0.0, 1.01, 0.089380221, -0.207503776, 0.0)
+    poly8generator(xH_BBHelix, 0.156, 1.03, 54.80664331, -196.8196655, 295.9418886,
 	       -232.105602, 96.99124565, -20.60918361, 1.573169816, 0.000745458)
-poly8generator(xH_BBOther, 0.61566, 1.07, 43.94483847, -144.3836033,
+    poly8generator(xH_BBOther, 0.61566, 1.07, 43.94483847, -144.3836033,
 	       193.5865176, -132.4469355, 47.28137288, -8.945888012, -0.227035135,
 	       0.791902995)
-poly3generator(xH_SP2short, 0.0, 1.08, 1.720984644, -1.855254573, 0.0)
-poly3generator(xH_SP2long, 0.0, 1.01, 0.439598249, -0.444673076, 0.0)
-poly3generator(xH_SP3, 0.0, 1.06, 1.761487842, -1.876959406, 0.0)
-poly7generator(xH_Ring, 0.7608, 1.089, 37.744316, -117.731674, 143.0759275,
+    poly3generator(xH_SP2short, 0.0, 1.08, 1.720984644, -1.855254573, 0.0)
+    poly3generator(xH_SP2long, 0.0, 1.01, 0.439598249, -0.444673076, 0.0)
+    poly3generator(xH_SP3, 0.0, 1.06, 1.761487842, -1.876959406, 0.0)
+    poly7generator(xH_Ring, 0.7608, 1.089, 37.744316, -117.731674, 143.0759275,
 	       -86.2258835, 26.7448175, -4.4699705, 0.6458455)
 #else
 
 poly8generator(AH_BBHelix, MIN_AH, 2.8, 12.93768086, -221.0155722, 1604.391304,
 	       -6409.335773, 15200.86425, -21375.00216, 16475.98811,
 	       -5361.55644)
-poly8generator(AH_BBOther, MIN_AH, 2.745, 13.58980244, -224.0452428,
+    poly8generator(AH_BBOther, MIN_AH, 2.745, 13.58980244, -224.0452428,
 	       1568.933094, -6044.257847, 13820.1498, -18730.96076, 13912.92238,
 	       -4361.995425)
-poly5generator(AH_SP2, MIN_AH, 2.5, 10.98727738, -100.2401419, 340.9733405,
+    poly5generator(AH_SP2, MIN_AH, 2.5, 10.98727738, -100.2401419, 340.9733405,
 	       -511.6111233, 285.0061262)
-poly5generator(AH_SP3, MIN_AH, 2.5, 7.011735538, -68.99968829, 251.820931,
+    poly5generator(AH_SP3, MIN_AH, 2.5, 7.011735538, -68.99968829, 251.820931,
 	       -403.3593133, 238.7378958)
-poly8generator(xD_BBHelix, MIN_xD, MAX_xD, 223.5268153, -757.7254095,
+    poly8generator(xD_BBHelix, MIN_xD, MAX_xD, 223.5268153, -757.7254095,
 	       1019.593508, -689.2232431, 240.1436064, -37.84119583, 0.85868904,
 	       0.278181985)
-poly8generator(xD_BBOther, MIN_xD, MAX_xD, 111.9877946, -380.3066184,
+    poly8generator(xD_BBOther, MIN_xD, MAX_xD, 111.9877946, -380.3066184,
 	       514.7650204, -352.4092342, 124.6219703, -19.94401946, 0.149314979,
 	       0.635771774)
-poly3generator(xD_SP2short, MIN_xD, MAX_xD, -0.562582503, -0.746682668,
+    poly3generator(xD_SP2short, MIN_xD, MAX_xD, -0.562582503, -0.746682668,
 	       0.809265171)
-poly3generator(xD_SP2long, MIN_xD, MAX_xD, 0.094962885, -0.254313172, 0.0)
-poly3generator(xD_SP3short, MIN_xD, MAX_xD, -0.100140144, -1.139139041,
+    poly3generator(xD_SP2long, MIN_xD, MAX_xD, 0.094962885, -0.254313172, 0.0)
+    poly3generator(xD_SP3short, MIN_xD, MAX_xD, -0.100140144, -1.139139041,
 	       0.739279186)
-poly3generator(xD_SP3long, MIN_xD, MAX_xD, 0.089380221, -0.207503776, 0.0)
-poly8generator(xH_BBHelix, MIN_xH, MAX_xH, 54.80664331, -196.8196655,
+    poly3generator(xD_SP3long, MIN_xD, MAX_xD, 0.089380221, -0.207503776, 0.0)
+    poly8generator(xH_BBHelix, MIN_xH, MAX_xH, 54.80664331, -196.8196655,
 	       295.9418886, -232.105602, 96.99124565, -20.60918361, 1.573169816,
 	       0.000745458)
-poly8generator(xH_BBOther, MIN_xH, MAX_xH, 43.94483847, -144.3836033,
+    poly8generator(xH_BBOther, MIN_xH, MAX_xH, 43.94483847, -144.3836033,
 	       193.5865176, -132.4469355, 47.28137288, -8.945888012, -0.227035135,
 	       0.791902995)
-poly3generator(xH_SP2short, MIN_xH, MAX_xH, 1.720984644, -1.855254573, 0.0)
-poly3generator(xH_SP2long, MIN_xH, MAX_xH, 0.439598249, -0.444673076, 0.0)
-poly3generator(xH_SP3, MIN_xH, MAX_xH, 1.761487842, -1.876959406, 0.0)
-poly7generator(xH_Ring, MIN_xH, MAX_xH, 37.744316, -117.731674, 143.0759275,
+    poly3generator(xH_SP2short, MIN_xH, MAX_xH, 1.720984644, -1.855254573, 0.0)
+    poly3generator(xH_SP2long, MIN_xH, MAX_xH, 0.439598249, -0.444673076, 0.0)
+    poly3generator(xH_SP3, MIN_xH, MAX_xH, 1.761487842, -1.876959406, 0.0)
+    poly7generator(xH_Ring, MIN_xH, MAX_xH, 37.744316, -117.731674, 143.0759275,
 	       -86.2258835, 26.7448175, -4.4699705, 0.6458455)
 #endif
 #if FADING_FUNCTION == LINEAR_FADE
@@ -136,13 +136,13 @@ static void name##_value_deriv(FLOAT x, FLOAT *val, FLOAT *der) { \
  	    *der = -name##_dfade_max; *val = ( max0 - x ) * name##_dfade_max; } \
 }
 // For adjusting xD and xH
-create_fade_interval(fade_rBB, MIN_AH, MIN_AH, INTPOL_EDGE_DIST, MAX_AH)
-create_fade_interval(fade_rshort, MIN_AH, MIN_AH, INTPOL_MIN, INTPOL_MAX)
-create_fade_interval(fade_rlong, INTPOL_MIN, INTPOL_MAX, INTPOL_MAX, MAX_AH)
+    create_fade_interval(fade_rBB, MIN_AH, MIN_AH, INTPOL_EDGE_DIST, MAX_AH)
+    create_fade_interval(fade_rshort, MIN_AH, MIN_AH, INTPOL_MIN, INTPOL_MAX)
+    create_fade_interval(fade_rlong, INTPOL_MIN, INTPOL_MAX, INTPOL_MAX, MAX_AH)
 // fading theta(xD)
-create_fade_interval(fade_xD, MIN_xD, INTPOL_EDGE_ANGL, 1, 1)
+    create_fade_interval(fade_xD, MIN_xD, INTPOL_EDGE_ANGL, 1, 1)
 // fading r,xD
-create_fade_interval(fade_xH, MIN_xH, INTPOL_EDGE_ANGL, 1, 1)
+    create_fade_interval(fade_xH, MIN_xH, INTPOL_EDGE_ANGL, 1, 1)
 #endif //LINEAR_FADE
 #ifdef USE_LONG_DOUBLE
 #define create_log_fade_interval( name, a, b, c, d, e, f ) \
@@ -161,211 +161,211 @@ create_fade_interval(fade_xH, MIN_xH, INTPOL_EDGE_ANGL, 1, 1)
 #endif
 // used to adjust xD,xH
 #if FADING_FUNCTION == LOG_FADE
-create_log_fade_interval(fade_rBB, -37.3180547817287, 285.741141861363,
+    create_log_fade_interval(fade_rBB, -37.3180547817287, 285.741141861363,
 			 -834.307606917721, 1189.6798830102, -826.409671561707,
 			 222.919001825369)
-create_log_fade_interval(fade_rshort, 5.17967058862565, -73.0669137757406,
+    create_log_fade_interval(fade_rshort, 5.17967058862565, -73.0669137757406,
 			 315.57016260663, -559.689100793323, 438.586611628675,
 			 -126.548509998553)
-create_log_fade_interval(fade_rlong, -14.0813542571684, 130.05181593123,
+    create_log_fade_interval(fade_rlong, -14.0813542571684, 130.05181593123,
 			 -453.153559518528, 740.025843886255, -562.47374254511,
 			 160.168566150279)
-create_log_fade_interval(fade_xD, 0.133459218358311, 13.0816902916604, -57.2491258523768, 86.8476548565786, -3.78050184877689, -58.7848249871094)	//      theta(xD) should fade r,xH sooner
-create_log_fade_interval(fade_xH, 0.133459218358311, 13.0816902916604, -57.2491258523768, 86.8476548565786, -3.78050184877689, -58.7848249871094)	// fading r and xD
+    create_log_fade_interval(fade_xD, 0.133459218358311, 13.0816902916604, -57.2491258523768, 86.8476548565786, -3.78050184877689, -58.7848249871094)	//      theta(xD) should fade r,xH sooner
+    create_log_fade_interval(fade_xH, 0.133459218358311, 13.0816902916604, -57.2491258523768, 86.8476548565786, -3.78050184877689, -58.7848249871094)	// fading r and xD
 #endif //LOG_FADE
 // The following cubic splines were generated using DataFit 9
 // fade_interval: 1.4, 1.4, 2.1, 3.0
 int fade_rBB_n = 44;
 FLOAT fade_rBB_x[] = { 0, 0.100, 0.500, 0.750, 1.000, 1.200,
-                          1.250, 1.280, 1.300, 1.320, 1.350,
-                          1.370, 1.390, 1.393, 1.395, 1.398,
-                          1.400, 1.405, 1.410, 1.415, 1.420,
-                          1.425, 1.430, 1.440, 1.460, 1.480,
-                          1.500, 1.510, 1.530, 1.550, 1.600,
-                          1.700, 1.800, 1.900, 2.000, 2.100,
-                          2.325, 2.550, 2.775, 3.000, 3.100,
-                          3.200, 3.300, 3.400, 3.500
+	1.250, 1.280, 1.300, 1.320, 1.350,
+	1.370, 1.390, 1.393, 1.395, 1.398,
+	1.400, 1.405, 1.410, 1.415, 1.420,
+	1.425, 1.430, 1.440, 1.460, 1.480,
+	1.500, 1.510, 1.530, 1.550, 1.600,
+	1.700, 1.800, 1.900, 2.000, 2.100,
+	2.325, 2.550, 2.775, 3.000, 3.100,
+	3.200, 3.300, 3.400, 3.500
 };
 
 FLOAT fade_rBB_y[] = { 0, 0.00, 0.00, 0.00, 0.00, 0.00,
-                          0.00, 0.00, 0.00, 0.00, 0.00,
-                          0.00, 0.00, 0.25, 0.50, 0.75,
-                          1.00, 1.00, 1.00, 1.00, 1.00,
-                          1.00, 1.00, 1.00, 1.00, 1.00,
-                          1.00, 1.00, 1.00, 1.00, 1.00,
-                          1.00, 1.00, 1.00, 1.00, 1.00,
-                          0.75, 0.50, 0.25, 0.00, 0.00,
-                          0.00, 0.00, 0.00, 0.00
+	0.00, 0.00, 0.00, 0.00, 0.00,
+	0.00, 0.00, 0.25, 0.50, 0.75,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	0.75, 0.50, 0.25, 0.00, 0.00,
+	0.00, 0.00, 0.00, 0.00
 };
 
 FLOAT fade_rBB_y2[] =
     { 0, 0.000000000000, 0.002691890564, -0.013997830935, 0.053299433177,
-         -0.222350160627, 2.010303873564, -10.351037057964, 48.739729479473,
-         -184.607880859929, 582.866449880115, -2637.420428110680,
-         9966.815262562670, 31424.968828103199, -47075.067034355103,
-         52633.577562452803, -67555.287260737794, 18101.373305087502,
-         -4850.205959610880, 1299.450533356390, -347.596173814588,
-         90.934161901984, -16.140473793343, 2.954340429037, -0.792784390439,
-         0.216797132720, -0.074404140441, 0.012830577206, -0.001289661396,
-         -0.007671931621, 0.021997273096, -0.062155853479, 0.226626140818,
-         -0.844348709794, 3.150768698359, -11.758726083643, 2.939681857178,
-         -0.000001345070, -2.939676476899, 11.758707252664, -3.150658402628,
-         0.843926357847, -0.225047028759, 0.056261757190, 0.000000000000
+	-0.222350160627, 2.010303873564, -10.351037057964, 48.739729479473,
+	-184.607880859929, 582.866449880115, -2637.420428110680,
+	9966.815262562670, 31424.968828103199, -47075.067034355103,
+	52633.577562452803, -67555.287260737794, 18101.373305087502,
+	-4850.205959610880, 1299.450533356390, -347.596173814588,
+	90.934161901984, -16.140473793343, 2.954340429037, -0.792784390439,
+	0.216797132720, -0.074404140441, 0.012830577206, -0.001289661396,
+	-0.007671931621, 0.021997273096, -0.062155853479, 0.226626140818,
+	-0.844348709794, 3.150768698359, -11.758726083643, 2.939681857178,
+	-0.000001345070, -2.939676476899, 11.758707252664, -3.150658402628,
+	0.843926357847, -0.225047028759, 0.056261757190, 0.000000000000
 };
 
 // fade_interval: 1.4, 1.4, 1.9, 2.3
 int fade_rshort_n = 49;
 FLOAT fade_rshort_x[] = { 0, 0.100, 0.500, 0.750, 1.000, 1.200,
-                             1.250, 1.280, 1.300, 1.320, 1.350,
-                             1.360, 1.370, 1.380, 1.385, 1.390,
-                             1.393, 1.395, 1.398, 1.400, 1.405,
-                             1.410, 1.415, 1.420, 1.425, 1.430,
-                             1.440, 1.460, 1.480, 1.500, 1.510,
-                             1.530, 1.550, 1.600, 1.700, 1.800,
-                             1.850, 1.900, 2.000, 2.100, 2.200,
-                             2.300, 2.350, 2.400, 2.500, 2.600,
-                             2.700, 2.800, 2.900, 3.000
+	1.250, 1.280, 1.300, 1.320, 1.350,
+	1.360, 1.370, 1.380, 1.385, 1.390,
+	1.393, 1.395, 1.398, 1.400, 1.405,
+	1.410, 1.415, 1.420, 1.425, 1.430,
+	1.440, 1.460, 1.480, 1.500, 1.510,
+	1.530, 1.550, 1.600, 1.700, 1.800,
+	1.850, 1.900, 2.000, 2.100, 2.200,
+	2.300, 2.350, 2.400, 2.500, 2.600,
+	2.700, 2.800, 2.900, 3.000
 };
 
 FLOAT fade_rshort_y[] = { 0, 0.00, 0.00, 0.00, 0.00, 0.00,
-                             0.00, 0.00, 0.00, 0.00, 0.00,
-                             0.00, 0.00, 0.00, 0.00, 0.00,
-                             0.25, 0.50, 0.75, 1.00, 1.00,
-                             1.00, 1.00, 1.00, 1.00, 1.00,
-                             1.00, 1.00, 1.00, 1.00, 1.00,
-                             1.00, 1.00, 1.00, 1.00, 1.00,
-                             1.00, 1.00, 0.75, 0.50, 0.25,
-                             0.00, 0.00, 0.00, 0.00, 0.00,
-                             0.00, 0.00, 0.00, 0.00
+	0.00, 0.00, 0.00, 0.00, 0.00,
+	0.00, 0.00, 0.00, 0.00, 0.00,
+	0.25, 0.50, 0.75, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 0.75, 0.50, 0.25,
+	0.00, 0.00, 0.00, 0.00, 0.00,
+	0.00, 0.00, 0.00, 0.00
 };
 
 FLOAT fade_rshort_y2[] =
     { 0, 0.000000000000, -0.000062723877, 0.000326164163, -0.001241932774,
-         0.005180992280, -0.046842191700, 0.241190035268, -1.135686888788,
-         4.301557519885, -13.581400473759, 95.746531230416, -369.404724447903,
-         1381.872366561210, -7552.424750471250, 28827.826635324400,
-         25505.632529047500, -45769.902598219698, 52229.253641372103,
-         -67491.414309537300, 18084.258610158398, -4845.620131095010,
-         1298.221914221990, -347.267525792860, 90.848188949475,
-         -16.125230005034, 2.951595540365, -0.792171618577, 0.217090933945,
-         -0.076192117203, 0.022970835326, -0.030816447377, 0.100294954181,
-         -0.268499292757, 0.755350401180, -2.752902311963, 15.006713069415,
-         -57.273949965699, 14.318493362390, -0.000023483861, -14.318399426946,
-         57.273621191643, -15.004928295967, 2.746091992223, -0.735811828685,
-         0.197155322519, -0.052809461389, 0.014082523037, -0.003520630759,
-         0.000000000000
+	0.005180992280, -0.046842191700, 0.241190035268, -1.135686888788,
+	4.301557519885, -13.581400473759, 95.746531230416, -369.404724447903,
+	1381.872366561210, -7552.424750471250, 28827.826635324400,
+	25505.632529047500, -45769.902598219698, 52229.253641372103,
+	-67491.414309537300, 18084.258610158398, -4845.620131095010,
+	1298.221914221990, -347.267525792860, 90.848188949475,
+	-16.125230005034, 2.951595540365, -0.792171618577, 0.217090933945,
+	-0.076192117203, 0.022970835326, -0.030816447377, 0.100294954181,
+	-0.268499292757, 0.755350401180, -2.752902311963, 15.006713069415,
+	-57.273949965699, 14.318493362390, -0.000023483861, -14.318399426946,
+	57.273621191643, -15.004928295967, 2.746091992223, -0.735811828685,
+	0.197155322519, -0.052809461389, 0.014082523037, -0.003520630759,
+	0.000000000000
 };
 
 // fade_interval: 1.9, 2.3, 2.3, 3.0
 int fade_rlong_n = 23;
 FLOAT fade_rlong_x[] = { 0, 1.500, 1.600, 1.700, 1.800, 1.850,
-                            1.900, 2.000, 2.100, 2.200, 2.300,
-                            2.400, 2.500, 2.600, 2.700, 2.800,
-                            2.900, 3.000, 3.050, 3.100, 3.200,
-                            3.300, 3.400, 3.500
+	1.900, 2.000, 2.100, 2.200, 2.300,
+	2.400, 2.500, 2.600, 2.700, 2.800,
+	2.900, 3.000, 3.050, 3.100, 3.200,
+	3.300, 3.400, 3.500
 };
 
 FLOAT fade_rlong_y[] = { 0, 0.00, 0.00, 0.00, 0.00, 0.00,
-                            0.00, 0.25, 0.50, 0.75, 1.00,
-                            0.85, 0.71, 0.56, 0.42, 0.28,
-                            0.14, 0.00, 0.00, 0.00, 0.00,
-                            0.00, 0.00, 0.00
+	0.00, 0.25, 0.50, 0.75, 1.00,
+	0.85, 0.71, 0.56, 0.42, 0.28,
+	0.14, 0.00, 0.00, 0.00, 0.00,
+	0.00, 0.00, 0.00
 };
 
 FLOAT fade_rlong_y2[] =
     { 0, 0.000000000000, 0.182712031224, -0.730848124897, 2.740680468365,
-         -14.982386560393, 57.188865773208, -14.075404039428, -0.887249615495,
-         17.624402501407, -69.610360390132, 20.817039059120, -7.657795846350,
-         3.814144326278, -1.598781458762, 2.580981508772, -8.725144576323,
-         32.319596796522, -8.467291626486, 1.549569709422, -0.415063315024,
-         0.110683550673, -0.027670887668, 0.000000000000
+	-14.982386560393, 57.188865773208, -14.075404039428, -0.887249615495,
+	17.624402501407, -69.610360390132, 20.817039059120, -7.657795846350,
+	3.814144326278, -1.598781458762, 2.580981508772, -8.725144576323,
+	32.319596796522, -8.467291626486, 1.549569709422, -0.415063315024,
+	0.110683550673, -0.027670887668, 0.000000000000
 };
 
 // fade_interval: 0, 0.05, 1, 1
 int fade_xD_n = 37;
 FLOAT fade_xD_x[] = { 0, -0.100, 0.000, 0.010, 0.020, 0.030,
-                          0.040, 0.050, 0.060, 0.070, 0.100,
-                          0.115, 0.130, 0.150, 0.200, 0.300,
-                          0.400, 0.500, 0.600, 0.700, 0.800,
-                          0.850, 0.870, 0.885, 0.892, 0.900,
-                          0.930, 0.950, 0.960, 0.970, 0.980,
-                          0.990, 0.992, 0.994, 0.996, 0.998,
-                          1.000, 1.100
+	0.040, 0.050, 0.060, 0.070, 0.100,
+	0.115, 0.130, 0.150, 0.200, 0.300,
+	0.400, 0.500, 0.600, 0.700, 0.800,
+	0.850, 0.870, 0.885, 0.892, 0.900,
+	0.930, 0.950, 0.960, 0.970, 0.980,
+	0.990, 0.992, 0.994, 0.996, 0.998,
+	1.000, 1.100
 };
 
 FLOAT fade_xD_y[] = { 0, 0.00, 0.00, 0.20, 0.40, 0.60,
-                         0.80, 1.00, 1.00, 1.00, 1.00,
-                         1.00, 1.00, 1.00, 1.00, 1.00,
-                         1.00, 1.00, 1.00, 1.00, 1.00,
-                         1.00, 1.00, 1.00, 1.00, 1.00,
-                         1.00, 1.00, 1.00, 1.00, 1.00,
-                         1.00, 0.80, 0.60, 0.40, 0.20,
-                         0.00, 0.00
+	0.80, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 0.80, 0.60, 0.40, 0.20,
+	0.00, 0.00
 };
 
 FLOAT fade_xD_y2[] =
     { 0, 0.000000000000, 552.940610336330, -164.693427399256, 105.833099260692,
-         -258.638969643515, 928.722779313369, -3456.252147609970,
-         896.285811126504, -128.891096896051, 44.947654680636, -11.903734291710,
-         2.667282486206, -0.407687982937, 0.074613357741, -0.019996081755,
-         0.005370969278, -0.001487795357, 0.000580212150, -0.000833053243,
-         0.002752000823, -0.014845898451, 0.097041287097, -0.433064808519,
-         2.514176038338, -9.049228436313, 22.254265095103, -97.697482821044,
-         541.676366736059, -2069.007984123190, 7734.355569756700,
-         -28868.414294903600, 7749.193690060420, -2128.360465338230,
-         764.248171292678, -928.632219832562, 2950.280708037570, 0.000000000000
+	-258.638969643515, 928.722779313369, -3456.252147609970,
+	896.285811126504, -128.891096896051, 44.947654680636, -11.903734291710,
+	2.667282486206, -0.407687982937, 0.074613357741, -0.019996081755,
+	0.005370969278, -0.001487795357, 0.000580212150, -0.000833053243,
+	0.002752000823, -0.014845898451, 0.097041287097, -0.433064808519,
+	2.514176038338, -9.049228436313, 22.254265095103, -97.697482821044,
+	541.676366736059, -2069.007984123190, 7734.355569756700,
+	-28868.414294903600, 7749.193690060420, -2128.360465338230,
+	764.248171292678, -928.632219832562, 2950.280708037570, 0.000000000000
 };
 
 // fade_interval: 0, 0.05, 1, 1
 int fade_xH_n = 37;
 FLOAT fade_xH_x[] = { 0, -0.100, 0.000, 0.010, 0.020, 0.030,
-                          0.040, 0.050, 0.060, 0.070, 0.100,
-                          0.115, 0.130, 0.150, 0.200, 0.300,
-                          0.400, 0.500, 0.600, 0.700, 0.800,
-                          0.850, 0.870, 0.885, 0.892, 0.900,
-                          0.930, 0.950, 0.960, 0.970, 0.980,
-                          0.990, 0.992, 0.994, 0.996, 0.998,
-                          1.000, 1.100
+	0.040, 0.050, 0.060, 0.070, 0.100,
+	0.115, 0.130, 0.150, 0.200, 0.300,
+	0.400, 0.500, 0.600, 0.700, 0.800,
+	0.850, 0.870, 0.885, 0.892, 0.900,
+	0.930, 0.950, 0.960, 0.970, 0.980,
+	0.990, 0.992, 0.994, 0.996, 0.998,
+	1.000, 1.100
 };
 
 FLOAT fade_xH_y[] = { 0, 0.00, 0.00, 0.20, 0.40, 0.60,
-                         0.80, 1.00, 1.00, 1.00, 1.00,
-                         1.00, 1.00, 1.00, 1.00, 1.00,
-                         1.00, 1.00, 1.00, 1.00, 1.00,
-                         1.00, 1.00, 1.00, 1.00, 1.00,
-                         1.00, 1.00, 1.00, 1.00, 1.00,
-                         1.00, 0.80, 0.60, 0.40, 0.20,
-                         0.00, 0.00
+	0.80, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 1.00, 1.00, 1.00, 1.00,
+	1.00, 0.80, 0.60, 0.40, 0.20,
+	0.00, 0.00
 };
 
 FLOAT fade_xH_y2[] =
     { 0, 0.000000000000, 552.940610336330, -164.693427399256, 105.833099260692,
-         -258.638969643515, 928.722779313369, -3456.252147609970,
-         896.285811126504, -128.891096896051, 44.947654680636, -11.903734291710,
-         2.667282486206, -0.407687982937, 0.074613357741, -0.019996081755,
-         0.005370969278, -0.001487795357, 0.000580212150, -0.000833053243,
-         0.002752000823, -0.014845898451, 0.097041287097, -0.433064808519,
-         2.514176038338, -9.049228436313, 22.254265095103, -97.697482821044,
-         541.676366736059, -2069.007984123190, 7734.355569756700,
-         -28868.414294903600, 7749.193690060420, -2128.360465338230,
-         764.248171292678, -928.632219832562, 2950.280708037570, 0.000000000000
+	-258.638969643515, 928.722779313369, -3456.252147609970,
+	896.285811126504, -128.891096896051, 44.947654680636, -11.903734291710,
+	2.667282486206, -0.407687982937, 0.074613357741, -0.019996081755,
+	0.005370969278, -0.001487795357, 0.000580212150, -0.000833053243,
+	0.002752000823, -0.014845898451, 0.097041287097, -0.433064808519,
+	2.514176038338, -9.049228436313, 22.254265095103, -97.697482821044,
+	541.676366736059, -2069.007984123190, 7734.355569756700,
+	-28868.414294903600, 7749.193690060420, -2128.360465338230,
+	764.248171292678, -928.632219832562, 2950.280708037570, 0.000000000000
 };
 
 int hbeng_HOH_n = 11;
 FLOAT hbeng_HOH_x[] = { 0, 2.500, 2.550, 2.600, 2.800, 2.850,
-                           2.900, 3.200, 3.300, 3.400, 3.600,
-                           3.700
+	2.900, 3.200, 3.300, 3.400, 3.600,
+	3.700
 };
 
 FLOAT hbeng_HOH_y[] = { 0, 0.000, 0.000, 0.000, -0.950, -0.975,
-                          -1.000, -0.150, -0.050, -0.010, 0.000,
-                          0.000
+	-1.000, -0.150, -0.050, -0.010, 0.000,
+	0.000
 };
 
 FLOAT hbeng_HOH_y2[] =
     { 0, 0.000000000000, 24.162670008471, -96.6506800338837, 93.0860325825914,
-         -34.2576056903785, 43.9443901789217, -30.1606428024209,
-         -0.548028117397894, -3.64724472798789, 0.71574824266263, 0.000000000000
+	-34.2576056903785, 43.9443901789217, -30.1606428024209,
+	-0.548028117397894, -3.64724472798789, 0.71574824266263, 0.000000000000
 };
 
 #if FADING_FUNCTION == BSPLINE_FADE
@@ -382,14 +382,14 @@ static void name##_bspline_value_deriv( FLOAT x, FLOAT *val, FLOAT *der ) { \
 }
 
 create_bspline_fade_interval(fade_rBB)	// used to adjust xD, xH
-create_bspline_fade_interval(fade_rshort)
-create_bspline_fade_interval(fade_rlong)
+    create_bspline_fade_interval(fade_rshort)
+    create_bspline_fade_interval(fade_rlong)
 // xD=theta should fade r,xH sooner!
-create_bspline_fade_interval(fade_xD)
+    create_bspline_fade_interval(fade_xD)
 // fades r,xD
-create_bspline_fade_interval(fade_xH)
+    create_bspline_fade_interval(fade_xH)
 // water-mediated hbond energy
-create_bspline_fade_interval(hbeng_HOH)
+    create_bspline_fade_interval(hbeng_HOH)
 // generated using DataFit 9
 //
 static FLOAT eval_spline(FLOAT * x, FLOAT * y, FLOAT * y2, int n, FLOAT v)
@@ -422,7 +422,7 @@ static double dot_product(struct dvector *va, struct dvector *vb)
 	return ((va->X * vb->X) + (va->Y * vb->Y) + (va->Z * vb->Z));
 }
 
-static bool is_hydrogen(mol_atom * atom, struct prm * prm)
+static bool is_hydrogen(mol_atom * atom, struct prm *prm)
 {
 	uint_fast8_t i = 0;
 	while (isdigit((prm->atoms[atom->atom_typen].typemin[i])))
@@ -467,7 +467,7 @@ void mark_hbond_donors(struct atomgrp *ag, struct prm *prm)
 		mol_atom *hydrogen_atom;
 		int heavy_donor_base_count;
 
-		if (!is_hydrogen(&ag->atoms[atomi], prm)) 
+		if (!is_hydrogen(&ag->atoms[atomi], prm))
 			continue;
 
 		if (DEBUG_HBOND_DONOR)
@@ -506,7 +506,8 @@ void mark_hbond_donors(struct atomgrp *ag, struct prm *prm)
 			int donor_base_atomi;
 			mol_atom *donor_base_atom;
 
-			donor_base_atomi = bonded_atom_index(ag, donor_atomi, j);
+			donor_base_atomi =
+			    bonded_atom_index(ag, donor_atomi, j);
 			assert(donor_base_atomi < ag->natoms);
 			donor_base_atom = &(ag->atoms[donor_base_atomi]);
 
@@ -532,16 +533,13 @@ void mark_hbond_donors(struct atomgrp *ag, struct prm *prm)
 
 		if (DEBUG_HBOND_DONOR) {
 			printf("\t\tthe chosen one:\n");
-			printf("\t\tatom index: %d\n",
-			       heavy_donor_base_atomi);
+			printf("\t\tatom index: %d\n", heavy_donor_base_atomi);
 			printf("\t\t\tatom type name prefix: %s\n",
-			       prm->
-			       atoms[heavy_donor_base_atom->atom_typen].
-			       typemaj);
+			       prm->atoms[heavy_donor_base_atom->
+					  atom_typen].typemaj);
 			printf("\t\t\tatom type name suffix: %s\n",
-			       prm->
-			       atoms[heavy_donor_base_atom->atom_typen].
-			       typemaj);
+			       prm->atoms[heavy_donor_base_atom->
+					  atom_typen].typemaj);
 		}
 
 		if (DEBUG_HBOND_DONOR) {
@@ -838,9 +836,10 @@ void set_categorized_hbondeng(double *engcat, double bb_bb_sr, double bb_bb_lr,
 /* create a unit vector pointing from the hydrogen towards the donor */
 /* returns 0 on failure, 1 otherwise */
 
-static int create_donor_orientation_unit_vector(mol_atom * atoms, mol_atom * hydro,
-					 struct dvector *HDunit,
-					 FLOAT * invHDdis)
+static int create_donor_orientation_unit_vector(mol_atom * atoms,
+						mol_atom * hydro,
+						struct dvector *HDunit,
+						FLOAT * invHDdis)
 {
 	mol_atom *donor;
 	FLOAT HDdis;
@@ -862,7 +861,6 @@ static int create_donor_orientation_unit_vector(mol_atom * atoms, mol_atom * hyd
 		    ("Failed to normalize the hydrogen to donor vector!");
 		return 0;
 	}
-
 #ifdef USE_LONG_DOUBLE
 	HDdis = sqrtl(HDdis);
 #else
@@ -880,9 +878,10 @@ static int create_donor_orientation_unit_vector(mol_atom * atoms, mol_atom * hyd
 // To construct the unit vector from acceptor base to the acceptor atom:
 
 static int create_base_to_acceptor_unit_vector(int hbe_type, mol_atom * atoms,
-					mol_atom * acc, struct dvector *B,
-					struct dvector *BAunit,
-					FLOAT * invBAdis)
+					       mol_atom * acc,
+					       struct dvector *B,
+					       struct dvector *BAunit,
+					       FLOAT * invBAdis)
 {
 	mol_atom *base, *base2;
 	FLOAT BAdis;
@@ -902,20 +901,20 @@ static int create_base_to_acceptor_unit_vector(int hbe_type, mol_atom * atoms,
 
 	switch (hbe_type) {
 	case hbe_RINGSC:
-	case hbe_RINGB: // RING: B is the midpoint between base and base2
+	case hbe_RINGB:	// RING: B is the midpoint between base and base2
 		B->X = (base->X + base2->X) * 0.5;
 		B->Y = (base->Y + base2->Y) * 0.5;
 		B->Z = (base->Z + base2->Z) * 0.5;
 		break;
 
 	case hbe_SP3SC:
-	case hbe_SP3B: // SP3: B is base2
+	case hbe_SP3B:		// SP3: B is base2
 		B->X = base2->X;
 		B->Y = base2->Y;
 		B->Z = base2->Z;
 		break;
 
-	default: // SP2: B is base
+	default:		// SP2: B is base
 		B->X = base->X;
 		B->Y = base->Y;
 		B->Z = base->Z;
@@ -926,8 +925,7 @@ static int create_base_to_acceptor_unit_vector(int hbe_type, mol_atom * atoms,
 	BAunit->Y = acc->Y - B->Y;
 	BAunit->Z = acc->Z - B->Z;
 
-	BAdis =
-	    _mol_sq(BAunit->X) + _mol_sq(BAunit->Y) + _mol_sq(BAunit->Z);
+	BAdis = _mol_sq(BAunit->X) + _mol_sq(BAunit->Y) + _mol_sq(BAunit->Z);
 
 	if (BAdis <= 0) {
 		print_error("Failed to normalize the base to acceptor vector!");
@@ -953,20 +951,21 @@ static int hbe_is_BB_type(int hbe)
 }
 
 static int hbond_energy_computation(int hbe,
-			     FLOAT AHdis,
-			     FLOAT xD,
-			     FLOAT xH,
-			     FLOAT * energy,
-			     FLOAT * dE_dr, FLOAT * dE_dxD, FLOAT * dE_dxH)
+				    FLOAT AHdis,
+				    FLOAT xD,
+				    FLOAT xH,
+				    FLOAT * energy,
+				    FLOAT * dE_dr, FLOAT * dE_dxD,
+				    FLOAT * dE_dxH)
 {
 	FLOAT dAHdis = AHdis;
 	FLOAT dxD = xD;
 	FLOAT dxH = xH;
 
-	FLOAT FSr = 0.0, FLr = 0.0, FxD = 0.0, FxH = 0.0; // fading intervals values
-	FLOAT dFSr = 0.0, dFLr = 0.0, dFxD = 0.0, dFxH = 0.0; // fading intervals derivatives
-	FLOAT Pr = 0.0, PSxD = 0.0, PSxH = 0.0, PLxD = 0.0, PLxH = 0.0; // polynomials values
-	FLOAT dPr = 0.0, dPSxD = 0.0, dPSxH = 0.0, dPLxD = 0.0, dPLxH = 0.0; // polynomials derivatives
+	FLOAT FSr = 0.0, FLr = 0.0, FxD = 0.0, FxH = 0.0;	// fading intervals values
+	FLOAT dFSr = 0.0, dFLr = 0.0, dFxD = 0.0, dFxH = 0.0;	// fading intervals derivatives
+	FLOAT Pr = 0.0, PSxD = 0.0, PSxH = 0.0, PLxD = 0.0, PLxH = 0.0;	// polynomials values
+	FLOAT dPr = 0.0, dPSxD = 0.0, dPSxH = 0.0, dPLxD = 0.0, dPLxH = 0.0;	// polynomials derivatives
 
 	if (energy != NULL)
 		*energy = HB_ENG_MAX + 1.0f;
@@ -1101,14 +1100,14 @@ static int hbond_energy_computation(int hbe,
 	return 1;
 }
 
-static int water_mediated_hbond_compute_energy_and_gradient(int hbe, mol_atom * atoms_hydro, // atom group containing the hydrogen atom
-						     int hydro_id, // index of the hydrogen atom in atoms_hydro
-						     mol_atom * atoms_acc, // atom group containing the acceptor atom
-						     int acc_id, // index of the acceptor atom in atoms_acc
-						     mol_atom * atoms_wox, // atom group containing the water oxygen atom
-						     int wox_id, // index of the water oxygen atom in atoms_wox
-						     double *energy,
-						     int comp_grad)
+static int water_mediated_hbond_compute_energy_and_gradient(int hbe, mol_atom * atoms_hydro,	// atom group containing the hydrogen atom
+							    int hydro_id,	// index of the hydrogen atom in atoms_hydro
+							    mol_atom * atoms_acc,	// atom group containing the acceptor atom
+							    int acc_id,	// index of the acceptor atom in atoms_acc
+							    mol_atom * atoms_wox,	// atom group containing the water oxygen atom
+							    int wox_id,	// index of the water oxygen atom in atoms_wox
+							    double *energy,
+							    int comp_grad)
 {
 	struct dvector WHunit, HDunit, BAunit, AWunit, WDunit, B;
 	FLOAT invHDdis, invBAdis, invAWdis, invWHdis, d_wp;
@@ -1206,11 +1205,11 @@ static int water_mediated_hbond_compute_energy_and_gradient(int hbe, mol_atom * 
 	cosTht = -dot_product(&WHunit, &HDunit);
 
 	if ((cosPsi > 0.0) || (cosPsi < -0.939693))
-		return 0; // Psi (in degrees) is not in the allowed range [ 90, 160 ]
+		return 0;	// Psi (in degrees) is not in the allowed range [ 90, 160 ]
 	if ((cosOmg > 0.173648) || (cosOmg < -0.766044))
-		return 0; // Omega (in degrees) is not in the allowed range [ 80, 140 ]
+		return 0;	// Omega (in degrees) is not in the allowed range [ 80, 140 ]
 	if ((cosTht > -0.5) || (cosTht < -1.0))
-		return 0; // Theta (in degrees) is not in the allowed range [ 120, 180 ]
+		return 0;	// Theta (in degrees) is not in the allowed range [ 120, 180 ]
 
 	d_wp = (AWdis + WDdis) * 0.5;
 
@@ -1252,10 +1251,11 @@ static int water_mediated_hbond_compute_energy_and_gradient(int hbe, mol_atom * 
 }
 
 static int hbond_energy_and_gradient_computation(int hbe, mol_atom * atoms_hydro,	// atom group containing the hydrogen atom
-					  int hydro_id,	// index of the hydrogen atom in atoms_hydro
-					  mol_atom * atoms_acc,	// atom group containing the acceptor atom
-					  int acc_id,	// index of the acceptor atom in atoms_acc
-					  double *energy, int comp_grad, double weight)
+						 int hydro_id,	// index of the hydrogen atom in atoms_hydro
+						 mol_atom * atoms_acc,	// atom group containing the acceptor atom
+						 int acc_id,	// index of the acceptor atom in atoms_acc
+						 double *energy, int comp_grad,
+						 double weight)
 {
 	struct dvector AHunit, HDunit, BAunit, B;
 	FLOAT invAHdis, invHDdis, invBAdis;
@@ -1346,72 +1346,72 @@ static int hbond_energy_and_gradient_computation(int hbe, mol_atom * atoms_hydro
 
 	u = dE_dr * AHunit.X;
 	hydro->GX += weight * -u;
-	acc->GX   += weight * u;
+	acc->GX += weight * u;
 
 	u = dE_dr * AHunit.Y;
 	hydro->GY += weight * -u;
-	acc->GY   += weight * u;
+	acc->GY += weight * u;
 
 	u = dE_dr * AHunit.Z;
 	hydro->GZ += weight * -u;
-	acc->GZ   += weight * u;
+	acc->GZ += weight * u;
 
 	u = -dE_dxD * invAHdis * (xD * AHunit.X - HDunit.X);
 	v = -dE_dxD * invHDdis * (AHunit.X - xD * HDunit.X);
 	hydro->GX += weight * -(u + v);
-	acc->GX   += weight * u;
-	don->GX   += weight * v;
+	acc->GX += weight * u;
+	don->GX += weight * v;
 
 	u = -dE_dxD * invAHdis * (xD * AHunit.Y - HDunit.Y);
 	v = -dE_dxD * invHDdis * (AHunit.Y - xD * HDunit.Y);
 	hydro->GY += weight * -(u + v);
-	acc->GY   += weight * u;
-	don->GY   += weight * v;
+	acc->GY += weight * u;
+	don->GY += weight * v;
 
 	u = -dE_dxD * invAHdis * (xD * AHunit.Z - HDunit.Z);
 	v = -dE_dxD * invHDdis * (AHunit.Z - xD * HDunit.Z);
 	hydro->GZ += weight * -(u + v);
-	acc->GZ   += weight * u;
-	don->GZ   += weight * v;
+	acc->GZ += weight * u;
+	don->GZ += weight * v;
 
 	u = -dE_dxH * invAHdis * (BAunit.X - xH * AHunit.X);
 	v = -dE_dxH * invBAdis * (xH * BAunit.X - AHunit.X);
 	hydro->GX += weight * u;
-	acc->GX   += weight * -(u + v);
+	acc->GX += weight * -(u + v);
 
 	if ((hbe == hbe_RINGSC) || (hbe == hbe_RINGB)) {
-		base->GX  += weight * 0.5 * v;
+		base->GX += weight * 0.5 * v;
 		base2->GX += weight * 0.5 * v;
 	} else if ((hbe == hbe_SP3SC) || (hbe == hbe_SP3B))
 		base2->GX += weight * v;
 	else
-		base->GX  += weight * v;
+		base->GX += weight * v;
 
 	u = -dE_dxH * invAHdis * (BAunit.Y - xH * AHunit.Y);
 	v = -dE_dxH * invBAdis * (xH * BAunit.Y - AHunit.Y);
 	hydro->GY += weight * u;
-	acc->GY   += weight * -(u + v);
+	acc->GY += weight * -(u + v);
 
 	if ((hbe == hbe_RINGSC) || (hbe == hbe_RINGB)) {
-		base->GY  += weight * 0.5 * v;
+		base->GY += weight * 0.5 * v;
 		base2->GY += weight * 0.5 * v;
 	} else if ((hbe == hbe_SP3SC) || (hbe == hbe_SP3B))
 		base2->GY += weight * v;
 	else
-		base->GY  += weight * v;
+		base->GY += weight * v;
 
 	u = -dE_dxH * invAHdis * (BAunit.Z - xH * AHunit.Z);
 	v = -dE_dxH * invBAdis * (xH * BAunit.Z - AHunit.Z);
 	hydro->GZ += weight * u;
-	acc->GZ   += weight * -(u + v);
+	acc->GZ += weight * -(u + v);
 
 	if ((hbe == hbe_RINGSC) || (hbe == hbe_RINGB)) {
-		base->GZ  += weight * 0.5 * v;
+		base->GZ += weight * 0.5 * v;
 		base2->GZ += weight * 0.5 * v;
 	} else if ((hbe == hbe_SP3SC) || (hbe == hbe_SP3B))
 		base2->GZ += weight * v;
 	else
-		base->GZ  += weight * v;
+		base->GZ += weight * v;
 
 	return 1;
 }
@@ -1457,7 +1457,8 @@ static double get_pairwise_hbondeng(mol_atom * atoms_hydro, int hydro_id,
 	en = 0;
 
 	if (hbond_energy_and_gradient_computation
-	    (hbe, atoms_hydro, hydro_id, atoms_acc, acc_id, &en, comp_grad, 1.0)) {
+	    (hbe, atoms_hydro, hydro_id, atoms_acc, acc_id, &en, comp_grad,
+	     1.0)) {
 		if (engcat != NULL) {
 			enum HB_Weight_Type hbw = get_hbond_weight_type(hbe);
 			engcat[hbw] += en;
@@ -1471,7 +1472,8 @@ static double get_pairwise_hbondeng(mol_atom * atoms_hydro, int hydro_id,
 
 double get_pairwise_hbondeng_nblist(mol_atom * atoms_hydro, int hydro_id,
 				    mol_atom * atoms_acc, int acc_id,
-				    double *engcat, double rc2, int comp_grad, double weight)
+				    double *engcat, double rc2, int comp_grad,
+				    double weight)
 {
 	mol_atom *hydro = &(atoms_hydro[hydro_id]);
 	mol_atom *acc = &(atoms_acc[acc_id]);
@@ -1496,7 +1498,8 @@ double get_pairwise_hbondeng_nblist(mol_atom * atoms_hydro, int hydro_id,
 	en = 0;
 
 	if (hbond_energy_and_gradient_computation
-	    (hbe, atoms_hydro, hydro_id, atoms_acc, acc_id, &en, comp_grad, weight)) {
+	    (hbe, atoms_hydro, hydro_id, atoms_acc, acc_id, &en, comp_grad,
+	     weight)) {
 		if (engcat != NULL) {
 			enum HB_Weight_Type hbw = get_hbond_weight_type(hbe);
 			engcat[hbw] += en;
@@ -1570,9 +1573,8 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 			if (trans_mat != NULL)
 				transform_point(x, y, z, trans_mat, &x, &y, &z);	// defined in octree.h
 
-			d2 =
-			    min_pt2bx_dist2(snode->lx, snode->ly, snode->lz,
-					    snode->dim, x, y, z);
+			d2 = min_pt2bx_dist2(snode->lx, snode->ly, snode->lz,
+					     snode->dim, x, y, z);
 
 			if (rc2 < d2)
 				continue;
@@ -1586,8 +1588,7 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 					if ((j >= nf) && (aj <= ai))
 						continue;
 
-					atom_j =
-					    &(octree_static->atoms[aj]);
+					atom_j = &(octree_static->atoms[aj]);
 
 					if (!(atom_j->hprop & HBOND_ACCEPTOR))
 						continue;
@@ -1606,11 +1607,10 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 					if ((j >= nf) && (aj <= ai))
 						continue;
 
-					atom_j =
-					    &(octree_static->atoms[aj]);
+					atom_j = &(octree_static->atoms[aj]);
 
 					if (!(atom_j->hprop &
-					     DONATABLE_HYDROGEN))
+					      DONATABLE_HYDROGEN))
 						continue;
 
 					(*energy) += get_pairwise_hbondeng
@@ -1634,9 +1634,8 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 
 			x = atom_i->X, y = atom_i->Y, z = atom_i->Z;
 
-			d2 =
-			    min_pt2bx_dist2(mnode->lx, mnode->ly, mnode->lz,
-					    mnode->dim, x, y, z);
+			d2 = min_pt2bx_dist2(mnode->lx, mnode->ly, mnode->lz,
+					     mnode->dim, x, y, z);
 
 			if (rc2 < d2)
 				continue;
@@ -1650,8 +1649,7 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 					if ((i >= nf) && (aj >= ai))
 						continue;
 
-					atom_j =
-					    &(octree_moving->atoms[aj]);
+					atom_j = &(octree_moving->atoms[aj]);
 
 					if (!(atom_j->hprop & HBOND_ACCEPTOR))
 						continue;
@@ -1670,11 +1668,10 @@ void hbondeng_octree_single_mol(OCTREE_PARAMS * octpar, double *energy)
 					if ((i >= nf) && (aj >= ai))
 						continue;
 
-					atom_j =
-					    &(octree_moving->atoms[aj]);
+					atom_j = &(octree_moving->atoms[aj]);
 
 					if (!(atom_j->hprop &
-					     DONATABLE_HYDROGEN))
+					      DONATABLE_HYDROGEN))
 						continue;
 
 					(*energy) += get_pairwise_hbondeng
@@ -1718,7 +1715,8 @@ void hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, ai,
 								 ag->atoms, aj,
-								 NULL, rc2, 1, 1.0);
+								 NULL, rc2, 1,
+								 1.0);
 			} else {
 				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
 					continue;
@@ -1726,13 +1724,15 @@ void hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, aj,
 								 ag->atoms, ai,
-								 NULL, rc2, 1, 1.0);
+								 NULL, rc2, 1,
+								 1.0);
 			}
 		}
 	}
 }
 
-void hbondeng_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst, double weight)
+void hbondeng_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst,
+		       double weight)
 {
 	double rc = nblst->nbcof;
 	double rc2 = rc * rc;
@@ -1763,7 +1763,8 @@ void hbondeng_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst,
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, ai,
 								 ag->atoms, aj,
-								 NULL, rc2, 1, weight);
+								 NULL, rc2, 1,
+								 weight);
 			} else {
 				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
 					continue;
@@ -1771,13 +1772,15 @@ void hbondeng_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst,
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, aj,
 								 ag->atoms, ai,
-								 NULL, rc2, 1, weight);
+								 NULL, rc2, 1,
+								 weight);
 			}
 		}
 	}
 }
 
-void hbondeng_atom_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst)
+void hbondeng_atom_weighted(struct atomgrp *ag, double *energy,
+			    struct nblist *nblst)
 {
 	double rc = nblst->nbcof;
 	double rc2 = rc * rc;
@@ -1806,29 +1809,32 @@ void hbondeng_atom_weighted(struct atomgrp *ag, double *energy, struct nblist *n
 					continue;
 
 				double weight = atom_i->hbond_weight *
-				                atom_j->hbond_weight;
+				    atom_j->hbond_weight;
 
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, ai,
 								 ag->atoms, aj,
-								 NULL, rc2, 1, weight);
+								 NULL, rc2, 1,
+								 weight);
 			} else {
 				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
 					continue;
 
 				double weight = atom_i->hbond_weight *
-				                atom_j->hbond_weight;
+				    atom_j->hbond_weight;
 
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, aj,
 								 ag->atoms, ai,
-								 NULL, rc2, 1, weight);
+								 NULL, rc2, 1,
+								 weight);
 			}
 		}
 	}
 }
 
-void hbondeng_split(struct atomgrp *ag, double *energy, struct nblist *nblst, int atom_split, double weight)
+void hbondeng_split(struct atomgrp *ag, double *energy, struct nblist *nblst,
+		    int atom_split, double weight)
 {
 	double rc = nblst->nbcof;
 	double rc2 = rc * rc;
@@ -1851,8 +1857,8 @@ void hbondeng_split(struct atomgrp *ag, double *energy, struct nblist *nblst, in
 		for (j = 0; j < n2; j++) {
 			int aj = p[j];
 
-			if ( ((ai <  atom_split) && (aj <  atom_split)) ||
-			     ((ai >= atom_split) && (aj >= atom_split))) 
+			if (((ai < atom_split) && (aj < atom_split)) ||
+			    ((ai >= atom_split) && (aj >= atom_split)))
 				continue;
 
 			mol_atom *atom_j = &(ag->atoms[aj]);
@@ -1864,7 +1870,8 @@ void hbondeng_split(struct atomgrp *ag, double *energy, struct nblist *nblst, in
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, ai,
 								 ag->atoms, aj,
-								 NULL, rc2, 1, weight);
+								 NULL, rc2, 1,
+								 weight);
 			} else {
 				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
 					continue;
@@ -1872,13 +1879,16 @@ void hbondeng_split(struct atomgrp *ag, double *energy, struct nblist *nblst, in
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, aj,
 								 ag->atoms, ai,
-								 NULL, rc2, 1, weight);
+								 NULL, rc2, 1,
+								 weight);
 			}
 		}
 	}
 }
 
-void hbondeng_split_atom_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst, int atom_split, double weight)
+void hbondeng_split_atom_weighted(struct atomgrp *ag, double *energy,
+				  struct nblist *nblst, int atom_split,
+				  double weight)
 {
 	double rc = nblst->nbcof;
 	double rc2 = rc * rc;
@@ -1901,8 +1911,8 @@ void hbondeng_split_atom_weighted(struct atomgrp *ag, double *energy, struct nbl
 		for (j = 0; j < n2; j++) {
 			int aj = p[j];
 
-			if ( ((ai <  atom_split) && (aj <  atom_split)) ||
-			     ((ai >= atom_split) && (aj >= atom_split)))
+			if (((ai < atom_split) && (aj < atom_split)) ||
+			    ((ai >= atom_split) && (aj >= atom_split)))
 				continue;
 
 			mol_atom *atom_j = &(ag->atoms[aj]);
@@ -1912,23 +1922,25 @@ void hbondeng_split_atom_weighted(struct atomgrp *ag, double *energy, struct nbl
 					continue;
 
 				double weightl = weight * atom_i->hbond_weight *
-				                 atom_j->hbond_weight;
+				    atom_j->hbond_weight;
 
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, ai,
 								 ag->atoms, aj,
-								 NULL, rc2, 1, weightl);
+								 NULL, rc2, 1,
+								 weightl);
 			} else {
 				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
 					continue;
 
 				double weightl = weight * atom_i->hbond_weight *
-				                 atom_j->hbond_weight;
+				    atom_j->hbond_weight;
 
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, aj,
 								 ag->atoms, ai,
-								 NULL, rc2, 1, weightl);
+								 NULL, rc2, 1,
+								 weightl);
 			}
 		}
 	}
@@ -1963,14 +1975,16 @@ void hbondengcat(struct atomgrp *ag, double *energy, struct nblist *nblst)
 
 				get_pairwise_hbondeng_nblist(ag->atoms, ai,
 							     ag->atoms, aj,
-							     energy, rc2, 1, 1.0);
+							     energy, rc2, 1,
+							     1.0);
 			} else {
 				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
 					continue;
 
 				get_pairwise_hbondeng_nblist(ag->atoms, aj,
 							     ag->atoms, ai,
-							     energy, rc2, 1, 1.0);
+							     energy, rc2, 1,
+							     1.0);
 			}
 		}
 	}
@@ -2002,7 +2016,6 @@ void hbondeng_all(struct atomgrp *ag, double *energy, struct nblist *nblst)
 	int i;
 	double en[hbw_SC + 1];
 
-
 	(*energy) = 0;
 
 	for (i = 0; i < hbw_SC; i++)
@@ -2025,9 +2038,9 @@ void hbondeng_all(struct atomgrp *ag, double *energy, struct nblist *nblst)
 			enum HB_Weight_Type hbw;
 
 			if ((atom_i->comb_res_seq ==
-			     atom_j->
-			     comb_res_seq) /*( i == j ) */ ||hb_bonded(atom_i,
-								       atom_j))
+			     atom_j->comb_res_seq) /*( i == j ) */
+			    ||hb_bonded(atom_i,
+					atom_j))
 				continue;
 
 			if (!(atom_j->hprop & HBOND_ACCEPTOR))
@@ -2093,8 +2106,8 @@ void hbondeng_bbexc(struct atomgrp *ag, double *energy, struct nblist *nblst)
 			int hbe;
 			mol_atom *atom_j = &(ag->atoms[aj]);
 
-			if ((atom_i->comb_res_seq == atom_j->comb_res_seq) 
-			    ||hb_bonded(atom_i, atom_j))
+			if ((atom_i->comb_res_seq == atom_j->comb_res_seq)
+			    || hb_bonded(atom_i, atom_j))
 				continue;
 
 			if (!(atom_j->hprop & HBOND_ACCEPTOR))
@@ -2137,8 +2150,8 @@ void hbondeng_bbexc(struct atomgrp *ag, double *energy, struct nblist *nblst)
 
 			atom_j = &(ag->atoms[aj]);
 
-			if ((atom_i->comb_res_seq == atom_j-> comb_res_seq) 
-			    ||hb_bonded(atom_i, atom_j))
+			if ((atom_i->comb_res_seq == atom_j->comb_res_seq)
+			    || hb_bonded(atom_i, atom_j))
 				continue;
 
 			if (!(atom_j->hprop & HBOND_ACCEPTOR))
@@ -2247,16 +2260,9 @@ void water_mediated_hbondeng(struct atomgrp *ag, double *energy)
 				if (!(atom_j->hprop & HBOND_ACCEPTOR))
 					continue;
 
-				en =
-				    get_water_mediated_pairwise_hbondeng(ag->
-									 atoms,
-									 ai,
-									 ag->
-									 atoms,
-									 aj,
-									 ag->
-									 atoms,
-									 ak, 1);
+				en = get_water_mediated_pairwise_hbondeng
+				    (ag->atoms, ai, ag->atoms, aj, ag->atoms,
+				     ak, 1);
 
 				if (en >= 0)
 					continue;
@@ -2283,9 +2289,9 @@ static int residual_acceptor_valency(mol_atom * atom, struct prm *prm)
 {
 	switch (prm->atoms[atom->atom_typen].typemin[0]) {
 	case 'O':
-		return 2; //( 3 - atom->nbondis );
+		return 2;	//( 3 - atom->nbondis );
 	case 'N':
-		return 1; //( 4 - atom->nbondis );
+		return 1;	//( 4 - atom->nbondis );
 	default:
 		return 0;
 	}
@@ -2442,8 +2448,9 @@ int reinit_flow_struct(FLOW_STRUCT * flow_struct, int max_n_fedge, int max_n)
 	return 1;
 }
 
-static int dijkstra(int n, int *deg, int *adj, int *cap, int *fnet, FLOAT * cost,
-	     int *q, int *inq, int *par, FLOAT * pi, FLOAT * d, FLOAT inf)
+static int dijkstra(int n, int *deg, int *adj, int *cap, int *fnet,
+		    FLOAT * cost, int *q, int *inq, int *par, FLOAT * pi,
+		    FLOAT * d, FLOAT inf)
 {
 	int i;
 	int qs;
@@ -2652,14 +2659,16 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 
 				en = get_pairwise_hbondeng_nblist(ag->atoms, ai,
 								  ag->atoms, aj,
-								  NULL, rc2, 0, 1.0);
+								  NULL, rc2, 0,
+								  1.0);
 			} else {
 				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
 					continue;
 
 				en = get_pairwise_hbondeng_nblist(ag->atoms, aj,
 								  ag->atoms, ai,
-								  NULL, rc2, 0, 1.0);
+								  NULL, rc2, 0,
+								  1.0);
 			}
 
 			if (en < 0) {
@@ -2759,9 +2768,9 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 		if (!i || (flow_edge[i].acc_id > flow_map[k].id)) {
 			flow_map[++k].cap =
 			    residual_acceptor_valency(&
-						      (ag->
-						       atoms[flow_edge[i].
-							     acc_id]), ag->prm);
+						      (ag->atoms
+						       [flow_edge[i].acc_id]),
+						      ag->prm);
 			flow_map[k].id = flow_edge[i].acc_id;
 		}
 
@@ -2784,10 +2793,9 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 			ai = flow_map[i].id;
 			aj = flow_map[j].id;
 
-			en =
-			    get_pairwise_hbondeng_nblist(ag->atoms, ai,
-							 ag->atoms, aj, NULL,
-							 rc2, 1, 1.0);
+			en = get_pairwise_hbondeng_nblist(ag->atoms, ai,
+							  ag->atoms, aj, NULL,
+							  rc2, 1, 1.0);
 
 			(*energy) += en;
 		}
@@ -2840,10 +2848,9 @@ void flow_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)
 			if (f < 1)
 				continue;
 
-			en =
-			    get_pairwise_hbondeng_nblist(ag->atoms, ai,
-							 ag->atoms, aj, NULL,
-							 rc2, 1, 1.0);
+			en = get_pairwise_hbondeng_nblist(ag->atoms, ai,
+							  ag->atoms, aj, NULL,
+							  rc2, 1, 1.0);
 
 			(*energy) += en;
 		}
@@ -2883,7 +2890,8 @@ static void set_hbond_donor_bases(struct atomgrp *ag)
 			int donor_base_atomi;
 			mol_atom *donor_base_atom;
 
-			donor_base_atomi = bonded_atom_index(ag, donor_atomi, j);
+			donor_base_atomi =
+			    bonded_atom_index(ag, donor_atomi, j);
 			assert(donor_base_atomi < ag->natoms);
 			donor_base_atom = &(ag->atoms[donor_base_atomi]);
 
@@ -2893,10 +2901,10 @@ static void set_hbond_donor_bases(struct atomgrp *ag)
 			heavy_donor_base_count++;
 		}
 
-//		if (heavy_donor_base_count == 1)	// rotatable hydrogen
-//			hydrogen_atom->hprop |= ROTATABLE_HYDROGEN;
-//		else
-//			hydrogen_atom->hprop |= FIXED_HYDROGEN;
+//              if (heavy_donor_base_count == 1)        // rotatable hydrogen
+//                      hydrogen_atom->hprop |= ROTATABLE_HYDROGEN;
+//              else
+//                      hydrogen_atom->hprop |= FIXED_HYDROGEN;
 	}
 }
 
@@ -2929,7 +2937,7 @@ static void set_hbond_acceptor_bases(struct atomgrp *ag)
 				continue;
 
 			heavy_acceptor_base_count++;
-			if (heavy_acceptor_base_count == 1) // take the first one as the acceptor base
+			if (heavy_acceptor_base_count == 1)	// take the first one as the acceptor base
 				atom->base = acceptor_base_atomi;
 			else
 				atom->base2 = acceptor_base_atomi;

@@ -39,7 +39,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 		    struct atomgrp *ag)
 {
-        int i, j, i1, i2, i3, i4;
+	int i, j, i1, i2, i3, i4;
 	int nat, nb, nang, ndih0, ndih, nimp, ndon, nacc;
 	int *atoms, *bonds, *angs, *dihs, *imps, *dons, *acpts;
 	int first_atom, last_atom;
@@ -63,7 +63,7 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 	ag->nres = nres;
 	if (nres > 0) {
 		ag->iares = _mol_malloc((nres + 1) * sizeof(int));
-		ag->rot   = _mol_malloc(nres * sizeof(int));
+		ag->rot = _mol_malloc(nres * sizeof(int));
 		ag->idres = _mol_malloc(nres * sizeof(char *));
 		ag->res_type = _mol_malloc(nres * sizeof(enum mol_res_type));
 	}
@@ -74,26 +74,26 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 	ag->iares[nres] = nat;
 
 	//set rotamer numbers to zero i.e., native
-	for(i=0;i<ag->nres;i++){
-	  ag->rot[i] = 0;
+	for (i = 0; i < ag->nres; i++) {
+		ag->rot[i] = 0;
 	}
 
-	for(i=0;i<ag->nres;i++){
-	  first_atom   = ag->iares[i];
-	  if(i==ag->nres-1){
-	    last_atom  = ag->natoms;
-	  }else{
-	    last_atom  = ag->iares[i+1];
-	  }
+	for (i = 0; i < ag->nres; i++) {
+		first_atom = ag->iares[i];
+		if (i == ag->nres - 1) {
+			last_atom = ag->natoms;
+		} else {
+			last_atom = ag->iares[i + 1];
+		}
 
-	  for(j=first_atom;j<last_atom;j++){
-	    ag->atoms[j].res_num = i;
-	    
-	  }
+		for (j = first_atom; j < last_atom; j++) {
+			ag->atoms[j].res_num = i;
+
+		}
 	}
-	
+
 	for (i = 0; i < nres; i++) {
-		res_name = (ag->idres[i]) + 10; //location of residue name on psf line
+		res_name = (ag->idres[i]) + 10;	//location of residue name on psf line
 
 		if (strncmp(res_name, "ALA ", 4) == 0)
 			ag->res_type[i] = ALA;
@@ -181,7 +181,10 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 			ag->res_type[i] = UNK;
 	}
 
-	ag->atypenn = (struct atom_type_name_num*)_mol_malloc(300*sizeof(struct atom_type_name_num));
+	ag->atypenn =
+	    (struct atom_type_name_num *)_mol_malloc(300 *
+						     sizeof(struct
+							    atom_type_name_num));
 	read_atom_type_name_num(rtffile, &(ag->num_atom_types), ag->atypenn);
 
 	atnam = get_atnam_rtf(rtffile, atoms, nat);
@@ -202,15 +205,15 @@ void read_ff_charmm(const char *psffile, char *prmfile, char *rtffile,
 		ag->atoms[i].atom_ftypen = atoms[i];
 		ag->atoms[i].ftype_name = _mol_malloc(sizeof(char) * 5);
 
-		for(j = 0; j < 4; j++){
-		  if(atnam[4*i + j] == ' '){
-		    ag->atoms[i].ftype_name[j]='\0';
-		    break;
-		  }else{
-		    ag->atoms[i].ftype_name[j] = atnam[4*i + j];
-		  }
+		for (j = 0; j < 4; j++) {
+			if (atnam[4 * i + j] == ' ') {
+				ag->atoms[i].ftype_name[j] = '\0';
+				break;
+			} else {
+				ag->atoms[i].ftype_name[j] = atnam[4 * i + j];
+			}
 		}
-		ag->atoms[i].ftype_name[4]='\0';
+		ag->atoms[i].ftype_name[4] = '\0';
 
 		ag->atoms[i].name = atom_names[i];
 		if (acevolumes[i] < 0.0) {
@@ -473,35 +476,36 @@ char *get_atnam_rtf(char *rtffile, int *atoms, int nat)
 	return atnam;
 }
 
+void read_atom_type_name_num(char *rtffile, int *num_atom_types,
+			     struct atom_type_name_num *atypenn)
+{
 
-void read_atom_type_name_num(char *rtffile, int *num_atom_types, struct atom_type_name_num* atypenn){
+	char *buffer = _mol_malloc(sizeof(char) * linesize);
+	char tmp_name[64];
+	char ftype_name[64];
+	int i = 0;
+	int ftype_num;
 
-  char *buffer = _mol_malloc(sizeof(char) * linesize);
-  char tmp_name[64];
-  char ftype_name[64];
-  int i=0;
-  int ftype_num;
+	FILE *fp = myfopen(rtffile, "r");
 
-  FILE *fp = myfopen(rtffile, "r");  
+	while (fgets(buffer, linesize, fp) != NULL) {
 
-  while (fgets(buffer, linesize, fp) != NULL) {
+		if (buffer[0] == '!' || buffer[1] == '!')
+			continue;
 
-    if(buffer[0] == '!' || buffer[1] == '!')
-      continue;
+		if (strstr(buffer, "MASS") != NULL) {
+			sscanf(buffer, "%s %d %s", tmp_name, &ftype_num,
+			       ftype_name);
+			strcpy(atypenn[i].name, ftype_name);
+			atypenn[i].num = ftype_num;
+			i++;
+		}
+	}
+	myfclose(fp);
 
-    if (strstr(buffer, "MASS") != NULL) {
-      sscanf(buffer, "%s %d %s", tmp_name, &ftype_num, ftype_name);
-      strcpy(atypenn[i].name, ftype_name);
-      atypenn[i].num = ftype_num;
-      i++;
-    }
-  }
-  myfclose(fp);
-
-  *num_atom_types = i;
-  free(buffer);
+	*num_atom_types = i;
+	free(buffer);
 }
-
 
 int nthv(char **pptext, char *ptext, char ch, int n)
 {
@@ -585,9 +589,10 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			bonds = _mol_malloc(sizeof(int) * 2 * nb);
 			for (i = 0; i < nb; i++) {
 				int scanned = fscanf(fp, "%d %d", &bonds[2 * i],
-				       &bonds[2 * i + 1]);
+						     &bonds[2 * i + 1]);
 				if (scanned != 2) {
-					fprintf(stderr, "error reading bonds from psf\n");
+					fprintf(stderr,
+						"error reading bonds from psf\n");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -597,10 +602,12 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			nang = atoi(buffer);
 			angs = _mol_malloc(sizeof(int) * 3 * nang);
 			for (i = 0; i < nang; i++) {
-				int scanned = fscanf(fp, "%d %d %d", &angs[3 * i],
-				       &angs[3 * i + 1], &angs[3 * i + 2]);
+				int scanned =
+				    fscanf(fp, "%d %d %d", &angs[3 * i],
+					   &angs[3 * i + 1], &angs[3 * i + 2]);
 				if (scanned != 3) {
-					fprintf(stderr, "error reading angles from psf\n");
+					fprintf(stderr,
+						"error reading angles from psf\n");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -610,11 +617,13 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			ndih = atoi(buffer);
 			dihs = _mol_malloc(sizeof(int) * 4 * ndih);
 			for (i = 0; i < ndih; i++) {
-				int scanned = fscanf(fp, "%d %d %d %d", &dihs[4 * i],
-				       &dihs[4 * i + 1], &dihs[4 * i + 2],
-				       &dihs[4 * i + 3]);
+				int scanned =
+				    fscanf(fp, "%d %d %d %d", &dihs[4 * i],
+					   &dihs[4 * i + 1], &dihs[4 * i + 2],
+					   &dihs[4 * i + 3]);
 				if (scanned != 4) {
-					fprintf(stderr, "error reading dihedrals from psf\n");
+					fprintf(stderr,
+						"error reading dihedrals from psf\n");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -624,11 +633,13 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			nimp = atoi(buffer);
 			imps = _mol_malloc(sizeof(int) * 4 * nimp);
 			for (i = 0; i < nimp; i++) {
-				int scanned = fscanf(fp, "%d %d %d %d", &imps[4 * i],
-				       &imps[4 * i + 1], &imps[4 * i + 2],
-				       &imps[4 * i + 3]);
+				int scanned =
+				    fscanf(fp, "%d %d %d %d", &imps[4 * i],
+					   &imps[4 * i + 1], &imps[4 * i + 2],
+					   &imps[4 * i + 3]);
 				if (scanned != 4) {
-					fprintf(stderr, "error reading impropers from psf\n");
+					fprintf(stderr,
+						"error reading impropers from psf\n");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -639,9 +650,10 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			dons = _mol_malloc(sizeof(int) * 2 * ndon);
 			for (i = 0; i < ndon; i++) {
 				int scanned = fscanf(fp, "%d %d", &dons[2 * i],
-				       &dons[2 * i + 1]);
+						     &dons[2 * i + 1]);
 				if (scanned != 2) {
-					fprintf(stderr, "error reading donors from psf\n");
+					fprintf(stderr,
+						"error reading donors from psf\n");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -652,9 +664,10 @@ void read_psf(const char *psffile, int *o_nat, int **o_atoms,
 			acpts = _mol_malloc(sizeof(int) * 2 * nacc);
 			for (i = 0; i < nacc; i++) {
 				int scanned = fscanf(fp, "%d %d", &acpts[2 * i],
-				       &acpts[2 * i + 1]);
+						     &acpts[2 * i + 1]);
 				if (scanned != 2) {
-					fprintf(stderr, "error reading acceptors from psf\n");
+					fprintf(stderr,
+						"error reading acceptors from psf\n");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -1378,7 +1391,8 @@ void fixed_update_nolist(struct atomgrp *ag)
 			ag->activelist[ci++] = i;
 	}
 	ag->nactives = ci;
-	ag->activelist = (int *)_mol_realloc(ag->activelist, (ag->nactives) * sizeof(int));
+	ag->activelist =
+	    (int *)_mol_realloc(ag->activelist, (ag->nactives) * sizeof(int));
 // bonds
 	n = ag->nbonds;
 	m = 0;

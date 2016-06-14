@@ -31,26 +31,28 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include _MOL_INCLUDE_
 
 // approximately equal (for good epsilon try 5e-7)
-int appxeq (double d1, double d2, double epsilon)
+int appxeq(double d1, double d2, double epsilon)
 {
 	if (fabs(d1 - d2) <= (fabs(d1 + d2) * epsilon))
-		return 1; // d1 is approximately equal to d2
+		return 1;	// d1 is approximately equal to d2
 
 	return 0;
 }
+
 // definitely greater than (for good epsilon try 1e-6)
-int defgt (double d1, double d2, double epsilon)
+int defgt(double d1, double d2, double epsilon)
 {
 	if ((d1 - d2) > (fabs(d1) * epsilon))
-		return 1; // d1 is definitely greater than d2
+		return 1;	// d1 is definitely greater than d2
 
 	return 0;
 }
+
 // definitely less than (for good epsilon try 1e-6)
-int deflt (double d1, double d2, double epsilon)
+int deflt(double d1, double d2, double epsilon)
 {
 	if ((d2 - d1) > (fabs(d1) * epsilon))
-		return 1; // d1 is definitely less than d2
+		return 1;	// d1 is definitely less than d2
 
 	return 0;
 }
