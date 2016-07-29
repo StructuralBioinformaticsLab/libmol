@@ -35,34 +35,32 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 #include _MOL_INCLUDE_
 
-void
-mol_version (char** lineptr, size_t *n)
+void mol_version(char **lineptr, size_t * n)
 {
-    size_t length = strlen(_MOL_VERSION_);
+	size_t length = strlen(_MOL_VERSION_);
 
-    if (*lineptr == NULL) {
-        *lineptr = _mol_malloc( sizeof(char) * length );
-        *n = length;
-    } else if( *n < length) {
-        *lineptr = _mol_realloc(*lineptr, sizeof(char) * length );
-        *n = length;
-    }
+	if (*lineptr == NULL) {
+		*lineptr = _mol_malloc(sizeof(char) * length);
+		*n = length;
+	} else if (*n < length) {
+		*lineptr = _mol_realloc(*lineptr, sizeof(char) * length);
+		*n = length;
+	}
 
 	sprintf(*lineptr, "%s", _MOL_VERSION_);
 }
 
-void
-mol_git_version (char** lineptr, size_t *n)
+void mol_git_version(char **lineptr, size_t * n)
 {
-    size_t length = strlen(_GIT_VERSION_);
+	size_t length = strlen(_GIT_VERSION_);
 
-    if (*lineptr == NULL) {
-        *lineptr = _mol_malloc( sizeof(char) * length );
-        *n = length;
-    } else if( *n < length) {
-        *lineptr = _mol_realloc(*lineptr, sizeof(char) * length );
-        *n = length;
-    }
+	if (*lineptr == NULL) {
+		*lineptr = _mol_malloc(sizeof(char) * length);
+		*n = length;
+	} else if (*n < length) {
+		*lineptr = _mol_realloc(*lineptr, sizeof(char) * length);
+		*n = length;
+	}
 
 	sprintf(*lineptr, "%s", _GIT_VERSION_);
 }

@@ -31,51 +31,45 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include _MOL_INCLUDE_
 
 #ifndef _DEBUG_
-void*
-_mol_malloc (size_t size)
+void *_mol_malloc(size_t size)
 {
 	void *v;
-    if (size == 0) {
-        return NULL;
-    }
-	v = (void*) malloc (size);
-	if (v == NULL)
-	{
-		fprintf (stderr, "insufficient memory request for %zd\n", size);
-		exit (EXIT_FAILURE);
+	if (size == 0) {
+		return NULL;
+	}
+	v = (void *)malloc(size);
+	if (v == NULL) {
+		fprintf(stderr, "insufficient memory request for %zd\n", size);
+		exit(EXIT_FAILURE);
 	}
 	return v;
 }
 
-void*
-_mol_calloc (size_t nmemb, size_t size)
+void *_mol_calloc(size_t nmemb, size_t size)
 {
 	void *v;
-    if (nmemb == 0 || size == 0) {
-        return NULL;
-    }
-	v = (void*) calloc (nmemb, size);
-	if (v == NULL)
-	{
-		perror ("calloc"), exit (EXIT_FAILURE);
+	if (nmemb == 0 || size == 0) {
+		return NULL;
+	}
+	v = (void *)calloc(nmemb, size);
+	if (v == NULL) {
+		perror("calloc"), exit(EXIT_FAILURE);
 	}
 	return v;
 }
 
-void*
-_mol_realloc (void* ptr, size_t size)
+void *_mol_realloc(void *ptr, size_t size)
 {
 	void *v;
-	if (size < 1)
-	{
-		fprintf (stderr, "warning: _mol_realloc called with size 0, no realloc will occur\n");
+	if (size < 1) {
+		fprintf(stderr,
+			"warning: _mol_realloc called with size 0, no realloc will occur\n");
 		return ptr;
-		
+
 	}
-	v = (void*) realloc (ptr, size);
-	if (v == NULL && ptr != NULL)
-	{
-		perror ("realloc"), exit (EXIT_FAILURE);
+	v = (void *)realloc(ptr, size);
+	if (v == NULL && ptr != NULL) {
+		perror("realloc"), exit(EXIT_FAILURE);
 	}
 	return v;
 }

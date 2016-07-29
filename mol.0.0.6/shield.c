@@ -29,7 +29,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include _MOL_INCLUDE_
 
-void shield_aas (struct atomgrp** ags, struct prm* prm)
+void shield_aas(struct atomgrp **ags, struct prm *prm)
 {
 
 }

@@ -47,27 +47,27 @@ static double Norm(double v[3])
 
 static void Exp_To_Skew(double v[3], double Z[3][3])
 {
-	Z[0][0] =   0.0;
+	Z[0][0] = 0.0;
 	Z[0][1] = -v[2];
-	Z[0][2] =  v[1];
+	Z[0][2] = v[1];
 
-	Z[1][0] =  v[2];
-	Z[1][1] =   0.0;
+	Z[1][0] = v[2];
+	Z[1][1] = 0.0;
 	Z[1][2] = -v[0];
 
 	Z[2][0] = -v[1];
-	Z[2][1] =  v[0];
-	Z[2][2] =   0.0;
+	Z[2][1] = v[0];
+	Z[2][2] = 0.0;
 }
 
 static void Exp_To_Skew_Square(double v[3], double Z[3][3])
 {
-	Z[0][0] = -(v[2]*v[2] + v[1]*v[1]);
-	Z[1][1] = -(v[2]*v[2] + v[0]*v[0]);
-	Z[2][2] = -(v[1]*v[1] + v[0]*v[0]);
-	Z[1][0] = Z[0][1] = v[1]*v[0];
-	Z[2][0] = Z[0][2] = v[2]*v[0];
-	Z[2][1] = Z[1][2] = v[2]*v[1];
+	Z[0][0] = -(v[2] * v[2] + v[1] * v[1]);
+	Z[1][1] = -(v[2] * v[2] + v[0] * v[0]);
+	Z[2][2] = -(v[1] * v[1] + v[0] * v[0]);
+	Z[1][0] = Z[0][1] = v[1] * v[0];
+	Z[2][0] = Z[0][2] = v[2] * v[0];
+	Z[2][1] = Z[1][2] = v[2] * v[1];
 }
 
 //-------------------------------------------
@@ -291,8 +291,7 @@ static void Partial_R_Exp(double v[3], double dRdv[3][3][3])
 		}
 	}
 
-	else
-	{
+	else {
 		double dXdv[3][3][3];
 
 		Partial_Skew(dXdv);
@@ -328,7 +327,8 @@ static void Partial_R_Exp(double v[3], double dRdv[3][3][3])
 	}
 }
 
-static void Mult_Partial(double v[3], double pos[3], double grad[3], double result[3])
+static void Mult_Partial(double v[3], double pos[3], double grad[3],
+			 double result[3])
 {
 
 	double dvdR[3][3][3];
@@ -353,7 +353,8 @@ static void Mult_Partial(double v[3], double pos[3], double grad[3], double resu
 	}
 }
 
-void mol_rigidbody_grad(double *grad, struct atomgrp *ag, double *inp, double *origin)
+void mol_rigidbody_grad(double *grad, struct atomgrp *ag, double *inp,
+			double *origin)
 {
 	memset(grad, 0, 6 * sizeof(double));
 
@@ -385,11 +386,11 @@ void mol_rigidbody_grad(double *grad, struct atomgrp *ag, double *inp, double *o
 //move the ligand atoms according to the given transformation 
 //change has 6 members, the first 3 is the exponential map for the rotation and the other is for the translation
 
-void rigidbody2ag(double *change, struct atomgrp *ag, struct rigidbody *rigidbody)
+void rigidbody2ag(double *change, struct atomgrp *ag,
+		  struct rigidbody *rigidbody)
 {
 	double rotate[3][3];
 	Exp_To_R(change, rotate);
-
 
 	for (int j = 0; j < ag->nactives; j++) {
 		double pos[3];
@@ -417,7 +418,7 @@ void rigidbody2ag(double *change, struct atomgrp *ag, struct rigidbody *rigidbod
 	}
 }
 
-void ag2rigidbody( struct rigidbody *rigidbody, struct atomgrp *ag)
+void ag2rigidbody(struct rigidbody *rigidbody, struct atomgrp *ag)
 {
 	double X, Y, Z;
 	X = Y = Z = 0.0;
@@ -436,8 +437,8 @@ void ag2rigidbody( struct rigidbody *rigidbody, struct atomgrp *ag)
 
 	for (int j = 0; j < ag->nactives; j++) {
 		int i = ag->activelist[j];
-		rigidbody->origin[(3*j)+0] = ag->atoms[i].X - X;
-		rigidbody->origin[(3*j)+1] = ag->atoms[i].Y - Y;
-		rigidbody->origin[(3*j)+2] = ag->atoms[i].Z - Z;
+		rigidbody->origin[(3 * j) + 0] = ag->atoms[i].X - X;
+		rigidbody->origin[(3 * j) + 1] = ag->atoms[i].Y - Y;
+		rigidbody->origin[(3 * j) + 2] = ag->atoms[i].Z - Z;
 	}
 }

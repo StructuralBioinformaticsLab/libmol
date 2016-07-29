@@ -69,6 +69,7 @@ LIB_OBJS = mol.$(MOL_VERSION)/mem.o \
 		   mol.$(MOL_VERSION)/energy.o \
                    mol.$(MOL_VERSION)/benergy.o \
                    mol.$(MOL_VERSION)/hbond.o \
+                   mol.$(MOL_VERSION)/hbond_probev2.o \
                    mol.$(MOL_VERSION)/nbenergy.o \
 		   mol.$(MOL_VERSION)/minimize.o   \
 		   mol.$(MOL_VERSION)/compare.o \
@@ -104,13 +105,14 @@ LIB_HEADERS = mol.$(MOL_VERSION)/mem.h \
 			  mol.$(MOL_VERSION)/sasa.h \
 			  mol.$(MOL_VERSION)/potential.h \
 			  mol.$(MOL_VERSION)/energy.h \
-                          mol.$(MOL_VERSION)/benergy.h \
-                          mol.$(MOL_VERSION)/hbond.h \
-                          mol.$(MOL_VERSION)/nbenergy.h \
+			mol.$(MOL_VERSION)/benergy.h \
+			mol.$(MOL_VERSION)/hbond.h \
+			mol.$(MOL_VERSION)/hbond_probev2.h \
+			mol.$(MOL_VERSION)/nbenergy.h \
 			  mol.$(MOL_VERSION)/minimize.h \
 			  mol.$(MOL_VERSION)/compare.h \
 			  mol.$(MOL_VERSION)/subag.h \
-		    mol.$(MOL_VERSION)/lbfgs.h \
+			mol.$(MOL_VERSION)/lbfgs.h \
 			  mol.$(MOL_VERSION)/version.h \
 			  mol.$(MOL_VERSION)/mol2.h \
 			  mol.$(MOL_VERSION)/phys.h \
@@ -137,6 +139,9 @@ endif
 $(LIB_FILE): $(LIB_OBJS)
 	$(AR) rc $(LIB_FILE) $(LIB_OBJS)
 	$(RANLIB) $(LIB_FILE)
+
+mol.$(MOL_VERSION)/hbond_probev2.c:
+	gperf --output-file=mol.$(MOL_VERSION)/hbond_probev2.c -m 20 mol.$(MOL_VERSION)/hbond_probev2.gperf
 
 # set version.c to be a phony target
 .PHONY: mol.$(MOL_VERSION)/version.c

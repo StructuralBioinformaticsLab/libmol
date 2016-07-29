@@ -31,12 +31,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include _MOL_INCLUDE_
 
-
-void
-mol_bond_copy (mol_bond* bsrc, mol_bond* bdst)
+void mol_bond_copy(mol_bond * bsrc, mol_bond * bdst)
 {
-	assert (bsrc != NULL);
-	assert (bdst != NULL);
+	assert(bsrc != NULL);
+	assert(bdst != NULL);
 
 	bdst->ai = bsrc->ai;
 	bdst->aj = bsrc->aj;

@@ -28,14 +28,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <math.h>
 
-
 /* This is based on Lone-Pair Directionality in Hydrogen Bond Potential Functions
    by Vedani and Dunitz
    J. Am. Chem. Soc. 1985, 107, 7653-7658
    See Tables I, II, and footnote 14
 */
 
-static double mol_yeti_pairwise_hbondeng(struct atomgrp *ag, int donor_h, int acceptor, double rc2)
+static double mol_yeti_pairwise_hbondeng(struct atomgrp *ag, int donor_h,
+					 int acceptor, double rc2)
 {
 	mol_atom *hydro = &(ag->atoms[donor_h]);
 	mol_atom *acc = &(ag->atoms[acceptor]);
@@ -49,7 +49,6 @@ static double mol_yeti_pairwise_hbondeng(struct atomgrp *ag, int donor_h, int ac
 	if (d2 > rc2)
 		return 0;
 
-	
 	double d_h_a_component;
 	double h_a_aa_component;
 	double displacement_component = 1.0;
@@ -57,20 +56,19 @@ static double mol_yeti_pairwise_hbondeng(struct atomgrp *ag, int donor_h, int ac
 	/* calculate j-i coefficients */
 	double A;
 	double C;
-	
-	/*
-	 for this case, we do i=12, j= 10, based on yeti paper
-	 (A/r^i - C/r^j)
-	 general form:
-	 A = (j/(j-i)) * E_0 * (r_0^i)
-	 C = (i/(j-i)) * E_0 * (r_0^j)
 
-	 In this case:
+	/*
+	   for this case, we do i=12, j= 10, based on yeti paper
+	   (A/r^i - C/r^j)
+	   general form:
+	   A = (j/(j-i)) * E_0 * (r_0^i)
+	   C = (i/(j-i)) * E_0 * (r_0^j)
+
+	   In this case:
 	   A = -5 * E_0 * (r_0^i)
 	   C = -6 * E_0 * (r_0^j)
-	*/
+	 */
 
-	
 }
 
 void mol_yeti_hbondeng(struct atomgrp *ag, double *energy, struct nblist *nblst)

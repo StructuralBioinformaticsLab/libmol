@@ -18,3 +18,10 @@
 
 # build directory
 build
+
+#gperfed files
+mol.0.0.6/hbond_probev2.c
+
+#python and text
+*.py
+*.txt

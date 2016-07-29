@@ -31,7 +31,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include _MOL_INCLUDE_
 
 void get_detransform(const struct atomgrp *ag, const int residue_index,
-		     struct mol_matrix3f *rot_to_bb, struct mol_vector3f *trans_to_bb)
+		     struct mol_matrix3f *rot_to_bb,
+		     struct mol_vector3f *trans_to_bb)
 {
 	struct mol_vector3f e1, e2, e3;
 	float d;
