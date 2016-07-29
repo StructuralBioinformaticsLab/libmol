@@ -229,8 +229,10 @@ void full_free_atomgrp(struct atomgrp *ag)
 	if (ag->nimpact > 0)
 		free(ag->impact);	// free active improper pointers
 	free(ag->imps);		// free impropers
-	for (i = 0; i < ag->nres; i++)
-		free(ag->idres[i]);	//free residue names
+	if (ag->idres != NULL) {
+		for (i = 0; i < ag->nres; i++)
+			free(ag->idres[i]);	//free residue names
+	}
 	free(ag->idres);	//free pointers to residue names
 	free(ag->iares);	//free array of first atom in residues
 	free(ag->rot);
@@ -439,7 +441,7 @@ struct atomgrp *copy_atomgrp(const struct atomgrp *srcag)
 	destag->atoms =
 	    (struct atom *)_mol_calloc(destag->natoms, sizeof(struct atom));
 	for (atomn = 0; atomn < destag->natoms; atomn++) {
-		copy_atom(&srcag->atoms[atomn], &destag->atoms[atomn]);
+		copy_atom(&(srcag->atoms[atomn]), &(destag->atoms[atomn]));
 	}
 	return destag;
 }

@@ -194,9 +194,13 @@ void copy_atom(struct atom *src, struct atom *dest)
 	dest->Z = src->Z;
 	if (src->name != NULL) {
 		dest->name = strdup(src->name);
+	} else {
+		dest->name = NULL;
 	}
 	if (src->residue_name != NULL) {
 		dest->residue_name = strdup(src->residue_name);
+	} else {
+		dest->residue_name = NULL;
 	}
 
 	/*
