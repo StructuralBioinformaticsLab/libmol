@@ -69,6 +69,9 @@ struct atomgrp *read_json_ag(const char *json_file)
 	char *prev_segment = _mol_calloc(1, sizeof(char));
 	char *prev_residue = _mol_calloc(1, sizeof(char));
 	int prev_residue_seq = -107;
+	ag->nres = 0;
+	int alloc_res = 250;
+	ag->iares = _mol_malloc(alloc_res*sizeof(int));
 	for (size_t i = 0; i < natoms; i++) {
 		json_t *atom = json_array_get(atoms, i);
 		if (!json_is_object(atom)) {
@@ -83,6 +86,7 @@ struct atomgrp *read_json_ag(const char *json_file)
 		json_t *yeti_type, *sybyl_type;
 		json_t *backbone, *hb_acceptor, *hb_donor, *hb_weight;
 		json_t *segment, *residue;
+
 
 		segment = json_object_get(atom, "segment");
 		residue = json_object_get(atom, "residue");
@@ -118,7 +122,15 @@ struct atomgrp *read_json_ag(const char *json_file)
 				}
 				free(prev_residue);
 				prev_residue = strdup(cur_residue);
+
+				if (ag->nres +1 == alloc_res) {
+					alloc_res *= 2;
+					ag->iares = _mol_realloc(ag->iares, alloc_res * i);
+				}
+				ag->iares[ag->nres] = i;
+				ag->nres++;
 			}
+
 
 			ag->atoms[i].comb_res_seq = prev_residue_seq;
 		} else {
@@ -356,6 +368,8 @@ struct atomgrp *read_json_ag(const char *json_file)
 		ag->atoms[i].base = -1;
 		ag->atoms[i].base2 = -1;
 	}
+	ag->iares[ag->nres] = ag->natoms;
+	ag->iares = _mol_realloc(ag->iares, (ag->nres+1) * sizeof(int));
 	free(prev_segment);
 	free(prev_residue);
 
