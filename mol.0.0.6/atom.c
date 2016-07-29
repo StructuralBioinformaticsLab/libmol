@@ -114,7 +114,9 @@ void mol_atom_copy(mol_atom * asrc, mol_atom * adst)
 void free_atom(struct atom *atm)
 {
 	free(atm->name);
-	free(atm->residue_name);
+	if (atm->residue_name != NULL) {
+		free(atm->residue_name);
+	}
 	free(atm->ftype_name);
 	//free(atm->element);
 	free(atm->bonds);
@@ -140,7 +142,11 @@ void fullcopy_atom(struct atom *src, struct atom *dest)
 	dest->attl = src->attl;
 	dest->mask = src->mask;
 	dest->name = strdup(src->name);
-	dest->residue_name = strdup(src->residue_name);
+	if (src->residue_name != NULL) {
+		dest->residue_name = strdup(src->residue_name);
+	} else {
+		dest->residue_name = NULL;
+	}
 
 	dest->X = src->X;
 	dest->Y = src->Y;

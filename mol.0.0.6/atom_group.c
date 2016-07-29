@@ -361,8 +361,10 @@ struct atomgrp *fullcopy_atomgrp(struct atomgrp *srcag)
 	for (i = 0; i < destag->natoms; i++) {
 //              struct atom local_atom = destag->atoms[i];
 		destag->atoms[i].name = strdup(srcag->atoms[i].name);
-		destag->atoms[i].residue_name =
-		    strdup(srcag->atoms[i].residue_name);
+		if (srcag->atoms[i].residue_name != NULL) {
+			destag->atoms[i].residue_name =
+			    strdup(srcag->atoms[i].residue_name);
+		}
 		destag->atoms[i].ftype_name =
 		    strdup(srcag->atoms[i].ftype_name);
 
@@ -820,7 +822,9 @@ struct atomgrp *join_rec_lig_ff(struct atomgrp *rec, struct atomgrp *lig)
 	//point to atoms to correct bonds, angs, tors, imps
 	for (i = 0; i < rec->natoms; i++) {
 		ag->atoms[i].name = strdup(rec->atoms[i].name);
-		ag->atoms[i].residue_name = strdup(rec->atoms[i].residue_name);
+		if (rec->atoms[i].residue_name != NULL) {
+			ag->atoms[i].residue_name = strdup(rec->atoms[i].residue_name);
+		}
 		ag->atoms[i].ftype_name = strdup(rec->atoms[i].ftype_name);
 
 		ag->atoms[i].bonds =
@@ -922,8 +926,10 @@ struct atomgrp *join_rec_lig_ff(struct atomgrp *rec, struct atomgrp *lig)
 //              struct atom local_atom = ag->atoms[i];
 		ag->atoms[i].atom_ftypen += rec->num_atom_types;
 		ag->atoms[i].name = strdup(lig->atoms[i - (rec->natoms)].name);
-		ag->atoms[i].residue_name =
-		    strdup(lig->atoms[i - (rec->natoms)].residue_name);
+		if (lig->atoms[i - (rec->natoms)].residue_name != NULL) {
+			ag->atoms[i].residue_name =
+			    strdup(lig->atoms[i - (rec->natoms)].residue_name);
+		}
 		ag->atoms[i].ftype_name =
 		    strdup(lig->atoms[i - (rec->natoms)].ftype_name);
 
