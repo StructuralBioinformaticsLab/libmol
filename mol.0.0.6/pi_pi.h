@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013, Acpharis Inc
+Copyright (c) 2016 Acpharis
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -25,27 +25,23 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef _MOL_VECTOR_H_
-#define _MOL_VECTOR_H_
+#ifndef _MOL_PIPI_H_
+#define _MOL_PIPI_H_
 
-struct mol_vector3f {
-	float X;
-	float Y;
-	float Z;
+struct pi_pi_pseudoatom {
+	int natoms;
+	struct mol_vector3 center;
+	int *atom_indices;
 };
 
-struct mol_vector3 {
-	double X;
-	double Y;
-	double Z;
+struct pi_pi_setup {
+	int npseudoatoms;
+	struct pi_pi_pseudoatom * pseudoatoms;
 };
 
-struct mol_vector3l {
-	long double X;
-	long double Y;
-	long double Z;
-};
-
-void print_mol_vector3f (struct mol_vector3f* t);
+void add_residue_pseudoatoms(struct pi_pi_setup * pps, const struct atomgrp *ag);
+void add_probe_pseudoatoms(struct pi_pi_setup * pps, const int atom_offset, const char *json_file);
+void pi_pi_eng(struct atomgrp *ag, double *energy, struct pi_pi_setup *pps_rec,
+		struct pi_pi_setup *pps_lig, double weight);
 
 #endif

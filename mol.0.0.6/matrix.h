@@ -126,4 +126,6 @@ void matrix2df_log (struct matrix2df* A, struct matrix2df* B);
 float matrix2df_element_sum (struct matrix2df* A);
 void matrix2df_scalar_mult (struct matrix2df* A, float val, struct matrix2df* B);
 
+void print_mol_matrix3f (struct mol_matrix3f* rmatrix);
+
 #endif

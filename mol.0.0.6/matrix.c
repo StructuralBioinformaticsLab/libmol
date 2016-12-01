@@ -497,3 +497,23 @@ void matrix2df_scalar_mult(struct matrix2df *A, float val, struct matrix2df *B)
 		}
 	}
 }
+
+void print_mol_matrix3f (struct mol_matrix3f* rmatrix)
+{
+	printf ("rmatrix:");
+	printf ("%8.4f\t%8.4f\t%8.4f\t%8.4f\t%8.4f\t%8.4f\t%8.4f\t%8.4f\t%8.4f\n",
+				rmatrix->m11,
+				rmatrix->m12,
+				rmatrix->m13,
+				rmatrix->m21,
+				rmatrix->m22,
+				rmatrix->m23,
+				rmatrix->m31,
+				rmatrix->m32,
+				rmatrix->m33);
+}
+
+void print_mol_vector3f (struct mol_vector3f* t)
+{
+	printf ("tvector: %.4f, %.4f, %.4f\n", t->X, t->Y, t->Z);
+}

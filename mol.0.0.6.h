@@ -87,5 +87,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "mol.0.0.6/sdf.h"
 #include "mol.0.0.6/json.h"
 #include "mol.0.0.6/yeti.h"
+#include "mol.0.0.6/pi_pi.h"
 #include "mol.0.0.6/rigid_body.h"
 #endif

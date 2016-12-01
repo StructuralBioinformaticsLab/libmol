@@ -83,6 +83,7 @@ LIB_OBJS = mol.$(MOL_VERSION)/mem.o \
 		   mol.$(MOL_VERSION)/gbsa.o \
 		   mol.$(MOL_VERSION)/sdf.o \
 		   mol.$(MOL_VERSION)/json.o \
+		   mol.$(MOL_VERSION)/pi_pi.o \
 		   mol.$(MOL_VERSION)/rigid_body.o \
 
 # library header files
@@ -124,6 +125,7 @@ LIB_HEADERS = mol.$(MOL_VERSION)/mem.h \
 			  mol.$(MOL_VERSION)/json.h \
 			  mol.$(MOL_VERSION)/enums.h \
 			  mol.$(MOL_VERSION)/yeti.h \
+			  mol.$(MOL_VERSION)/pi_pi.h \
 			  mol.$(MOL_VERSION)/rigid_body.h \
 
 # compiler flags
