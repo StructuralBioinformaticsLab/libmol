@@ -1306,30 +1306,53 @@ urea_O4_TYR_HH, 6.79
 #include _MOL_INCLUDE_
 
 
-static double get_weight(mol_atom *atom1, mol_atom* atom2)
+static double get_weight(mol_atom *atoms, mol_atom *hydro, mol_atom *acc)
 {
+	int hbe =  get_hbe_type(atoms, hydro, acc);
+
+	double  scaling = 1.0;
+	switch (hbe) {
+	case hbe_BB:
+	case hbe_BBTURN:
+	case hbe_BBHELIX:
+	case hbe_BBOTHER:
+		scaling = 1.715491;
+		break;
+	case hbe_BSC:
+	case hbe_SP2B:
+	case hbe_SP2SC:
+		scaling = 1.620014;
+		break;
+	case hbe_SP3B:
+	case hbe_RINGB:
+	case hbe_SP3SC:
+	case hbe_RINGSC:
+		scaling = 1.598616;
+		break;
+	}
+
 	char key[MAX_WORD_LENGTH+1];
 
-	snprintf(key, MAX_WORD_LENGTH+1, "%s_%s_%s_%s", atom2->residue_name, atom2->name,
-							atom1->residue_name, atom1->name);
+	snprintf(key, MAX_WORD_LENGTH+1, "%s_%s_%s_%s", acc->residue_name, acc->name,
+							hydro->residue_name, hydro->name);
 	
 	const struct mol_hbond_strength *strength =
 	    in_word_set(key, strlen(key));
 
 	if (strength != NULL) {
-		return strength->strength;
+		return strength->strength/scaling;
 	}
 
-	snprintf(key, MAX_WORD_LENGTH+1, "%s_%s_%s_%s", atom1->residue_name, atom1->name,
-							atom2->residue_name, atom2->name);
+	snprintf(key, MAX_WORD_LENGTH+1, "%s_%s_%s_%s", hydro->residue_name, hydro->name,
+							acc->residue_name, acc->name);
 	strength =
 	    in_word_set(key, strlen(key));
 
 	if (strength != NULL) {
-		return strength->strength;
+		return strength->strength/scaling;
 	}
 
-	return 1.0;
+	return 1.0/scaling;
 }
 
 void hbondeng_probe_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst)
@@ -1360,7 +1383,7 @@ void hbondeng_probe_weighted(struct atomgrp *ag, double *energy, struct nblist *
 				if (!(atom_j->hprop & HBOND_ACCEPTOR))
 					continue;
 
-				double weight = get_weight(atom_i, atom_j);
+				double weight = get_weight(ag->atoms, atom_i, atom_j);
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, ai,
 								 ag->atoms, aj,
@@ -1369,7 +1392,7 @@ void hbondeng_probe_weighted(struct atomgrp *ag, double *energy, struct nblist *
 				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
 					continue;
 
-				double weight = get_weight(atom_i, atom_j);
+				double weight = get_weight(ag->atoms, atom_j, atom_i);
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, aj,
 								 ag->atoms, ai,
@@ -1412,7 +1435,7 @@ void hbondeng_split_probe_weighted(struct atomgrp *ag, double *energy, struct nb
 				if (!(atom_j->hprop & HBOND_ACCEPTOR))
 					continue;
 
-				double weight = get_weight(atom_i, atom_j);
+				double weight = get_weight(ag->atoms, atom_i, atom_j);
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, ai,
 								 ag->atoms, aj,
@@ -1421,7 +1444,7 @@ void hbondeng_split_probe_weighted(struct atomgrp *ag, double *energy, struct nb
 				if (!(atom_j->hprop & DONATABLE_HYDROGEN))
 					continue;
 
-				double weight = get_weight(atom_i, atom_j);
+				double weight = get_weight(ag->atoms, atom_j, atom_i);
 				(*energy) +=
 				    get_pairwise_hbondeng_nblist(ag->atoms, aj,
 								 ag->atoms, ai,

@@ -165,4 +165,6 @@ double get_pairwise_hbondeng_nblist( mol_atom *atoms_hydro, int hydro_id, mol_at
 
 void mol_set_hbond_bases(struct atomgrp *ag);
 
+int get_hbe_type(mol_atom * atoms, mol_atom * hydro, mol_atom * acc);
+
 #endif

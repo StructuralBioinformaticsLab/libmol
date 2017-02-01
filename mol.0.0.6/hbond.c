@@ -746,7 +746,7 @@ static int get_acceptor_chem_type(mol_atom * acc)
 	return hbacc_NO;
 }
 
-static int get_hbe_type(mol_atom * atoms, mol_atom * hydro, mol_atom * acc)
+int get_hbe_type(mol_atom * atoms, mol_atom * hydro, mol_atom * acc)
 {
 	mol_atom *don;
 
@@ -968,7 +968,7 @@ static int hbond_energy_computation(int hbe,
 	FLOAT dPr = 0.0, dPSxD = 0.0, dPSxH = 0.0, dPLxD = 0.0, dPLxH = 0.0;	// polynomials derivatives
 
 	if (energy != NULL)
-		*energy = HB_ENG_MAX + 1.0f;
+		*energy = HB_ENG_MAX + 1.0;
 	if (dE_dr != NULL)
 		*dE_dr = 0.0;
 	if (dE_dxD != NULL)
@@ -1126,7 +1126,7 @@ static int water_mediated_hbond_compute_energy_and_gradient(int hbe, mol_atom * 
 	FLOAT u;
 
 	if (energy != NULL)
-		*energy = HB_ENG_MAX + 1.0f;
+		*energy = HB_ENG_MAX + 1.0;
 
 	if (!create_donor_orientation_unit_vector
 	    (atoms_hydro, hydro, &HDunit, &invHDdis))
@@ -2937,10 +2937,19 @@ static void set_hbond_acceptor_bases(struct atomgrp *ag)
 				continue;
 
 			heavy_acceptor_base_count++;
-			if (heavy_acceptor_base_count == 1)	// take the first one as the acceptor base
+			if (heavy_acceptor_base_count == 1) { // take the first one as the acceptor base
 				atom->base = acceptor_base_atomi;
-			else
+				for (int k = 0; k < acceptor_base_atom->nbonds; k++) {
+					int acceptor_base2_atomi = bonded_atom_index(ag, acceptor_base_atomi, k);
+					assert(acceptor_base2_atomi < ag->natoms);
+					if (acceptor_base2_atomi != i) {
+						atom->base2 = acceptor_base2_atomi;
+						break;
+					}
+				}
+			} else {
 				atom->base2 = acceptor_base_atomi;
+			}
 		}
 	}
 }
