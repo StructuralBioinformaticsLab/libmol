@@ -917,6 +917,8 @@ struct atomgrp *join_rec_lig_ff(struct atomgrp *rec, struct atomgrp *lig)
 		ag->imps[i].a3 = newlig_atoms + a3_offset;
 	}
 
+	int max_rec_res_seq = rec->atoms[rec->natoms-1].comb_res_seq;
+
 	//point to atoms to correct bonds, angs, tors, imps
 	struct atombond *newlig_bonds = ag->bonds + rec->nbonds;
 	struct atomangle *newlig_angs = ag->angs + rec->nangs;
@@ -924,6 +926,7 @@ struct atomgrp *join_rec_lig_ff(struct atomgrp *rec, struct atomgrp *lig)
 	struct atomimproper *newlig_imps = ag->imps + rec->nimps;
 	for (i = rec->natoms; i < ag->natoms; i++) {
 //              struct atom local_atom = ag->atoms[i];
+		ag->atoms[i].comb_res_seq += 100 + max_rec_res_seq;
 		ag->atoms[i].atom_ftypen += rec->num_atom_types;
 		ag->atoms[i].name = strdup(lig->atoms[i - (rec->natoms)].name);
 		if (lig->atoms[i - (rec->natoms)].residue_name != NULL) {
