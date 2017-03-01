@@ -193,6 +193,7 @@ struct atomgrp* fullcopy_atomgrp (struct atomgrp* srcag);
   extract all atoms of type and return them in atomgrp
 */
 struct atomgrp* extract_type (struct atomgrp* ag, const char* type, struct prm* prm);
+struct atomgrp* extract_type_prefix (struct atomgrp* ag, const char* type, struct prm* prm);
 
 /**
   remove all atoms of type and return the remaining atoms in atomgrp
@@ -200,6 +201,7 @@ struct atomgrp* extract_type (struct atomgrp* ag, const char* type, struct prm* 
 struct atomgrp* rm_type (struct atomgrp* ag, const char* type, struct prm* prm);
 
 struct atomgrp* exrm_type (struct atomgrp* ag, const char* type, struct prm* prm, int direction);
+struct atomgrp* exrm_type_prefix (struct atomgrp* ag, const char* type, struct prm* prm, int direction);
 
 /**
   typemaj extraction and removal

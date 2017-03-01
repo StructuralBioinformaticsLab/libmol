@@ -475,6 +475,11 @@ void array2ag(double *array, struct atomgrp *ag)
 
 }
 
+struct atomgrp* extract_type_prefix (struct atomgrp* ag, const char* type, struct prm* prm)
+{
+	return exrm_type_prefix (ag, type, prm, 0);
+}
+
 struct atomgrp *extract_type(struct atomgrp *ag, const char *type,
 			     struct prm *prm)
 {
@@ -484,6 +489,52 @@ struct atomgrp *extract_type(struct atomgrp *ag, const char *type,
 struct atomgrp *rm_type(struct atomgrp *ag, const char *type, struct prm *prm)
 {
 	return exrm_type(ag, type, prm, 1);
+}
+
+struct atomgrp* exrm_type_prefix (struct atomgrp* ag, const char* type, struct prm* prm, int direction)
+{
+	int atomn; // loop var
+	int natoms; // type atom number
+
+	struct atomgrp* exag = (struct atomgrp*) _mol_calloc (1, sizeof (struct atomgrp)); // resultant extracted atomgrp
+	exag->atoms = (struct atom*) _mol_malloc (sizeof (struct atom) * ag->natoms); // allocate memory for the array of atoms, realloc later to make it tight
+
+	size_t len = strlen(type);
+	natoms = 0;
+	for (atomn = 0; atomn < ag->natoms; atomn++)
+	{
+		if (
+				(direction == 0 && strncmp (type, ag->atoms[atomn].name, len) == 0) // extract type
+				||
+				(direction == 1 && ! (strncmp (type, ag->atoms[atomn].name, len) == 0)) // rm type
+		   )
+		{
+			exag->atoms[natoms].atom_typen = ag->atoms[atomn].atom_typen;
+			exag->atoms[natoms].sa = ag->atoms[atomn].sa;
+			exag->atoms[natoms].X = ag->atoms[atomn].X;
+			exag->atoms[natoms].Y = ag->atoms[atomn].Y;
+			exag->atoms[natoms].Z = ag->atoms[atomn].Z;
+			natoms++;
+		}
+	}
+
+	if (natoms == 0)
+	{
+		if (direction == 0)
+		{
+			fprintf (stderr, "there are no atoms of type %s to extract\n", type);
+		}
+		if (direction == 1)
+		{
+			fprintf (stderr, "removing atoms of type %s leaves no remaining atoms\n", type);
+		}
+		exit (EXIT_FAILURE);
+	}
+
+	exag->atoms = (struct atom*) _mol_realloc (exag->atoms, sizeof (struct atom) * natoms); // realloc exag->atoms to make it tight
+	exag->natoms = natoms; // attach number of atoms
+
+	return exag;
 }
 
 struct atomgrp *exrm_type(struct atomgrp *ag, const char *type, struct prm *prm,
