@@ -204,7 +204,7 @@ struct atomgrp **read_sdf_v3000(const char *path, int *rmodels)
 				fprintf(stderr,
 					"Not enough atom lines in sdf file\n");
 			}
-			sscanf(line, "M  V30 %*d %as %lf %lf %lf",
+			sscanf(line, "M  V30 %*d %ms %lf %lf %lf",
 			       &(ag_models[modeli]->atoms[atomi].name),
 			       &(ag_models[modeli]->atoms[atomi].X),
 			       &(ag_models[modeli]->atoms[atomi].Y),
@@ -440,7 +440,7 @@ struct atomgrp *next_sdf_v3000(struct sdf_reader *reader)
 		if (getline(&line, &len, reader->fp) == -1) {
 			fprintf(stderr, "Not enough atom lines in sdf file\n");
 		}
-		sscanf(line, "M  V30 %*d %as %lf %lf %lf",
+		sscanf(line, "M  V30 %*d %ms %lf %lf %lf",
 		       &(ag->atoms[atomi].name),
 		       &(ag->atoms[atomi].X),
 		       &(ag->atoms[atomi].Y), &(ag->atoms[atomi].Z));
