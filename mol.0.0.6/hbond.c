@@ -2939,14 +2939,6 @@ static void set_hbond_acceptor_bases(struct atomgrp *ag)
 			heavy_acceptor_base_count++;
 			if (heavy_acceptor_base_count == 1) { // take the first one as the acceptor base
 				atom->base = acceptor_base_atomi;
-				for (int k = 0; k < acceptor_base_atom->nbonds; k++) {
-					int acceptor_base2_atomi = bonded_atom_index(ag, acceptor_base_atomi, k);
-					assert(acceptor_base2_atomi < ag->natoms);
-					if (acceptor_base2_atomi != i) {
-						atom->base2 = acceptor_base2_atomi;
-						break;
-					}
-				}
 			} else {
 				atom->base2 = acceptor_base_atomi;
 			}
