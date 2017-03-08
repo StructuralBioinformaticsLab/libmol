@@ -1316,18 +1316,18 @@ static double get_weight(mol_atom *atoms, mol_atom *hydro, mol_atom *acc)
 	case hbe_BBTURN:
 	case hbe_BBHELIX:
 	case hbe_BBOTHER:
-		scaling = 1.715491;
+		scaling = 1.0/1.715491;
 		break;
 	case hbe_BSC:
 	case hbe_SP2B:
 	case hbe_SP2SC:
-		scaling = 1.620014;
+		scaling = 1.0/1.620014;
 		break;
 	case hbe_SP3B:
 	case hbe_RINGB:
 	case hbe_SP3SC:
 	case hbe_RINGSC:
-		scaling = 1.598616;
+		scaling = 1.0/1.598616;
 		break;
 	}
 
@@ -1340,7 +1340,7 @@ static double get_weight(mol_atom *atoms, mol_atom *hydro, mol_atom *acc)
 	    in_word_set(key, strlen(key));
 
 	if (strength != NULL) {
-		return strength->strength/scaling;
+		return strength->strength*scaling;
 	}
 
 	snprintf(key, MAX_WORD_LENGTH+1, "%s_%s_%s_%s", hydro->residue_name, hydro->name,
@@ -1349,10 +1349,10 @@ static double get_weight(mol_atom *atoms, mol_atom *hydro, mol_atom *acc)
 	    in_word_set(key, strlen(key));
 
 	if (strength != NULL) {
-		return strength->strength/scaling;
+		return strength->strength*scaling;
 	}
 
-	return 1.0/scaling;
+	return scaling;
 }
 
 void hbondeng_probe_weighted(struct atomgrp *ag, double *energy, struct nblist *nblst)
