@@ -134,6 +134,7 @@ struct atomgrp *read_pdb(const char *path, struct prm *prm)
 		}
 
 		ag->atoms[atomi].name = strdup(atypemin);
+		ag->atoms[atomi].residue_name = strdup(atypemaj);
 
 		ag->atoms[atomi].atom_typen = atomid(prm, atypemaj, atypemin);
 		if (ag->atoms[atomi].atom_typen == -1)	// val not found

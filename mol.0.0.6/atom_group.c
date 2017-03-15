@@ -94,9 +94,12 @@ void mol_atom_group_destroy(mol_atom_group * ag)
 	}
 
 	if (ag->nres > 0) {
-		for (i = 0; i < ag->nres; i++)
-			free(ag->idres[i]);
-		free(ag->idres);
+		if (ag->idres != NULL) {
+			for (i = 0; i < ag->nres; i++) {
+				free(ag->idres[i]);
+			}
+			free(ag->idres);
+		}
 		free(ag->iares);
 	}
 
