@@ -68,12 +68,16 @@ struct atom
 	double chrg; /**< electrostatic charge of atom */
 
         double B; /**< b-factor of an atom */
+
+        double fft_repvdw_radius; /**< b-factor of an atom */
         
         int res_num;/** global residue number based on libmol numbering */
         int res_seq; /**< residue sequence number */
         int comb_res_seq; /**< single sequence of residue numbers combining all chains */
         
         bool backbone; /**< 1 if this atom is part of the backbone, 0 otherwise */
+        bool fft_repvdw_filter; /**< 1 if this atom is part of the backbone, 0 otherwise */
+        bool fft_no_attvdw; /**< 1 if this atom is part of the backbone, 0 otherwise */
 
 	// deprecated
 	struct atombond** bonds; /**< first level bonds of this atom */

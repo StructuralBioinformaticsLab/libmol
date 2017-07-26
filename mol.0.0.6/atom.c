@@ -103,7 +103,11 @@ void mol_atom_copy(mol_atom * asrc, mol_atom * adst)
 
 	adst->acp_type = asrc->acp_type;
 	adst->rminh = asrc->rminh;
+	adst->fft_repvdw_radius = asrc->fft_repvdw_radius;
 	adst->chrg = asrc->chrg;
+	adst->backbone = asrc->backbone;
+	adst->fft_repvdw_filter = asrc->fft_repvdw_filter;
+	adst->fft_no_attvdw = asrc->fft_no_attvdw;
 
 	for (i = 0; i < adst->nbondis; i++)
 		adst->bondis[i] = asrc->bondis[i];

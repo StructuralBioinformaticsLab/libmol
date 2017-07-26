@@ -81,11 +81,12 @@ struct atomgrp *read_json_ag(const char *json_file)
 		}
 		json_t *ace_volume, *ftype_index, *ftype_name, *eps03;
 		json_t *name, *radius03, *eps, *acp_type, *residue_name;
-		json_t *charge, *radius, *element;
+		json_t *charge, *radius, *element, *fft_repvdw_radius;
 		json_t *x, *y, *z;
 		json_t *yeti_type, *sybyl_type;
 		json_t *backbone, *hb_acceptor, *hb_donor, *hb_weight;
 		json_t *segment, *residue;
+		json_t *fft_repvdw_filter, *fft_no_attvdw;
 
 
 		segment = json_object_get(atom, "segment");
@@ -323,6 +324,42 @@ struct atomgrp *read_json_ag(const char *json_file)
 			ag->atoms[i].backbone = json_is_true(backbone);
 		} else {
 			ag->atoms[i].backbone = false;
+		}
+
+		fft_repvdw_radius = json_object_get(atom, "fft_repvdw_radius");
+		if (fft_repvdw_radius != NULL) {
+			if (!json_is_real(fft_repvdw_radius)) {
+				fprintf(stderr,
+					"json fft_repvdw_radius is not floating point for atom %zd in json_file %s\n",
+					i, json_file);
+			}
+			ag->atoms[i].fft_repvdw_radius = json_real_value(fft_repvdw_radius);
+		} else {
+			ag->atoms[i].fft_repvdw_radius = -1.0;
+		}
+
+		fft_repvdw_filter = json_object_get(atom, "fft_repvdw_filter");
+		if (fft_repvdw_filter != NULL) {
+			if (!json_is_boolean(fft_repvdw_filter)) {
+				fprintf(stderr,
+					"json fft_repvdw_filter is not boolean for atom %zd in json_file %s\n",
+					i, json_file);
+			}
+			ag->atoms[i].fft_repvdw_filter = json_is_true(fft_repvdw_filter);
+		} else {
+			ag->atoms[i].fft_repvdw_filter = false;
+		}
+
+		fft_no_attvdw = json_object_get(atom, "fft_no_attvdw");
+		if (fft_no_attvdw != NULL) {
+			if (!json_is_boolean(fft_no_attvdw)) {
+				fprintf(stderr,
+					"json fft_no_attvdw is not boolean for atom %zd in json_file %s\n",
+					i, json_file);
+			}
+			ag->atoms[i].fft_no_attvdw = json_is_true(fft_no_attvdw);
+		} else {
+			ag->atoms[i].fft_no_attvdw = false;
 		}
 
 		ag->atoms[i].hprop = 0;
