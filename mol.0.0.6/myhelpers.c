@@ -36,9 +36,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _DEBUG_
 void *mymalloc(size_t size)
 {
-//      _PRINT_DEPRECATED_
-//      fprintf (stderr, "\t(please write your own malloc wrapper)\n");
-
 	void *v = (void *)malloc(size);
 	if (v == NULL) {
 		exit(EXIT_FAILURE);
@@ -48,9 +45,6 @@ void *mymalloc(size_t size)
 
 void *mycalloc(size_t nmemb, size_t size)
 {
-//      _PRINT_DEPRECATED_
-//      fprintf (stderr, "\t(please write your own calloc wrapper)\n");
-
 	void *v = (void *)calloc(nmemb, size);
 	if (v == NULL) {
 		perror("calloc"), exit(EXIT_FAILURE);
@@ -60,13 +54,8 @@ void *mycalloc(size_t nmemb, size_t size)
 
 void *myrealloc(void *ptr, size_t size)
 {
-//      _PRINT_DEPRECATED_
-//      fprintf (stderr, "\t(please write your own realloc wrapper)\n");
-
 	void *v;
 	if (size < 1) {
-		fprintf(stderr,
-			"warning: _mol_realloc called with size 0, no realloc will occur\n");
 		return ptr;
 
 	}
@@ -165,7 +154,7 @@ char *rstrip(char *string)
 
 /**
 	Prints a formatted error message.
-	[ Rezaul Chowdhury, Nov. 17, 2010 ]	
+	[ Rezaul Chowdhury, Nov. 17, 2010 ]
 */
 void print_error(char *format, ...)
 {
